@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Week (スペシャルウィーク) - Uma Musume Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Shippori+Mincho:wght@600;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        swPurple: '#6D28D9',
+                        swPurpleDark: '#4C1D95',
+                        swMagenta: '#BE123C',
+                        swRed: '#DC2626',
+                        swDarkBg: '#0B1120',
+                        swCardBg: 'rgba(30, 27, 75, 0.7)',
+                        swGold: '#D97706',
+                        swGoldLight: '#F59E0B',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Shippori Mincho', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1120;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6d28d9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            transform: translateY(-6px) scale(1.01);
+            border-color: rgba(245, 158, 11, 0.5);
+            box-shadow: 0 15px 35px -10px rgba(109, 40, 217, 0.5);
+        }
+
+        /* ANIMASI KANJI API BERGERAK (Fire Text Effect - Special Week Style) */
+        @keyframes fireAnim {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .kanji-fire-text {
+            background: linear-gradient(-45deg, #f59e0b, #be123c, #9333ea, #3b82f6, #f59e0b);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fireAnim 4s ease infinite;
+            filter: drop-shadow(0 0 10px rgba(190, 18, 60, 0.6));
+        }
+
+        /* Animasi Pulsing Glowing Orbs Background */
+        @keyframes orbPulse {
+            0%, 100% { transform: scale(1) translateY(0); opacity: 0.2; }
+            50% { transform: scale(1.15) translateY(-10px); opacity: 0.35; }
+        }
+        .animate-orb {
+            animation: orbPulse 8s ease-in-out infinite;
+        }
+
+        /* Hero Image Floating Animation */
+        @keyframes floatAnim {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .hero-float {
+            animation: floatAnim 5s ease-in-out infinite;
+        }
+
+        .badge-gold {
+            background: linear-gradient(90deg, #D97706 0%, #B45309 100%);
+            color: #FFF;
+        }
+    </style>
+</head>
+<body class="bg-swDarkBg text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 min-h-screen relative overflow-x-hidden">
+
+    <!-- CANVAS ANIMASI SAKURA GUGUR RINGAN -->
+    <canvas id="sakuraCanvas" class="fixed inset-0 pointer-events-none z-40"></canvas>
+
+    <!-- Background Ambient Glow Effects -->
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none animate-orb"></div>
+    <div class="fixed top-1/3 -right-40 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none animate-orb" style="animation-delay: 3s;"></div>
+    <div class="fixed bottom-10 left-1/4 w-96 h-96 bg-rose-600/10 rounded-full blur-3xl pointer-events-none animate-orb" style="animation-delay: 5s;"></div>
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-800 px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo / Name -->
+            <a href="index.html" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-700 via-rose-500 to-amber-500 p-0.5 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center font-bold text-amber-400 font-serif text-lg">
+                        特
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-wide text-white group-hover:text-amber-400 transition-colors">Special Week</h1>
+                    <p class="text-xs text-slate-400">スペシャルウィーク • Golden Generation</p>
+                </div>
+            <!-- Desktop Nav Links & Full Character Nav -->
+            <nav class="hidden md:flex items-center space-x-1 text-xs font-medium text-slate-300">
+                <a href="index.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all flex items-center gap-1 font-bold text-amber-400"><i class="fa-solid fa-house"></i> Home</a>
+                <span class="text-slate-700">|</span>
+                <a href="specialweek.html" class="px-2.5 py-1.5 rounded-lg text-amber-400 bg-purple-900/40 border border-purple-500/30 font-bold">Special Week</a>
+                <a href="grasswonder.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">Grass Wonder</a>
+                <a href="elcondorpasa.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">El Condor Pasa</a>
+                <a href="seiunsky.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">Seiun Sky</a>
+                <a href="kinghalo.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">King Halo</a>
+            </nav>
+
+            <!-- Quick Action Badge & Home Button -->
+            <div class="flex items-center space-x-3">
+                <a href="index.html" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-slate-950 transition-all shadow-sm">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Beranda Utama</span>
+                </a>
+                <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-300 hover:text-white focus:outline-none">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="hidden md:hidden mt-3 pt-3 border-t border-slate-800 flex flex-col space-y-2 text-sm">
+            <a href="index.html" class="px-3 py-2 rounded-lg bg-amber-500/20 text-amber-400 font-semibold"><i class="fa-solid fa-house mr-2"></i>Beranda Utama (index.html)</a>
+            <div class="px-3 pt-1 text-[11px] font-bold uppercase text-slate-400 tracking-wider">Navigasi Karakter:</div>
+            <div class="grid grid-cols-2 gap-1.5 px-1">
+                <a href="specialweek.html" class="px-2.5 py-1.5 rounded bg-purple-900/50 text-amber-400 font-bold text-xs"><i class="fa-solid fa-star text-[10px] mr-1"></i>Special Week</a>
+                <a href="grasswonder.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-horse text-[10px] mr-1"></i>Grass Wonder</a>
+                <a href="elcondorpasa.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-mask text-[10px] mr-1"></i>El Condor Pasa</a>
+                <a href="seiunsky.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-cloud text-[10px] mr-1"></i>Seiun Sky</a>
+                <a href="kinghalo.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs flex-span-2"><i class="fa-solid fa-crown text-[10px] mr-1"></i>King Halo</a>
+            </div>
+            <a href="#pengenalan" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-300 text-xs">Pengenalan</a>
+            <a href="#variasi" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-300 text-xs">Kostum & Karusel</a>
+            <a href="#biografi" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-300 text-xs">Profil & Stat</a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+
+        <!-- HERO / PENGENALAN SECTION -->
+        <section id="pengenalan" class="relative rounded-3xl overflow-hidden glass-card border border-slate-700/50 p-6 md:p-10">
+            <!-- Decorative Japanese Text Overlay in Background -->
+            <div class="absolute right-4 bottom-0 text-slate-800/30 text-8xl lg:text-9xl font-serif font-black select-none pointer-events-none">
+                スペシャルウィーク
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                <!-- Text Intro Column -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold hover:bg-amber-500 hover:text-slate-950 transition-all">
+                            <i class="fa-solid fa-arrow-left text-[11px]"></i> Kembali ke Home
+                        </a>
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-900/40 border border-purple-500/30 text-purple-300 text-xs font-semibold uppercase tracking-wider">
+                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                            Japan's Hope • Golden Generation
+                        </div>
+                    </div>
+                    
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                        Special Week <br>
+                        <!-- KANJI TEKS API BERGERAK -->
+                        <span class="kanji-fire-text text-2xl sm:text-3xl lg:text-4xl font-serif mt-1 block">「日本一のウマ娘になる！」</span>
+                    </h1>
+
+                    <p class="text-slate-300 leading-relaxed text-base sm:text-lg">
+                        Special Week adalah gadis kuda (<b>Uma Musume</b>) polos dan bersemangat tinggi asal Hokkaido. Memiliki latar belakang unik karena dibesarkan oleh dua ibu (ibu kuda kandung dan ibu manusia angkat), ia pindah ke Akademi Tracen dengan janji membara untuk menjadi <b>Gadis Kuda Nomor Satu di Jepang (日本一のウマ娘)</b>.
+                    </p>
+
+                    <!-- Student Quote Box -->
+                    <div class="p-4 rounded-xl bg-slate-900/80 border-l-4 border-amber-500 text-slate-300 text-sm italic relative hover:border-purple-500 transition-colors">
+                        <i class="fa-solid fa-quote-left text-amber-500/20 text-3xl absolute right-3 bottom-2 pointer-events-none"></i>
+                        "Saya berjanji pada dua ibu saya bahwa saya akan menjadi gadis kuda nomor satu di seluruh Jepang! Mohon bimbingannya, Trainer-san!"
+                        <div class="not-italic text-xs font-semibold text-amber-400 mt-2">— Intro Siswa (Student Introduction)</div>
+                    </div>
+
+                    <!-- Quick Info Badges -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                        <div class="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center hover:border-amber-500/50 hover:scale-105 transition-all cursor-default">
+                            <span class="text-xs text-slate-400 block">Ulang Tahun</span>
+                            <span class="text-sm font-bold text-slate-100">2 Mei</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center hover:border-amber-500/50 hover:scale-105 transition-all cursor-default">
+                            <span class="text-xs text-slate-400 block">Tinggi Badan</span>
+                            <span class="text-sm font-bold text-slate-100">158 cm</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center hover:border-amber-500/50 hover:scale-105 transition-all cursor-default">
+                            <span class="text-xs text-slate-400 block">VA / Pengisi Suara</span>
+                            <span class="text-sm font-bold text-slate-100">Waki Azumi</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center hover:border-amber-500/50 hover:scale-105 transition-all cursor-default">
+                            <span class="text-xs text-slate-400 block">Favorit</span>
+                            <span class="text-sm font-bold text-amber-400">Wortel & Makan Banyak</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Highlight Showcase Image -->
+                <div class="lg:col-span-5 flex justify-center relative">
+                    <div class="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border border-slate-700/80 group hero-float">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent z-10"></div>
+                        
+                        <!-- Main Hero Image -->
+                        <img src="https://umamusu.wiki/w/images/d/dd/Special_Week_%28Race%29.png" 
+                             alt="Special Week Banner Illustration" 
+                             onerror="this.src='https://placehold.co/400x600/0f172a/f59e0b?text=Special+Week'"
+                             class="w-full h-full object-cover object-center transform group-hover:scale-110 transition-transform duration-700">
+                        
+                        <div class="absolute inset-0 border-2 border-amber-500/30 rounded-2xl pointer-events-none z-20 m-2 group-hover:border-amber-400 transition-colors"></div>
+                        
+                        <!-- Bottom Info Tag -->
+                        <div class="absolute bottom-4 left-4 right-4 z-20 bg-slate-900/90 backdrop-blur-md p-3 rounded-xl border border-slate-700 group-hover:border-amber-500/50 transition-all">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="text-xs font-semibold text-amber-400 uppercase tracking-wide">Main Race Attire</h4>
+                                    <p class="text-sm font-bold text-white">Special Dreamer (スペシャルドリーマー)</p>
+                                </div>
+                                <span class="px-2 py-1 rounded bg-purple-600 text-[10px] font-bold text-white uppercase animate-pulse">Grade I</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CAROUSEL SECTION: 4 OUTFIT VERSIONS -->
+        <section id="variasi" class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 uppercase tracking-wider">
+                        <i class="fa-solid fa-layer-group"></i> Uma Musume Wiki Costumes
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Galeri Variasi Karakter (4 Versi)</h2>
+                </div>
+                <p class="text-slate-400 text-sm max-w-md">
+                    Gunakan tombol navigasi untuk melihat 4 iterasi kostum Special Week yang tersedia dalam waralaba.
+                </p>
+            </div>
+
+            <!-- Carousel Box Container -->
+            <div class="relative glass-card rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+                <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[460px]">
+                    
+                    <!-- Carousel Image Area -->
+                    <div class="lg:col-span-6 relative bg-slate-950 flex items-center justify-center overflow-hidden p-6">
+                        <div class="absolute inset-0 bg-radial-gradient from-purple-900/30 to-transparent"></div>
+                        
+                        <div class="relative z-10 w-full h-80 sm:h-96 flex items-center justify-center">
+                            <img id="carouselImg" 
+                                 src="" 
+                                 alt="Special Week Outfit" 
+                                 onerror="this.src='https://placehold.co/400x600/0f172a/f59e0b?text=Special+Week+Outfit'"
+                                 class="max-h-full max-w-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] transition-all duration-500 opacity-0 scale-95 hover:scale-105 cursor-pointer">
+                        </div>
+
+                        <div class="absolute top-4 left-4 z-20">
+                            <span id="versionBadge" class="px-3 py-1 rounded-full text-xs font-bold badge-gold shadow">
+                                Versi 1 dari 4
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Carousel Content Area -->
+                    <div class="lg:col-span-6 p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-slate-900/60">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span id="outfitType" class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/20">
+                                    Racing Outfit
+                                </span>
+                                <span id="outfitRarity" class="text-xs text-slate-400">
+                                    3★ Base Character
+                                </span>
+                            </div>
+
+                            <h3 id="outfitTitle" class="text-2xl font-bold text-white font-serif">
+                                Special Dreamer
+                            </h3>
+                            <p id="outfitJpTitle" class="text-sm text-slate-400 italic">
+                                [Special Dreamer] Special Week
+                            </p>
+
+                            <p id="outfitDescription" class="text-slate-300 text-sm leading-relaxed">
+                                Seragam balap resmi bernuansa kombinasi warna putih, magenta, dan ungu dengan dasi kupu-kupu emas. Melambangkan semangat pantang menyerah sang bintang harapan Jepang.
+                            </p>
+
+                            <div class="pt-2">
+                                <h4 class="text-xs font-semibold text-slate-400 uppercase mb-2">Ciri Khas & Keahlian:</h4>
+                                <div id="outfitTags" class="flex flex-wrap gap-2">
+                                    <!-- Dynamic Tags Filled by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Controls & Navigation Indicators -->
+                        <div class="space-y-4 pt-4 border-t border-slate-800">
+                            <div class="flex items-center justify-between">
+                                <div class="flex space-x-2" id="carouselDots">
+                                    <!-- Dots generated via JS -->
+                                </div>
+
+                                <div class="flex space-x-3">
+                                    <button id="prevBtn" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-white transition-all active:scale-95 flex items-center justify-center border border-slate-700 shadow-md">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </button>
+                                    <button id="nextBtn" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-white transition-all active:scale-95 flex items-center justify-center border border-slate-700 shadow-md">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WIKI CONTENTS TABBED SECTION -->
+        <section id="biografi" class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-400 uppercase tracking-wider">
+                    <i class="fa-solid fa-book-bookmark"></i> Information Database
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-white">Profil & Detail Wiki</h2>
+            </div>
+
+            <!-- Tab Buttons Header -->
+            <div class="flex space-x-2 border-b border-slate-800 overflow-x-auto pb-1">
+                <button onclick="switchTab('tab-bio')" id="btn-tab-bio" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-sm border-b-2 border-amber-500 text-amber-400 bg-slate-800/40 transition-all whitespace-nowrap">
+                    <i class="fa-regular fa-user mr-2"></i>Biografi & Statistik
+                </button>
+                <button onclick="switchTab('tab-appearance')" id="btn-tab-appearance" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-shirt mr-2"></i>Penampilan & Desain
+                </button>
+                <button onclick="switchTab('tab-irl')" id="btn-tab-irl" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-horse-head mr-2"></i>Kuda Pacu Nyata (IRL)
+                </button>
+            </div>
+
+            <!-- TAB 1: BIOGRAPHY & STATS -->
+            <div id="tab-bio" class="tab-content block space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Stat Card -->
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-4 hover:border-purple-500/40 transition-colors">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
+                            <i class="fa-solid fa-sliders text-amber-400"></i> Spesifikasi Karakter
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between py-1.5 border-b border-slate-800/60">
+                                <span class="text-slate-400">Nama Jepang</span>
+                                <span class="font-semibold text-white">スペシャルウィーク</span>
+                            </div>
+                            <div class="flex justify-between py-1.5 border-b border-slate-800/60">
+                                <span class="text-slate-400">Asal Tempat</span>
+                                <span class="font-semibold text-white">Hokkaido, Jepang</span>
+                            </div>
+                            <div class="flex justify-between py-1.5 border-b border-slate-800/60">
+                                <span class="text-slate-400">Tinggi / Berat</span>
+                                <span class="font-semibold text-white">158 cm / Sedang bertambah</span>
+                            </div>
+                            <div class="flex justify-between py-1.5 border-b border-slate-800/60">
+                                <span class="text-slate-400">Ukuran B-W-H</span>
+                                <span class="font-semibold text-white">79 - 57 - 81</span>
+                            </div>
+                            <div class="flex justify-between py-1.5 border-b border-slate-800/60">
+                                <span class="text-slate-400">Kamar Asrama</span>
+                                <span class="font-semibold text-white">Asrama Miho (Kamar 201)</span>
+                            </div>
+                            <div class="flex justify-between py-1.5">
+                                <span class="text-slate-400">Teman Kamar</span>
+                                <span class="font-semibold text-purple-400">Silence Suzuka</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Biography Narrative -->
+                    <div class="lg:col-span-2 glass-card p-6 rounded-2xl border border-slate-800 space-y-4 hover:border-purple-500/40 transition-colors">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
+                            <i class="fa-solid fa-feather-pointed text-amber-400"></i> Biografi Kepribadian
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Special Week tumbuh besar di padang rumput Hokkaido yang asri. Karena ibu kandungnya meninggal saat melahirkannya, ia dibesarkan oleh wanita penangkar yang ia panggil sebagai ibu manusianya. Pengalaman ini membuatnya memiliki tekad ganda untuk membanggakan kedua ibunya.
+                        </p>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Ia memiliki kepribadian yang ceria, polos, dan terkadang sedikit canggung saat berada di kota besar. Namun saat menginjakkan kaki di atas lintasan balap, daya pacu dan dorongan sprint kecepatannya mampu membalikkan keadaan dalam sekejap (*Shooting Star*).
+                        </p>
+
+                        <div class="pt-2">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Kemampuan Balap (Aptitude)</h4>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 hover:border-amber-400/50 hover:scale-105 transition-all">
+                                    <span class="text-slate-400 block text-[10px]">Rumput (Turf)</span>
+                                    <span class="text-base font-extrabold text-emerald-400">A</span>
+                                </div>
+                                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 hover:border-amber-400/50 hover:scale-105 transition-all">
+                                    <span class="text-slate-400 block text-[10px]">Jarak Menengah</span>
+                                    <span class="text-base font-extrabold text-emerald-400">A</span>
+                                </div>
+                                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 hover:border-amber-400/50 hover:scale-105 transition-all">
+                                    <span class="text-slate-400 block text-[10px]">Jarak Jauh</span>
+                                    <span class="text-base font-extrabold text-emerald-400">A</span>
+                                </div>
+                                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 hover:border-amber-400/50 hover:scale-105 transition-all">
+                                    <span class="text-slate-400 block text-[10px]">Taktik Pace Chaser</span>
+                                    <span class="text-base font-extrabold text-emerald-400">A</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: APPEARANCE -->
+            <div id="tab-appearance" class="tab-content hidden glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
+                <h3 class="text-lg font-bold text-white border-b border-slate-800 pb-3">Ciri Visual & Desain Karakter</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-300">
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-800/40 transition-colors">
+                            <div class="p-2 rounded bg-amber-500/10 text-amber-400 mt-1"><i class="fa-solid fa-star"></i></div>
+                            <div>
+                                <h4 class="font-bold text-white">Garis Hair Blaze di Dahi</h4>
+                                <p class="text-xs text-slate-400">Jambul rambut putih berujung bintang di bagian dahi depan yang merepresentasikan corak garis bulu putih kuda pacu aslinya.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-800/40 transition-colors">
+                            <div class="p-2 rounded bg-amber-500/10 text-amber-400 mt-1"><i class="fa-solid fa-ribbon"></i></div>
+                            <div>
+                                <h4 class="font-bold text-white">Aksesoris Telinga Kiri</h4>
+                                <p class="text-xs text-slate-400">Pita pita kombinasi ungu-merah di telinga kiri yang menandakan atribut karakter bertipe betina (filly) dalam waralaba.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-800/40 transition-colors">
+                            <div class="p-2 rounded bg-amber-500/10 text-amber-400 mt-1"><i class="fa-solid fa-vest"></i></div>
+                            <div>
+                                <h4 class="font-bold text-white">Kombinasi Warna Seragam</h4>
+                                <p class="text-xs text-slate-400">Dominasi warna ungu royal, putih bersih, dan aksen merah magenta yang melambangkan keberanian dan kehangatan hati.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-800/40 transition-colors">
+                            <div class="p-2 rounded bg-amber-500/10 text-amber-400 mt-1"><i class="fa-solid fa-utensils"></i></div>
+                            <div>
+                                <h4 class="font-bold text-white">Porsi Makan Gunung</h4>
+                                <p class="text-xs text-slate-400">Visual karakternya sering kali digambarkan memegang mangkuk nasi porsi ekstra tinggi (*Oomori*) di kantin sekolah.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: REAL HORSE INFO -->
+            <div id="tab-irl" class="tab-content hidden glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
+                <h3 class="text-lg font-bold text-white border-b border-slate-800 pb-3">Sejarah Kuda Pacu Asli (Special Week 1995-2018)</h3>
+                <div class="space-y-3 text-sm text-slate-300">
+                    <p>
+                        Special Week (lahir 2 Mei 1995 di Hidaka, Hokkaido) adalah jantan murni (*thoroughbred*) yang menjadi kebanggaan balap Jepang era 90-an. Di bawah arahan joki legendaris Yutaka Take, ia berhasil menjuarai <b>Tokyo Yushun / Japan Derby (1998)</b>, <b>Tenno Sho Spring & Fall (1999)</b>, serta <b>Japan Cup (1999)</b>.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 hover:border-amber-500/50 hover:scale-105 transition-all">
+                            <span class="text-xs text-slate-400 block">Total Rekor Balap</span>
+                            <span class="text-xl font-bold text-amber-400">17 Laga / 10 Kemenangan</span>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 hover:border-amber-500/50 hover:scale-105 transition-all">
+                            <span class="text-xs text-slate-400 block">Rival Utama</span>
+                            <span class="text-xl font-bold text-purple-400">Grass Wonder</span>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 hover:border-amber-500/50 hover:scale-105 transition-all">
+                            <span class="text-xs text-slate-400 block">Gelar Utama</span>
+                            <span class="text-xl font-bold text-rose-400">Japan's Supreme Horse</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RELATIONSHIPS SECTION (GOLDEN GENERATION) -->
+        <section id="hubungan" class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-400 uppercase tracking-wider">
+                    <i class="fa-solid fa-people-group"></i> Golden Generation
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-white">Hubungan Karakter (Relationships)</h2>
+            </div>
+
+            <!-- Grid Cards for Friends / Rivals -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Silence Suzuka -->
+                <div class="glass-card p-5 rounded-2xl glass-card-hover border border-slate-800 flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Senior & Roommate</span>
+                            <i class="fa-solid fa-heart text-rose-400 text-sm group-hover:scale-125 transition-transform"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">Silence Suzuka</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Senior yang paling dikagumi dan teman satu kamar di Asrama Miho. Kecepatan berlari Suzuka menjadi sumber inspirasi terbesar bagi Special Week.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                        Hubungan: Kagum & Teman Kamar
+                    </div>
+                </div>
+
+                <!-- Grass Wonder -->
+                <div class="glass-card p-5 rounded-2xl glass-card-hover border border-amber-500/30 flex flex-col justify-between group shadow-md">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Rival Abadi</span>
+                            <i class="fa-solid fa-trophy text-amber-400 text-sm group-hover:rotate-12 transition-transform"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-amber-400 group-hover:text-amber-300 transition-colors">Grass Wonder</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Rival terbesar seangkatan. Pertarungan mereka di Takarazuka Kinen & Arima Kinen 1999 menjadi duel paling dramatis dalam sejarah Golden Generation.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-amber-400 font-semibold flex justify-between items-center">
+                        <span>Hubungan: Dualitas Persaingan</span>
+                        <a href="grasswonder.html" class="hover:underline text-[10px]">Grass Page →</a>
+                    </div>
+                </div>
+
+                <!-- El Condor Pasa -->
+                <div class="glass-card p-5 rounded-2xl glass-card-hover border border-slate-800 flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">Rival Internasional</span>
+                            <i class="fa-solid fa-mask text-blue-400 text-sm group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">El Condor Pasa</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Sahabat heboh dan rival balap sejak kelas awal. Sering saling menantang dalam hal kemampuan bertanding maupun makan bersama.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-amber-400 font-semibold flex justify-between items-center">
+                        <span>Hubungan: Sahabat & Rival</span>
+                        <a href="elcondorpasa.html" class="hover:underline text-[10px] text-red-400 font-bold">El Condor Page →</a>
+                    </div>
+                </div>
+
+                <!-- Seiun Sky & King Halo -->
+                <div class="glass-card p-5 rounded-2xl glass-card-hover border border-slate-800 flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">Kawan Angkatan</span>
+                            <i class="fa-solid fa-crown text-purple-400 text-sm group-hover:rotate-12 transition-transform"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">Seiun & King Halo</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Rekan seperjuangan dalam perebutan mahkota Tiga Mahkota (*Triple Crown*). Saling mendorong batas kemampuan satu sama lain.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between items-center">
+                        <a href="seiunsky.html" class="hover:underline text-emerald-400 font-bold">Seiun Sky →</a>
+                        <a href="kinghalo.html" class="hover:underline text-purple-400 font-bold">King Halo →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MEDIA APPEARANCES & TRIVIA ACCORDION -->
+        <section id="media-trivia" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left: Media Appearances -->
+            <div class="lg:col-span-6 space-y-4">
+                <div class="border-b border-slate-800 pb-3">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-tv text-amber-400"></i> Penampilan Media
+                    </h3>
+                </div>
+                
+                <div class="space-y-3 text-sm">
+                    <!-- Anime -->
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 hover:border-slate-700 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-white"><i class="fa-solid fa-film text-purple-400 mr-2"></i>Anime Adaptasi</span>
+                            <span class="text-xs text-amber-400 font-semibold">Season 1 Main Protagonist</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Special Week adalah **tokoh utama (protagonis)** di Anime Uma Musume Season 1, menceritakan perjalanan karirnya dari desa di Hokkaido menuju puncak balap Jepang.
+                        </p>
+                    </div>
+
+                    <!-- Manga -->
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 hover:border-slate-700 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-white"><i class="fa-solid fa-book-open text-emerald-400 mr-2"></i>Manga</span>
+                            <span class="text-xs text-slate-400">Haru Urara Ganbaru & Umayon</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Muncul dalam manga spin-off komedi **Umayon** dan manga **Uma Musume: Haru Urara Ganbaru!** memperlihatkan keceriaannya sehari-hari.
+                        </p>
+                    </div>
+
+                    <!-- Discography / Songs -->
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 hover:border-slate-700 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-white"><i class="fa-solid fa-music text-rose-400 mr-2"></i>Lagu Karakter</span>
+                            <span class="text-xs text-slate-400">WINNING LIVE</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Menyanyikan lagu solo khas: <span class="text-amber-400 italic">"Find My Only Way"</span> serta vokal utama lagu tema **Make debut!** dan **GIRLS' LEGEND U**.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Trivia Accordion -->
+            <div class="lg:col-span-6 space-y-4">
+                <div class="border-b border-slate-800 pb-3">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-amber-400"></i> Fakta Menarik (Trivia)
+                    </h3>
+                </div>
+
+                <div class="space-y-3" id="triviaAccordion">
+                    <!-- Trivia Item 1 -->
+                    <div class="rounded-xl bg-slate-900/80 border border-slate-800 overflow-hidden">
+                        <button onclick="toggleAccordion(1)" class="w-full p-4 text-left flex justify-between items-center font-semibold text-sm text-white hover:bg-slate-800/60 transition-colors">
+                            <span>1. Kisah Nyata Memiliki Dua Ibu</span>
+                            <i id="acc-icon-1" class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-300"></i>
+                        </button>
+                        <div id="acc-content-1" class="hidden p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-slate-800/50 mt-2">
+                            Kuda pacu aslinya ditinggal mati oleh induknya lima hari setelah lahir. Ia kemudian dirawat dan dibesarkan oleh pengasuh kuda keturunan Selandia Baru serta pemilik peranakannya, yang diadaptasi menjadi latar kisah "Dua Ibu" di serial anime.
+                        </div>
+                    </div>
+
+                    <!-- Trivia Item 2 -->
+                    <div class="rounded-xl bg-slate-900/80 border border-slate-800 overflow-hidden">
+                        <button onclick="toggleAccordion(2)" class="w-full p-4 text-left flex justify-between items-center font-semibold text-sm text-white hover:bg-slate-800/60 transition-colors">
+                            <span>2. Nafsu Makan Luar Biasa (Gourmet Spe)</span>
+                            <i id="acc-icon-2" class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-300"></i>
+                        </button>
+                        <div id="acc-content-2" class="hidden p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-slate-800/50 mt-2">
+                            Special Week terkenal dengan nafsu makannya yang sangat besar. Dalam game dan anime, berat badannya sering naik (*fat gain status*) jika Trainer memberinya terlalu banyak porsi makanan lezat.
+                        </div>
+                    </div>
+
+                    <!-- Trivia Item 3 -->
+                    <div class="rounded-xl bg-slate-900/80 border border-slate-800 overflow-hidden">
+                        <button onclick="toggleAccordion(3)" class="w-full p-4 text-left flex justify-between items-center font-semibold text-sm text-white hover:bg-slate-800/60 transition-colors">
+                            <span>3. Joki Legendaris Yutaka Take</span>
+                            <i id="acc-icon-3" class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-300"></i>
+                        </button>
+                        <div id="acc-content-3" class="hidden p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-slate-800/50 mt-2">
+                            Special Week memberikan kemenangan Japan Derby pertama bagi joki legendaris Jepang, Yutaka Take, pada tahun 1998, mengukuhkan posisinya dalam sejarah pacuan kuda Jepang.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-950 mt-20 py-8 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 space-y-3">
+            <div class="flex justify-center items-center space-x-2">
+                <span class="font-bold text-white font-serif">Special Week Fan Portal</span>
+                <span>•</span>
+                <span>Uma Musume: Pretty Derby</span>
+            </div>
+            <p class="max-w-xl mx-auto text-slate-400">
+                Data dan informasi dirangkum dari Uma Musume Official Wiki. Karakter Special Week merupakan hak cipta dari Cygames, Inc.
+            </p>
+            <p class="text-slate-400 text-[10px]">
+                 @Finwahyu - Golden Generation Portal
+            </p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // -------------------------------------------------------------
+        // ANIMASI SAKURA GUGUR RINGAN (CANVAS)
+        // -------------------------------------------------------------
+        const canvas = document.getElementById('sakuraCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const petals = [];
+        const petalCount = 15;
+
+        for (let i = 0; i < petalCount; i++) {
+            petals.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 6 + 4,
+                speedY: Math.random() * 1.5 + 1.0,
+                speedX: Math.random() * 0.6 - 0.3,
+                angle: Math.random() * 360,
+                spin: Math.random() * 2 - 1,
+                opacity: Math.random() * 0.4 + 0.2
+            });
+        }
+
+        function drawPetal(petal) {
+            ctx.save();
+            ctx.translate(petal.x, petal.y);
+            ctx.rotate((petal.angle * Math.PI) / 180);
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(244, 114, 182, ${petal.opacity})`;
+            ctx.ellipse(0, 0, petal.size, petal.size / 2, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function animateSakura() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            petals.forEach(petal => {
+                petal.y += petal.speedY;
+                petal.x += petal.speedX;
+                petal.angle += petal.spin;
+
+                if (petal.y > canvas.height) {
+                    petal.y = -10;
+                    petal.x = Math.random() * canvas.width;
+                }
+                if (petal.x > canvas.width) petal.x = 0;
+                if (petal.x < 0) petal.x = canvas.width;
+
+                drawPetal(petal);
+            });
+            requestAnimationFrame(animateSakura);
+        }
+        animateSakura();
+
+        // -------------------------------------------------------------
+        // CAROUSEL DATA: 4 OUTFIT VERSIONS OF SPECIAL WEEK
+        // -------------------------------------------------------------
+        const outfitData = [
+            {
+                id: 1,
+                title: "Special Dreamer",
+                jpTitle: "[スペシャルドリーマー] Special Week",
+                type: "Racing Outfit (Main)",
+                rarity: "3★ Base Character",
+                img: "https://umamusu.wiki/w/images/6/63/Game_Asset_chara_stand_1001_100101.png", 
+                description: "Seragam balap resmi bernuansa kombinasi warna putih, magenta, dan ungu dengan dasi kupu-kupu emas. Melambangkan semangat pantang menyerah sang bintang harapan Jepang.",
+                tags: ["Turf Specialist", "Medium/Long Distance", "Pace Chaser / Betweener"],
+                badge: "Versi 1 dari 4"
+            },
+            {
+                id: 2,
+                title: "Ruler of Japan",
+                jpTitle: "[日之本一の総大将] Special Week",
+                type: "Main Story Outfit (Act 1 Reward)",
+                rarity: "3★ Special Story Trainee",
+                img: "https://umamusu.wiki/w/images/2/29/Game_Asset_chara_stand_1001_100102.png",
+                description: "Kostum zirah jenderal perang bertema 'Ruler of Japan' (Panglima Utama Nomor Satu di Jepang). Kostum spesial ini diperoleh dari penyelesaian Cerita Utama (Main Story Act 1 Finale Part 2), melambangkan tekad terkuat Special Week saat membawa impian seluruh pendukungnya.",
+                tags: ["Main Story Act 1 Reward", "Japan Cup Champion", "Best in Japan Skill", "Long / Medium Specialist"],
+                badge: "Versi 2 dari 4"
+            },
+            {
+                id: 3,
+                title: "Tracen Academy Uniform",
+                jpTitle: "[Tracen Academy] School Uniform",
+                type: "School Uniform",
+                rarity: "Standard Outfit",
+                img: "https://umamusu.wiki/w/images/d/d1/Game_Asset_chara_stand_1001_000005.png",
+                description: "Seragam musim panas / musim dingin resmi Akademi Tracen. Desain blazer ungu dan rok lipat yang digunakan Special Week saat belajar di kelas bersama teman seangkatannya.",
+                tags: ["Campus Life", "Miho Dormitory", "Student"],
+                badge: "Versi 3 dari 4"
+            },
+            {
+                id: 4,
+                title: "Casual / Private Outfit",
+                jpTitle: "[Casual Wear] Private Outfit",
+                type: "Casual Wear",
+                rarity: "Event / Private",
+                img: "https://umamusu.wiki/w/images/b/b8/Game_Asset_chara_stand_1001_901001.png",
+                description: "Pakaian santai sehari-hari bertema kasual manis yang dikenakan Special Week saat pergi berbelanja makanan lezat bersama Silence Suzuka di kota.",
+                tags: ["Private Outfit", "Gourmet Shopping", "Casual"],
+                badge: "Versi 4 dari 4"
+            }
+        ];
+
+        let currentIndex = 0;
+
+        const carouselImg = document.getElementById('carouselImg');
+        const outfitTitle = document.getElementById('outfitTitle');
+        const outfitJpTitle = document.getElementById('outfitJpTitle');
+        const outfitType = document.getElementById('outfitType');
+        const outfitRarity = document.getElementById('outfitRarity');
+        const outfitDescription = document.getElementById('outfitDescription');
+        const outfitTags = document.getElementById('outfitTags');
+        const versionBadge = document.getElementById('versionBadge');
+        const carouselDots = document.getElementById('carouselDots');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function renderDots() {
+            carouselDots.innerHTML = '';
+            outfitData.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.className = `w-3 h-3 rounded-full transition-all ${idx === currentIndex ? 'bg-amber-500 w-8' : 'bg-slate-700 hover:bg-slate-500'}`;
+                dot.onclick = () => goToSlide(idx);
+                carouselDots.appendChild(dot);
+            });
+        }
+
+        function updateSlide() {
+            const item = outfitData[currentIndex];
+            carouselImg.classList.add('opacity-0', 'scale-95');
+
+            setTimeout(() => {
+                carouselImg.src = item.img;
+                outfitTitle.textContent = item.title;
+                outfitJpTitle.textContent = item.jpTitle;
+                outfitType.textContent = item.type;
+                outfitRarity.textContent = item.rarity;
+                outfitDescription.textContent = item.description;
+                versionBadge.textContent = item.badge;
+
+                outfitTags.innerHTML = item.tags.map(tag => 
+                    `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:border-amber-400 transition-colors">${tag}</span>`
+                ).join('');
+
+                renderDots();
+                carouselImg.classList.remove('opacity-0', 'scale-95');
+            }, 200);
+        }
+
+        function goToSlide(index) {
+            currentIndex = index;
+            updateSlide();
+        }
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex === 0) ? outfitData.length - 1 : currentIndex - 1;
+            updateSlide();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex === outfitData.length - 1) ? 0 : currentIndex + 1;
+            updateSlide();
+        });
+
+        updateSlide();
+
+        // -------------------------------------------------------------
+        // TAB SYSTEM LOGIC
+        // -------------------------------------------------------------
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-amber-500', 'text-amber-400', 'bg-slate-800/40');
+                btn.classList.add('border-transparent', 'text-slate-400');
+            });
+
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.classList.remove('hidden');
+                activeTab.classList.add('block');
+            }
+
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('border-amber-500', 'text-amber-400', 'bg-slate-800/40');
+                activeBtn.classList.remove('border-transparent', 'text-slate-400');
+            }
+        }
+
+        // -------------------------------------------------------------
+        // ACCORDION LOGIC
+        // -------------------------------------------------------------
+        function toggleAccordion(id) {
+            const content = document.getElementById(`acc-content-${id}`);
+            const icon = document.getElementById(`acc-icon-${id}`);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // -------------------------------------------------------------
+        // MOBILE MENU TOGGLE
+        // -------------------------------------------------------------
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Generation (黄金世代) - Uma Musume Home Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans & Shippori Mincho -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Shippori+Mincho:wght@600;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gwNavy: '#0F172A',
+                        gwDarkBg: '#0B1120',
+                        gwCardBg: 'rgba(15, 23, 42, 0.45)',
+                        gwGold: '#D97706',
+                        gwGoldLight: '#F59E0B',
+                        gwRed: '#DC2626',
+                        gwBlue: '#1E40AF',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Shippori Mincho', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1120;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d97706;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+
+        /* Glassmorphism Ultra Transparent */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.50);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        /* Hover Elevation Effects */
+        .glass-card-interactive {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card-interactive:hover {
+            transform: translateY(-8px) scale(1.02);
+            background: rgba(15, 23, 42, 0.70);
+            border-color: rgba(245, 158, 11, 0.6);
+            box-shadow: 0 20px 40px -15px rgba(217, 119, 6, 0.4);
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* FIRE & GOLD GRADIENT KANJI ANIMATION */
+        @keyframes fireGoldAnim {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .kanji-gold-fire {
+            background: linear-gradient(-45deg, #f59e0b, #fbbf24, #d97706, #ef4444, #f59e0b);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fireGoldAnim 4s ease infinite;
+            filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.5));
+        }
+
+        /* Pulsing Sun Center Badge */
+        @keyframes sunPulse {
+            0%, 100% { box-shadow: 0 0 12px rgba(245, 158, 11, 0.35); transform: scale(1); }
+            50% { box-shadow: 0 0 24px rgba(245, 158, 11, 0.65); transform: scale(1.04); }
+        }
+        .sun-pulse {
+            animation: sunPulse 3s ease-in-out infinite;
+        }
+
+        /* Character Card Image Floating Effect */
+        .chara-img-hover {
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .glass-card-interactive:hover .chara-img-hover {
+            transform: scale(1.08) translateY(-6px);
+        }
+
+        /* Hide main UI interface when Orbit Focus Mode is Active */
+        body.orbit-focused #mainUI {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: scale(0.96);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #mainUI {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+</head>
+<body class="bg-gwDarkBg text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 min-h-screen relative overflow-x-hidden">
+
+    <!-- INTERACTIVE CANVAS (SOLAR SYSTEM ORBITS, TWINKLING STARS & CAMERA TRACKING) -->
+    <canvas id="spaceCanvas" class="fixed inset-0 pointer-events-auto z-10 cursor-pointer"></canvas>
+
+    <!-- ORBIT FOCUS TOP NAVIGATION OVERLAY BAR -->
+    <div id="orbitTopBar" class="fixed top-4 left-1/2 -translate-x-1/2 z-40 opacity-0 pointer-events-none transition-all duration-500 flex items-center gap-3 bg-slate-900/85 backdrop-blur-md px-5 py-2.5 rounded-full border border-amber-500/40 shadow-2xl">
+        <span class="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
+            <i class="fa-solid fa-solar-system animate-pulse"></i> SOLAR ORBIT SYSTEM
+        </span>
+        <span class="text-slate-500">|</span>
+        <span id="orbitStatusText" class="text-xs text-slate-300 font-medium">Klik planet untuk melihat detail</span>
+        <button onclick="toggleOrbitFocus()" class="ml-2 px-3.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 text-xs font-bold transition-all shadow-md">
+            <i class="fa-solid fa-xmark mr-1"></i> Exit Orbit Mode
+        </button>
+    </div>
+
+    <!-- FLOATING PLANET FOCUS DETAIL MODAL CARD -->
+    <div id="planetModal" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 opacity-0 pointer-events-none translate-y-8 transition-all duration-500 w-[92%] max-w-xl glass-card p-5 sm:p-6 rounded-3xl border border-amber-500/50 shadow-2xl text-center space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div class="flex items-center space-x-3 text-left">
+                <div class="w-14 h-14 rounded-2xl bg-slate-950 border border-amber-500/40 p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <img id="modalAvatar" src="" alt="Avatar" onerror="this.src='https://placehold.co/100x100/0f172a/f59e0b?text=Uma'" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h3 id="modalName" class="text-xl font-extrabold text-white font-serif">Karakter</h3>
+                    <p id="modalJpName" class="text-xs text-amber-400 font-semibold italic">Japanese Name</p>
+                    <span id="modalVA" class="text-[11px] text-slate-400 block font-sans">VA: -</span>
+                </div>
+            </div>
+            <button onclick="resetCamera()" class="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-amber-500 hover:text-slate-950 text-slate-300 text-sm flex items-center justify-center transition-colors flex-shrink-0" title="Reset Kamera / Tutup">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <p id="modalBio" class="text-xs text-slate-300 leading-relaxed text-left">
+            Deskripsi singkat karakter...
+        </p>
+
+        <!-- Dynamic Spec Badges Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-left text-xs pt-1">
+            <div class="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800">
+                <span class="text-[10px] text-slate-400 uppercase font-bold block">Asal / Lahir</span>
+                <span id="modalOrigin" class="font-semibold text-white">Hokkaido</span>
+            </div>
+            <div class="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800">
+                <span class="text-[10px] text-slate-400 uppercase font-bold block">Ulang Tahun</span>
+                <span id="modalBday" class="font-semibold text-white">2 Mei</span>
+            </div>
+            <div class="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800">
+                <span class="text-[10px] text-slate-400 uppercase font-bold block">Tinggi / B-W-H</span>
+                <span id="modalBody" class="font-semibold text-white">158cm</span>
+            </div>
+            <div class="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800">
+                <span class="text-[10px] text-slate-400 uppercase font-bold block">Aptitude (Rumput)</span>
+                <span id="modalAptitude" class="font-bold text-emerald-400">Turf (A)</span>
+            </div>
+        </div>
+
+        <!-- Trophies Badges -->
+        <div class="text-left space-y-1 pt-1">
+            <span class="text-[10px] font-bold text-amber-400/90 uppercase tracking-wider block"><i class="fa-solid fa-trophy mr-1"></i>Trofi Utama G1:</span>
+            <div id="modalTrophies" class="flex flex-wrap gap-1">
+                <!-- Disuntikkan via JS -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-3">
+            <button onclick="resetCamera()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-rotate-left"></i> Reset Kamera
+            </button>
+            <a id="modalPageLink" href="#" class="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-bold transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5">
+                <span>Kunjungi Halaman Karakter</span> <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN UI WRAPPER CONTENT -->
+    <div id="mainUI" class="relative z-20">
+
+        <!-- TOP NAVIGATION BAR -->
+        <header class="sticky top-0 z-40 glass-card border-b border-amber-500/20 px-4 lg:px-8 py-3">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-red-600 p-0.5 shadow-lg group-hover:scale-110 transition-transform">
+                        <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center font-bold text-amber-400 font-serif text-lg">
+                            金
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold tracking-wide text-white group-hover:text-amber-400 transition-colors">Golden Generation</h1>
+                        <p class="text-xs text-slate-400">ウマ娘 黄金世代 • 1998 Classic Era</p>
+                    </div>
+                </a>
+
+                <!-- Nav Links -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-xs font-medium text-slate-300">
+                    <a href="index.html" class="px-2.5 py-1.5 rounded-lg text-amber-400 bg-amber-500/10 border border-amber-500/30 font-bold"><i class="fa-solid fa-house mr-1"></i>Beranda</a>
+                    <span class="text-slate-700">|</span>
+                    <a href="specialweek.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">Special Week</a>
+                    <a href="grasswonder.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">Grass Wonder</a>
+                    <a href="elcondorpasa.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">El Condor Pasa</a>
+                    <a href="seiunsky.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">Seiun Sky</a>
+                    <a href="kinghalo.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">King Halo</a>
+                </nav>
+
+                <!-- Trigger Focus Mode Button -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleOrbitFocus()" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-slate-950 transition-all shadow-md">
+                        <i class="fa-solid fa-solar-system"></i> Focus Orbit Mode
+                    </button>
+                    <button onclick="toggleMobileMenu()" id="mobileMenuBtn" class="md:hidden p-2 text-slate-300 hover:text-white focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Menu -->
+            <div id="mobileMenu" class="hidden md:hidden mt-3 pt-3 border-t border-slate-800 flex flex-col space-y-2 text-sm">
+                <a href="index.html" class="px-3 py-2 rounded-lg bg-amber-500/20 text-amber-400 font-bold"><i class="fa-solid fa-house mr-2"></i>Beranda Utama (index.html)</a>
+                <div class="px-3 pt-1 text-[11px] font-bold uppercase text-slate-400 tracking-wider">Halaman Karakter:</div>
+                <div class="grid grid-cols-2 gap-1.5 px-1">
+                    <a href="specialweek.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-star text-[10px] mr-1"></i>Special Week</a>
+                    <a href="grasswonder.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-horse text-[10px] mr-1"></i>Grass Wonder</a>
+                    <a href="elcondorpasa.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-mask text-[10px] mr-1"></i>El Condor Pasa</a>
+                    <a href="seiunsky.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-cloud text-[10px] mr-1"></i>Seiun Sky</a>
+                    <a href="kinghalo.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-crown text-[10px] mr-1"></i>King Halo</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+
+            <!-- HERO SECTION -->
+            <section id="hero" class="relative rounded-3xl glass-card border border-amber-500/30 p-6 md:p-10 overflow-hidden shadow-2xl reveal">
+                <!-- Background Kanji Overlay -->
+                <div class="absolute -right-10 -bottom-10 text-slate-800/20 text-9xl font-serif font-black select-none pointer-events-none">
+                    黄金世代
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <!-- Text Intro Column -->
+                    <div class="lg:col-span-8 space-y-5">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-extrabold uppercase tracking-widest">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+                            Uma Musume Pretty Derby • Legendary Era
+                        </div>
+
+                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+                            Golden Generation <br>
+                            <span class="kanji-gold-fire font-serif text-2xl sm:text-4xl lg:text-5xl mt-2 block">
+                                「黄金世代 — ５つの輝く星」
+                            </span>
+                        </h1>
+
+                        <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+                            Selamat datang di portal utama <b>Golden Generation (黄金世代)</b>. Pada musim balap klasik 1998, lima gadis kuda legendaris mengukir era keemasan paling ikonik di Akademi Tracen. Jelajahi kisah persaingan, gelar kejayaan G1, serta halaman khusus dari masing-masing karakter.
+                        </p>
+                    </div>
+
+                    <!-- Solar Orbit Emblem Badge Card (Trigger Button) -->
+                    <div class="lg:col-span-4 flex justify-center">
+                        <div class="relative w-full max-w-xs aspect-square rounded-3xl bg-slate-950/60 border border-amber-500/30 p-6 flex flex-col justify-between items-center overflow-hidden shadow-2xl group">
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div class="w-28 h-28 rounded-full bg-gradient-to-tr from-amber-500 via-red-500 to-yellow-300 blur-xl opacity-30 animate-pulse"></div>
+                            </div>
+
+                            <div class="w-full flex justify-between items-center z-10">
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-widest"><i class="fa-solid fa-atom mr-1"></i> Orbit System</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">5 Stars</span>
+                            </div>
+
+                            <!-- Central Emblem Button -->
+                            <button onclick="toggleOrbitFocus()" class="relative z-10 text-center my-auto space-y-2 group/btn focus:outline-none cursor-pointer">
+                                <div class="w-20 h-20 mx-auto rounded-full bg-slate-900/90 border-2 border-amber-400 flex items-center justify-center text-amber-400 text-3xl font-serif font-black shadow-lg shadow-amber-500/20 group-hover/btn:scale-110 group-hover/btn:border-amber-300 transition-all duration-300 sun-pulse">
+                                    黄金
+                                </div>
+                                <h3 class="text-base font-bold text-white group-hover/btn:text-amber-400 transition-colors">5 Bintang Generasi Emas</h3>
+                                <span class="inline-block text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 group-hover/btn:bg-amber-500 group-hover:text-slate-950 transition-all">
+                                    Klik 「黄金」 untuk Orbit Focus Mode
+                                </span>
+                            </button>
+
+                            <div class="w-full text-center z-10 pt-2 border-t border-slate-800 text-[11px] text-amber-300/80">
+                                <i class="fa-solid fa-circle-nodes mr-1"></i> Live Orbit Visualizer Active
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5 CHARACTER SHOWCASE (SIMETRIS ALIGN CENTER: 3 ATAS, 2 BAWAH) -->
+            <section id="karakter" class="space-y-8 reveal">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 uppercase tracking-wider">
+                            <i class="fa-solid fa-star"></i> 5 Members Showcase
+                        </div>
+                        <h2 class="text-3xl font-extrabold text-white">Daftar Anggota Golden Generation</h2>
+                    </div>
+
+                    <!-- Taktik Filter Buttons -->
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <button onclick="filterStyle('all')" class="filter-btn px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold transition-all">Semua Taktik</button>
+                        <button onclick="filterStyle('Nige')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all">Front-runner (逃げ)</button>
+                        <button onclick="filterStyle('Senko')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all">Pace Chaser (先行)</button>
+                        <button onclick="filterStyle('Sashi')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all">Betweener (差し)</button>
+                        <button onclick="filterStyle('Oikomi')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all">Chaser (追込)</button>
+                    </div>
+                </div>
+
+                <!-- FLEX CONTAINER SIMETRIS (3 ATAS, 2 BAWAH TEPAT DI TENGAH) -->
+                <div id="characterGrid" class="flex flex-wrap justify-center gap-6 lg:gap-8 max-w-7xl mx-auto">
+                    <!-- Disuntikkan via JS -->
+                </div>
+            </section>
+
+            <!-- COMPARISON MATRIX SECTION -->
+            <section id="komparasi" class="space-y-6 reveal">
+                <div class="border-b border-slate-800 pb-4">
+                    <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 uppercase tracking-wider">
+                        <i class="fa-solid fa-chart-simple"></i> Comparison Matrix
+                    </div>
+                    <h2 class="text-3xl font-bold text-white">Tabel Perbandingan Spek & Rekor</h2>
+                </div>
+
+                <!-- Spec Table Transparan -->
+                <div class="glass-card rounded-2xl border border-slate-800 overflow-x-auto shadow-xl">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-950/80 text-xs uppercase tracking-wider text-amber-400 border-b border-slate-800">
+                            <tr>
+                                <th class="p-4">Karakter</th>
+                                <th class="p-4">Gelar Kehormatan</th>
+                                <th class="p-4">Taktik Balap</th>
+                                <th class="p-4">G1 Trophies Utama</th>
+                                <th class="p-4 text-center">Spesialisasi Rumput</th>
+                                <th class="p-4 text-center">Aksi / Link Halaman</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60" id="comparisonTableBody">
+                            <!-- Diisi via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="border-t border-slate-800 bg-slate-950/90 mt-20 py-8 text-center text-xs text-slate-400 relative z-10">
+            <div class="max-w-7xl mx-auto px-4 space-y-3">
+                <div class="flex justify-center items-center space-x-2">
+                    <span class="font-bold text-white font-serif">Golden Generation Portal</span>
+                    <span>•</span>
+                    <span>Uma Musume: Pretty Derby</span>
+                </div>
+                <p class="max-w-xl mx-auto text-slate-400">
+                    Dipersembahkan untuk seluruh fans Golden Generation 1998 (Special Week, Grass Wonder, El Condor Pasa, Seiun Sky, King Halo).
+                </p>
+                <p class="text-amber-400/80 font-mono text-[11px]">
+                    @Finwahyu • Single File HTML Web Portal
+                </p>
+            </div>
+        </footer>
+
+    </div> <!-- END OF MAIN UI -->
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // -------------------------------------------------------------
+        // 1. DATASET 5 KARAKTER GOLDEN GENERATION (UMA MUSUME WIKI DATA)
+        // -------------------------------------------------------------
+        const goldenMembers = [
+            {
+                id: 0,
+                name: "Special Week",
+                jpName: "スペシャルウィーク",
+                title: "Bintang Harapan Jepang (Japan's Hope)",
+                va: "Waki Azumi (和氣あず未)",
+                origin: "Hokkaido",
+                birthday: "2 Mei",
+                heightBwh: "158 cm | B79-W57-H81",
+                aptitude: "Turf (A) • Medium (A) • Long (A)",
+                styleTag: "Senko",
+                styleLabel: "Pace Chaser / Betweener",
+                color: "#3b82f6",
+                img: "https://umamusu.wiki/w/images/6/63/Game_Asset_chara_stand_1001_100101.png",
+                g1Titles: ["Japan Derby (1998)", "Tenno Sho Spring/Fall (1999)", "Japan Cup (1999)"],
+                skill: "Shooting Star (Shooting☆Star)",
+                bio: "Kuda betina berbakat asal Hokkaido yang dibesarkan oleh dua ibu. Memiliki impian menjadi gadis kuda nomor satu di Jepang.",
+                fileLink: "specialweek.html"
+            },
+            {
+                id: 1,
+                name: "Grass Wonder",
+                jpName: "グラスワンダー",
+                title: "Api Dingin Yamato Nadeshiko",
+                va: "Maeda Rena (前田玲奈)",
+                origin: "USA (Kentucky)",
+                birthday: "18 September",
+                heightBwh: "152 cm | B77-W53-H84",
+                aptitude: "Turf (A) • Medium (A) • Long (A)",
+                styleTag: "Sashi",
+                styleLabel: "Betweener (差し)",
+                color: "#f59e0b",
+                img: "https://umamusu.wiki/w/images/0/0a/Game_Asset_chara_stand_1011_101101.png",
+                g1Titles: ["Arima Kinen (1998, 1999)", "Takarazuka Kinen (1999)", "Asahi Hai (1997)"],
+                skill: "Spirit of the Phoenix (精神一到)",
+                bio: "Lahir di Amerika, dibesarkan dengan tradisi Jepang yang kental. Sosok ramah namun memiliki daya tempur membara bagai Phoenix.",
+                fileLink: "grasswonder.html"
+            },
+            {
+                id: 2,
+                name: "El Condor Pasa",
+                jpName: "エルコンドルパサー",
+                title: "Penakluk Dunia Bertengkorak (World Challenger)",
+                va: "Takahashi Minami (高橋未奈美)",
+                origin: "USA",
+                birthday: "17 Maret",
+                heightBwh: "163 cm | B89-W58-H86",
+                aptitude: "Turf (A) • Dirt (A) • Mile (A)",
+                styleTag: "Senko",
+                styleLabel: "Pace Chaser / Leader",
+                color: "#ef4444",
+                img: "https://umamusu.wiki/w/images/a/aa/Game_Asset_chara_stand_1014_101401.png",
+                g1Titles: ["NHK Mile Cup (1998)", "Japan Cup (1998)", "Prix de l'Arc de Triomphe 2nd (1999)"],
+                skill: "Condor Plume (Plan de El Condor)",
+                bio: "Gadis bertopeng lucha libre yang penuh semangat dan energi membara. Bertekad membuktikan kemampuannya di panggung balap internasional.",
+                fileLink: "elcondorpasa.html"
+            },
+            {
+                id: 3,
+                name: "Seiun Sky",
+                jpName: "セイウンスカイ",
+                title: "Ahli Taktik Awan Biru (Trickster Master)",
+                va: "Kito Akari (鬼頭明里)",
+                origin: "Aomori",
+                birthday: "26 April",
+                heightBwh: "155 cm | B77-W55-H80",
+                aptitude: "Turf (A) • Medium (A) • Long (A)",
+                styleTag: "Nige",
+                styleLabel: "Front-runner (逃げ)",
+                color: "#10b981",
+                img: "https://umamusu.wiki/w/images/b/b0/Game_Asset_chara_stand_1020_102001.png",
+                g1Titles: ["Satsuki Sho (1998)", "Kikuka Sho (1998)"],
+                skill: "Angling x Scheming (アングリング×スキーミング)",
+                bio: "Sering terlihat santai dan suka memancing, namun di lintasan pacu ia adalah jenius taktik yang tak terduga dalam memimpin kecepatan.",
+                fileLink: "seiunsky.html"
+            },
+            {
+                id: 4,
+                name: "King Halo",
+                jpName: "キングヘイロー",
+                title: "Kebanggaan Yang Tak Tertundukkan (Unyielding Pride)",
+                va: "Saeki Iori (佐伯伊織)",
+                origin: "Hokkaido",
+                birthday: "28 April",
+                heightBwh: "159 cm | B85-W56-H82",
+                aptitude: "Turf (A) • Short (A) • Mile (A)",
+                styleTag: "Oikomi",
+                styleLabel: "Chaser / Sprinter (追込)",
+                color: "#a855f7",
+                img: "https://umamusu.wiki/w/images/f/fa/Game_Asset_chara_stand_1061_106101.png",
+                g1Titles: ["Takamatsunomiya Kinen (2000)"],
+                skill: "Pride of King (Call me KING)",
+                bio: "Putri dari keluarga terpandang dengan harga diri tinggi. Terus berjuang melampaui berbagai kekalahan hingga meraih mahkota kejayaannya.",
+                fileLink: "kinghalo.html"
+            }
+        ];
+
+        // -------------------------------------------------------------
+        // 2. ORBIT FOCUS & CAMERA TRACKING GLOBAL STATE
+        // -------------------------------------------------------------
+        let isFocused = false;
+        let focusedPlanetIndex = null;
+
+        let currentZoom = 1.0;
+        let targetZoom = 1.0;
+
+        let camX = 0;
+        let camY = 0;
+        let targetCamX = 0;
+        let targetCamY = 0;
+
+        // Orbit System Angles & Keplerian Dynamics Speeds (v ∝ 1/√r)
+        const planetAngles = [0, 1.2, 2.4, 3.6, 4.8];
+        const keplerSpeeds = [0.012, 0.007, 0.0045, 0.003, 0.0019];
+        const radiiFactors = [0.24, 0.42, 0.60, 0.78, 0.96]; // Clean fit without clipping outer orbit
+        const currentPlanetPos = goldenMembers.map(() => ({ x: 0, y: 0 }));
+
+        // -------------------------------------------------------------
+        // 3. CANVAS ANIMATION LOOP (CELESTIAL SUN, PLANETS & LERP CAMERA)
+        // -------------------------------------------------------------
+        const canvas = document.getElementById('spaceCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Background Twinkling Stars
+        const stars = [];
+        for (let i = 0; i < 90; i++) {
+            stars.push({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                r: Math.random() * 1.5 + 0.5,
+                alpha: Math.random(),
+                speed: Math.random() * 0.02 + 0.005,
+                increasing: Math.random() > 0.5
+            });
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // 1. Render Background Twinkling Stars (Screen Space)
+            stars.forEach(s => {
+                if (s.increasing) {
+                    s.alpha += s.speed;
+                    if (s.alpha >= 0.85) s.increasing = false;
+                } else {
+                    s.alpha -= s.speed;
+                    if (s.alpha <= 0.15) s.increasing = true;
+                }
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
+                ctx.fill();
+            });
+
+            // 2. Compute Max Radius cleanly fitting screen
+            const maxRadius = Math.min(canvas.width, canvas.height) * 0.38;
+
+            // Update planet position coordinates in World Space
+            goldenMembers.forEach((_, i) => {
+                planetAngles[i] += keplerSpeeds[i];
+                const r = radiiFactors[i] * maxRadius;
+                currentPlanetPos[i].x = centerX + Math.cos(planetAngles[i]) * r;
+                currentPlanetPos[i].y = centerY + Math.sin(planetAngles[i]) * r;
+            });
+
+            // 3. Update Camera Target (Smooth LERP)
+            if (isFocused && focusedPlanetIndex !== null) {
+                targetZoom = 2.0;
+                targetCamX = currentPlanetPos[focusedPlanetIndex].x;
+                // Offset camera target slightly downwards so planet floats safely in upper viewport above modal
+                targetCamY = currentPlanetPos[focusedPlanetIndex].y + (70 / currentZoom);
+            } else {
+                targetZoom = 1.0;
+                targetCamX = centerX;
+                targetCamY = centerY;
+            }
+
+            // Smooth Interpolation (LERP)
+            camX += (targetCamX - camX) * 0.08;
+            camY += (targetCamY - camY) * 0.08;
+            currentZoom += (targetZoom - currentZoom) * 0.08;
+
+            // 4. Apply World Camera Transform
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.scale(currentZoom, currentZoom);
+            ctx.translate(-camX, -camY);
+
+            // 5. Draw 5 Concentric Golden Orbits
+            radiiFactors.forEach((factor, i) => {
+                const r = factor * maxRadius;
+                const isPlanetFocused = (focusedPlanetIndex === i);
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+                ctx.strokeStyle = isPlanetFocused ? 'rgba(245, 158, 11, 0.7)' : (isFocused ? 'rgba(245, 158, 11, 0.35)' : 'rgba(245, 158, 11, 0.12)');
+                ctx.lineWidth = isPlanetFocused ? 2.5 : (isFocused ? 1.5 : 1);
+                ctx.setLineDash(isFocused ? [6, 6] : []);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            });
+
+            // 6. Draw Celestial Sun in Center (Native Canvas Render)
+            if (isFocused) {
+                // Sun Corona Flare Outer Glow
+                const coronaGrad = ctx.createRadialGradient(centerX, centerY, 10, centerX, centerY, 55);
+                coronaGrad.addColorStop(0, 'rgba(245, 158, 11, 0.9)');
+                coronaGrad.addColorStop(0.5, 'rgba(239, 68, 68, 0.4)');
+                coronaGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 55, 0, Math.PI * 2);
+                ctx.fillStyle = coronaGrad;
+                ctx.fill();
+
+                // Radiant Sun Core
+                const coreGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 24);
+                coreGrad.addColorStop(0, '#FEF08A');
+                coreGrad.addColorStop(0.4, '#F59E0B');
+                coreGrad.addColorStop(1, '#D97706');
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 24, 0, Math.PI * 2);
+                ctx.fillStyle = coreGrad;
+                ctx.shadowColor = '#F59E0B';
+                ctx.shadowBlur = 20;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Kanji Text in Sun Core
+                ctx.font = 'bold 13px "Shippori Mincho", serif';
+                ctx.fillStyle = '#0B1120';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('黄金', centerX, centerY);
+            }
+
+            // 7. Draw Planets, Energy Tethers & Name Badges
+            goldenMembers.forEach((chara, i) => {
+                const px = currentPlanetPos[i].x;
+                const py = currentPlanetPos[i].y;
+                const isSelected = (focusedPlanetIndex === i);
+
+                // Laser Tether Beam to Sun if Selected
+                if (isFocused && isSelected) {
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(px, py);
+                    ctx.strokeStyle = chara.color;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([4, 4]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // Planet Body Glow
+                ctx.beginPath();
+                ctx.arc(px, py, isSelected ? 11 : (isFocused ? 8 : 6), 0, Math.PI * 2);
+                ctx.fillStyle = chara.color;
+                ctx.shadowColor = chara.color;
+                ctx.shadowBlur = isSelected ? 30 : (isFocused ? 14 : 6);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Pulsing Target Ring for Selected Planet
+                if (isSelected) {
+                    ctx.beginPath();
+                    ctx.arc(px, py, 18, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+
+                // Name Badges
+                if (isFocused) {
+                    ctx.font = isSelected ? 'extrabold 12px "Plus Jakarta Sans", sans-serif' : 'bold 11px "Plus Jakarta Sans", sans-serif';
+                    const textWidth = ctx.measureText(chara.name).width;
+
+                    // Badge Pill Background
+                    ctx.fillStyle = isSelected ? 'rgba(15, 23, 42, 0.95)' : 'rgba(15, 23, 42, 0.75)';
+                    ctx.beginPath();
+                    ctx.roundRect(px + 14, py - 11, textWidth + 14, 22, 6);
+                    ctx.fill();
+                    ctx.strokeStyle = chara.color;
+                    ctx.lineWidth = isSelected ? 1.5 : 1;
+                    ctx.stroke();
+
+                    // Text
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(chara.name, px + 21, py);
+                }
+            });
+
+            ctx.restore(); // Restore Canvas Camera Transform
+
+            requestAnimationFrame(animateCanvas);
+        }
+
+        // Start Animation Loop
+        animateCanvas();
+
+        // -------------------------------------------------------------
+        // 4. CANVAS CLICK HIT-TESTING (WORLD SPACE DETECT)
+        // -------------------------------------------------------------
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            // Transform Screen Coordinates to World Coordinates
+            const worldX = (clickX - canvas.width / 2) / currentZoom + camX;
+            const worldY = (clickY - canvas.height / 2) / currentZoom + camY;
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Check distance to Central Sun
+            const distToSun = Math.hypot(worldX - centerX, worldY - centerY);
+            if (distToSun < 35) {
+                toggleOrbitFocus();
+                return;
+            }
+
+            // In Orbit Focus Mode: Check Distance to Planets
+            if (isFocused) {
+                let clickedIndex = -1;
+                goldenMembers.forEach((_, i) => {
+                    const dist = Math.hypot(worldX - currentPlanetPos[i].x, worldY - currentPlanetPos[i].y);
+                    if (dist < (28 / currentZoom)) {
+                        clickedIndex = i;
+                    }
+                });
+
+                if (clickedIndex !== -1) {
+                    selectPlanet(clickedIndex);
+                } else if (distToSun >= 35) {
+                    resetCamera();
+                }
+            }
+        });
+
+        // -------------------------------------------------------------
+        // 5. ORBIT FOCUS MODE TOGGLE & MODAL CONTROLLERS
+        // -------------------------------------------------------------
+        function toggleOrbitFocus() {
+            isFocused = !isFocused;
+            document.body.classList.toggle('orbit-focused', isFocused);
+
+            const topBar = document.getElementById('orbitTopBar');
+            if (isFocused) {
+                topBar.classList.remove('opacity-0', 'pointer-events-none');
+                topBar.classList.add('opacity-100', 'pointer-events-auto');
+            } else {
+                topBar.classList.add('opacity-0', 'pointer-events-none');
+                topBar.classList.remove('opacity-100', 'pointer-events-auto');
+                resetCamera();
+            }
+        }
+
+        function selectPlanet(index) {
+            if (index < 0 || index >= goldenMembers.length) return;
+            focusedPlanetIndex = index;
+            const chara = goldenMembers[index];
+
+            // Populate Modal Content
+            document.getElementById('modalAvatar').src = chara.img;
+            document.getElementById('modalName').textContent = chara.name;
+            document.getElementById('modalJpName').textContent = `${chara.jpName} • ${chara.title}`;
+            document.getElementById('modalVA').textContent = `VA: ${chara.va}`;
+            document.getElementById('modalBio').textContent = chara.bio;
+            document.getElementById('modalOrigin').textContent = chara.origin;
+            document.getElementById('modalBday').textContent = chara.birthday;
+            document.getElementById('modalBody').textContent = chara.heightBwh;
+            document.getElementById('modalAptitude').textContent = chara.aptitude;
+            document.getElementById('modalPageLink').href = chara.fileLink;
+
+            const trophiesContainer = document.getElementById('modalTrophies');
+            trophiesContainer.innerHTML = chara.g1Titles.map(t => 
+                `<span class="px-2 py-0.5 rounded text-[10px] bg-slate-900 text-amber-300 border border-amber-500/30">${t}</span>`
+            ).join('');
+
+            document.getElementById('orbitStatusText').textContent = `Terfokus: ${chara.name}`;
+
+            const modal = document.getElementById('planetModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-8');
+            modal.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+        }
+
+        function resetCamera() {
+            focusedPlanetIndex = null;
+            targetZoom = 1.0;
+            const modal = document.getElementById('planetModal');
+            if (modal) {
+                modal.classList.add('opacity-0', 'pointer-events-none', 'translate-y-8');
+                modal.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            }
+            const statusText = document.getElementById('orbitStatusText');
+            if (statusText) {
+                statusText.textContent = "Klik planet untuk melihat detail";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu) {
+                mobileMenu.classList.toggle('hidden');
+            }
+        }
+
+        // -------------------------------------------------------------
+        // 6. RENDER 5 CHARACTER SHOWCASE CARDS (SIMETRIS) & TABLE
+        // -------------------------------------------------------------
+        function renderCards(filter = 'all') {
+            const grid = document.getElementById('characterGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            goldenMembers.forEach((chara) => {
+                if (filter !== 'all' && chara.styleTag !== filter) return;
+
+                const isGrass = (chara.name === "Grass Wonder");
+                const card = document.createElement('div');
+                card.className = "w-full sm:w-[350px] glass-card glass-card-interactive rounded-2xl p-6 flex flex-col justify-between border border-slate-800/80 relative overflow-hidden group";
+
+                card.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center z-10 relative">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                ${chara.styleLabel}
+                            </span>
+                            <span class="text-xs text-slate-400 font-mono">#0${chara.id + 1}</span>
+                        </div>
+
+                        <div class="w-full h-64 rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center relative border border-slate-800">
+                            <div class="absolute inset-0 bg-radial-gradient from-amber-500/10 to-transparent"></div>
+                            <img src="${chara.img}" alt="${chara.name}" 
+                                 onerror="this.src='https://placehold.co/300x400/0f172a/f59e0b?text=${chara.name}'"
+                                 class="h-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)] chara-img-hover z-10">
+                        </div>
+
+                        <div class="space-y-1">
+                            <h3 class="text-xl font-bold text-white group-hover:text-amber-400 transition-colors font-serif">${chara.name}</h3>
+                            <p class="text-xs text-amber-400/80 italic">${chara.jpName} • ${chara.title}</p>
+                        </div>
+
+                        <p class="text-xs text-slate-300 leading-relaxed">${chara.bio}</p>
+
+                        <div class="space-y-1 pt-1">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Trofi Utama G1:</span>
+                            <div class="flex flex-wrap gap-1">
+                                ${chara.g1Titles.map(t => `<span class="px-2 py-0.5 rounded bg-slate-900 text-[10px] text-amber-300 border border-slate-800">${t}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 mt-4 border-t border-slate-800/80 flex justify-between items-center z-10 relative">
+                        <span class="text-[11px] text-amber-400 font-semibold"><i class="fa-solid fa-bolt mr-1"></i>${chara.skill}</span>
+                        ${isGrass ? `
+                            <a href="grasswonder.html" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs hover:scale-105 transition-transform flex items-center gap-1 shadow-lg shadow-amber-500/20">
+                                Detail Grass Wonder <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        ` : `
+                            <a href="${chara.fileLink}" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-white text-xs font-bold transition-all flex items-center gap-1">
+                                Detail Profil <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+                        `}
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function filterStyle(style) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
+                btn.classList.add('bg-slate-800', 'text-slate-300', 'font-medium');
+            });
+            event.target.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
+            event.target.classList.remove('bg-slate-800', 'text-slate-300', 'font-medium');
+            renderCards(style);
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('comparisonTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = goldenMembers.map(c => `
+                <tr class="hover:bg-slate-800/40 transition-colors">
+                    <td class="p-4 font-bold text-white flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-slate-900 border border-amber-500/40 flex items-center justify-center text-xs font-serif font-bold text-amber-400">
+                            ${c.name.charAt(0)}
+                        </div>
+                        <div>
+                            <div>${c.name}</div>
+                            <div class="text-xs text-slate-400 font-normal">${c.jpName}</div>
+                        </div>
+                    </td>
+                    <td class="p-4 text-xs font-semibold text-amber-400">${c.title}</td>
+                    <td class="p-4 text-xs">${c.styleLabel}</td>
+                    <td class="p-4 text-xs text-slate-300">${c.g1Titles.join(', ')}</td>
+                    <td class="p-4 text-center font-extrabold text-emerald-400">A</td>
+                    <td class="p-4 text-center">
+                        <a href="${c.fileLink}" class="px-3 py-1 rounded bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold transition-colors">Buka Page →</a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // -------------------------------------------------------------
+        // 7. SCROLL REVEAL ANIMATION (INTERSECTION OBSERVER)
+        // -------------------------------------------------------------
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // -------------------------------------------------------------
+        // INITIALIZATION ON LOAD
+        // -------------------------------------------------------------
+        renderCards();
+        renderTable();
+    </script>
+</body>
+</html>
