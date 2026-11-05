@@ -1,0 +1,1 @@
+# uma-musume-golden-generation
