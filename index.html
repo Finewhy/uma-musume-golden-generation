@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
+
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Golden Generation (黄金世代) - Uma Musume Home Portal</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Shippori+Mincho:wght@600;700;900&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{gwDarkBg:'#050914'},fontFamily:{sans:['Plus Jakarta Sans','sans-serif'],serif:['Shippori Mincho','serif']}}}}</script>
-<style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Generation (黄金世代) - Uma Musume Home Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Shippori+Mincho:wght@600;700;900&display=swap"
+        rel="stylesheet">
+    <script>tailwind.config = { theme: { extend: { colors: { gwDarkBg: '#050914' }, fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], serif: ['Shippori Mincho', 'serif'] } } } }</script>
+    <style>
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: #0b1120;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #d97706;
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #f59e0b;
         }
@@ -36,6 +44,7 @@
         .glass-card-interactive {
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .glass-card-interactive:hover {
             transform: translateY(-8px) scale(1.02);
             background: rgba(15, 23, 42, 0.70);
@@ -49,6 +58,7 @@
             transform: translateY(28px);
             transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
@@ -56,10 +66,19 @@
 
         /* FIRE & GOLD GRADIENT KANJI ANIMATION */
         @keyframes fireGoldAnim {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
+
         .kanji-gold-fire {
             background: linear-gradient(-45deg, #f59e0b, #fbbf24, #d97706, #ef4444, #f59e0b);
             background-size: 300% 300%;
@@ -71,9 +90,19 @@
 
         /* Pulsing Sun Center Badge */
         @keyframes sunPulse {
-            0%, 100% { box-shadow: 0 0 12px rgba(245, 158, 11, 0.35); transform: scale(1); }
-            50% { box-shadow: 0 0 24px rgba(245, 158, 11, 0.65); transform: scale(1.04); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+                transform: scale(1);
+            }
+
+            50% {
+                box-shadow: 0 0 24px rgba(245, 158, 11, 0.65);
+                transform: scale(1.04);
+            }
         }
+
         .sun-pulse {
             animation: sunPulse 3s ease-in-out infinite;
         }
@@ -82,6 +111,7 @@
         .chara-img-hover {
             transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+
         .glass-card-interactive:hover .chara-img-hover {
             transform: scale(1.08) translateY(-6px);
         }
@@ -93,32 +123,47 @@
             pointer-events: none;
             transform: scale(0.94) translateY(12px);
         }
+
         #mainUI {
             transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                        visibility 0.6s;
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.6s;
             transform-origin: 50% 40%;
         }
 
         /* Canvas: drag-to-rotate hanya aktif saat Orbit Focus Mode */
-        body.orbit-focused #spaceCanvas { cursor: grab; touch-action: none; }
-        body.orbit-focused #spaceCanvas:active { cursor: grabbing; }
+        body.orbit-focused #spaceCanvas {
+            cursor: grab;
+            touch-action: none;
+        }
+
+        body.orbit-focused #spaceCanvas:active {
+            cursor: grabbing;
+        }
 
         /* Top bar & modal: masuk dengan slide + sedikit scale (properti individual, tidak bentrok dengan Tailwind) */
         #orbitTopBar {
             translate: 0 -18px;
             transition: opacity 0.6s ease, translate 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        #orbitTopBar.opacity-100 { translate: 0 0; transition-delay: 0.3s; }
+
+        #orbitTopBar.opacity-100 {
+            translate: 0 0;
+            transition-delay: 0.3s;
+        }
 
         #planetModal {
             scale: 0.94;
             transform-origin: 50% 100%;
             transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-                        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-                        scale 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                scale 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        #planetModal.opacity-100 { scale: 1; }
+
+        #planetModal.opacity-100 {
+            scale: 1;
+        }
+
         #planetModal {
             max-height: 52vh;
             overflow-y: auto;
@@ -127,120 +172,652 @@
 
         /* Isi modal muncul bertahap setiap ganti planet */
         @keyframes swapIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        #planetModal.modal-swap > * { animation: swapIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
-        #planetModal.modal-swap > *:nth-child(2) { animation-delay: 0.04s; }
-        #planetModal.modal-swap > *:nth-child(3) { animation-delay: 0.08s; }
-        #planetModal.modal-swap > *:nth-child(4) { animation-delay: 0.12s; }
-        #planetModal.modal-swap > *:nth-child(5) { animation-delay: 0.16s; }
+
+        #planetModal.modal-swap>* {
+            animation: swapIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        #planetModal.modal-swap>*:nth-child(2) {
+            animation-delay: 0.04s;
+        }
+
+        #planetModal.modal-swap>*:nth-child(3) {
+            animation-delay: 0.08s;
+        }
+
+        #planetModal.modal-swap>*:nth-child(4) {
+            animation-delay: 0.12s;
+        }
+
+        #planetModal.modal-swap>*:nth-child(5) {
+            animation-delay: 0.16s;
+        }
 
         @media (prefers-reduced-motion: reduce) {
-            #planetModal.modal-swap > * { animation: none; }
-            #mainUI, #orbitTopBar, #planetModal { transition-duration: 0.01s; }
-        }
-    
-body{background:#050914}
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:
- radial-gradient(60% 50% at 12% 8%,rgba(168,85,247,.17),transparent),
- radial-gradient(50% 45% at 92% 28%,rgba(59,130,246,.15),transparent),
- radial-gradient(60% 50% at 50% 102%,rgba(245,158,11,.14),transparent)}
-.gold-text{background:linear-gradient(100deg,#fde68a,#f59e0b,#ef4444,#f59e0b,#fde68a);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fireGoldAnim 7s linear infinite;filter:drop-shadow(0 0 28px rgba(245,158,11,.35))}
-#prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#a855f7,#f59e0b,#ef4444)}
-#glow{position:fixed;left:0;top:0;width:420px;height:420px;margin:-210px 0 0 -210px;z-index:15;pointer-events:none;background:radial-gradient(closest-side,rgba(245,158,11,.10),transparent);will-change:transform}
-.shoot{position:fixed;z-index:12;height:1px;width:140px;background:linear-gradient(90deg,transparent,#fff);opacity:0;transform:rotate(-30deg);animation:shoot 9s linear infinite}
-@keyframes shoot{0%{opacity:0;translate:0 0}2%{opacity:.9}12%{opacity:0;translate:-420px 242px}100%{opacity:0;translate:-420px 242px}}
-.chip{padding:.45rem .9rem;border-radius:9999px;font-size:.75rem;font-weight:700;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#cbd5e1;transition:.25s}
-.chip:hover{border-color:rgba(245,158,11,.5);color:#fbbf24}
-.chip.on{background:#f59e0b;color:#0b1120;border-color:#f59e0b}
-.btn-gold{background:linear-gradient(135deg,#fbbf24,#f59e0b 50%,#d97706);color:#0b1120;font-weight:800;border-radius:9999px;box-shadow:0 8px 30px -6px rgba(245,158,11,.6);transition:.3s}
-.btn-gold:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 12px 40px -6px rgba(245,158,11,.85)}
-.btn-ghost{border:1px solid rgba(255,255,255,.18);border-radius:9999px;color:#e2e8f0;font-weight:700;transition:.3s;background:rgba(255,255,255,.03)}
-.btn-ghost:hover{border-color:#f59e0b;color:#fbbf24;background:rgba(245,158,11,.08)}
-.marq{display:flex;gap:2.5rem;width:max-content;animation:marq 55s linear infinite}
-@keyframes marq{to{transform:translateX(-50%)}}
-.ucard{--c:#f59e0b;position:relative;border-radius:1.5rem;padding:1px;height:100%;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 75%,transparent),rgba(255,255,255,.05) 40%,transparent);transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .3s ease-out;will-change:transform}
-.ucard .in{position:relative;overflow:hidden;height:100%;border-radius:calc(1.5rem - 1px);background:rgba(7,12,26,.84);padding:1.25rem;display:flex;flex-direction:column;gap:.9rem}
-.ucard .halo{position:absolute;left:-20%;right:-20%;top:12%;height:48%;background:radial-gradient(closest-side,color-mix(in srgb,var(--c) 50%,transparent),transparent);opacity:.5;transition:opacity .4s}
-.ucard:hover .halo{opacity:1}
-.ucard .cimg{transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
-.ucard:hover .cimg{transform:translateY(-8px) scale(1.05)}
-.tag{padding:.15rem .5rem;border-radius:.4rem;font-size:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fcd34d}
-.orb-ring{position:absolute;inset:0;margin:auto;border:1px solid color-mix(in srgb,var(--c) 40%,rgba(245,158,11,.2));border-radius:50%;animation:spin var(--d) linear infinite}
-.orb-ring i{position:absolute;top:-6px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--c);box-shadow:0 0 14px var(--c)}
-body.loading{overflow:hidden}
-#loader{background:radial-gradient(circle at 50% 40%,#10193a,#050914 70%);transition:opacity .9s ease,transform 1.1s cubic-bezier(.7,0,.3,1),visibility 0s .9s}
-#loader.done{opacity:0;transform:scale(1.4);visibility:hidden;pointer-events:none}
-#loader::before{content:"";position:absolute;left:0;top:0;width:2px;height:2px;border-radius:50%;box-shadow:8vw 12vh #fff,22vw 72vh #fffa,35vw 20vh #fff,48vw 88vh #fff8,61vw 9vh #fff,74vw 64vh #fffa,86vw 30vh #fff,93vw 82vh #fff8,14vw 44vh #fff6,67vw 41vh #fff6,40vw 55vh #fff5,82vw 8vh #fff;animation:tw 2.6s ease-in-out infinite alternate}
-@keyframes tw{from{opacity:.25}to{opacity:1}}
-.ld-stage{position:relative;width:11rem;height:11rem}
-.ld-bar{width:min(18rem,70vw);height:3px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:1.1rem}
-.ld-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a855f7,#f59e0b,#ef4444);box-shadow:0 0 12px #f59e0b}
-@property --c{syntax:'<color>';inherits:true;initial-value:#f59e0b}
-#stage{--c:#3b82f6;background:rgba(6,10,22,.8);transition:--c .7s ease}
-.st-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 70% at 72% 48%,color-mix(in srgb,var(--c) 40%,transparent),transparent 72%),radial-gradient(45% 50% at 8% 95%,color-mix(in srgb,var(--c) 20%,transparent),transparent)}
-#stArt{container-type:size;--px:0;--py:0;touch-action:pan-y}
-.st-kanji{position:absolute;right:2%;top:0;bottom:0;writing-mode:vertical-rl;font-family:'Shippori Mincho',serif;font-weight:900;font-size:clamp(2.6rem,8vw,5.6rem);line-height:1;letter-spacing:.05em;color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--c) 60%,transparent);opacity:.6;white-space:nowrap;translate:calc(var(--px)*-22px) calc(var(--py)*-10px);transition:translate .25s ease-out}
-.st-ring{position:absolute;left:50%;top:48%;translate:-50% -50%;border-radius:50%;border:1px dashed color-mix(in srgb,var(--c) 50%,transparent);animation:spin var(--d) linear infinite}
-.st-ring i{position:absolute;top:-5px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--c);box-shadow:0 0 14px var(--c)}
-.st-img{position:absolute;left:50%;bottom:0;height:100%;max-width:none;translate:calc(-50% + var(--px)*14px) calc(var(--py)*8px);filter:drop-shadow(0 22px 30px rgba(0,0,0,.7));animation:artIn .8s cubic-bezier(.16,1,.3,1) both,bob 6s ease-in-out .8s infinite;transition:translate .25s ease-out}
-@keyframes artIn{from{opacity:0;transform:translateX(calc(var(--dir,1)*70px)) scale(.94)}to{opacity:1;transform:none}}
-@keyframes bob{50%{transform:translateY(-10px)}}
-.st-info>*{animation:swapIn .6s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i,0)*.05s)}
-.thumb{position:relative;width:3.5rem;height:3.5rem;border-radius:9999px;border:2px solid rgba(255,255,255,.14);overflow:hidden;background:#0b1224;opacity:.7;transition:.35s}
-.thumb img{width:100%;height:100%;object-fit:cover;object-position:top}
-.thumb:hover{opacity:1;transform:translateY(-3px)}
-.thumb.on{opacity:1;transform:scale(1.18);border-color:var(--tc);box-shadow:0 0 0 4px color-mix(in srgb,var(--tc) 25%,transparent),0 0 22px var(--tc)}
-.thumb.dim{opacity:.2;filter:grayscale(1)}
-.arrow{width:2.6rem;height:2.6rem;border-radius:9999px;border:1px solid rgba(255,255,255,.15);background:rgba(5,9,20,.6);color:#e2e8f0;transition:.25s}
-.arrow:hover{border-color:var(--c);color:var(--c)}
-.dbar{display:block;height:100%;width:0;border-radius:9999px;transition:width .7s cubic-bezier(.16,1,.3,1),background .5s}
-header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
-@keyframes spin{to{rotate:360deg}}
-.tl-dot{position:absolute;left:-2.4rem;top:.35rem;width:.9rem;height:.9rem;border-radius:50%;background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.15),0 0 18px #f59e0b}
-@media (prefers-reduced-motion:reduce){.marq,.orb-ring,.st-ring,.st-img,.shoot,.gold-text{animation:none}}
-</style>
-</head>
-<body class="bg-gwDarkBg text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 min-h-screen relative overflow-x-hidden loading">
-<div id="prog"></div><div id="glow"></div>
-<div id="loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-4 text-center">
-  <div class="ld-stage">
-    <div class="orb-ring" style="--c:#3b82f6;--d:6s;width:36%;height:36%"><i></i></div>
-    <div class="orb-ring" style="--c:#f59e0b;--d:9s;width:52%;height:52%;animation-direction:reverse"><i></i></div>
-    <div class="orb-ring" style="--c:#ef4444;--d:12s;width:68%;height:68%"><i></i></div>
-    <div class="orb-ring" style="--c:#10b981;--d:16s;width:84%;height:84%;animation-direction:reverse"><i></i></div>
-    <div class="orb-ring" style="--c:#a855f7;--d:21s;width:100%;height:100%"><i></i></div>
-    <div class="absolute inset-0 m-auto w-14 h-14 rounded-full bg-gradient-to-br from-amber-200 via-amber-500 to-amber-700 flex items-center justify-center font-serif font-black text-slate-950 sun-pulse">黄金</div>
-  </div>
-  <div class="gold-text font-serif text-2xl sm:text-3xl font-black tracking-[.25em] mt-9">GOLDEN GENERATION</div>
-  <div id="ldText" class="text-xs text-slate-400 mt-2 h-4">Menyalakan matahari emas…</div>
-  <div class="ld-bar"><i id="ldBar"></i></div>
-  <div id="ldPct" class="font-mono text-xs text-amber-400 mt-2">0%</div>
-</div>
-<span class="shoot" style="top:8%;left:78%"></span><span class="shoot" style="top:22%;left:96%;animation-delay:4.5s"></span>
+            #planetModal.modal-swap>* {
+                animation: none;
+            }
 
-<!-- INTERACTIVE CANVAS (SOLAR SYSTEM ORBITS, TWINKLING STARS & CAMERA TRACKING) -->
+            #mainUI,
+            #orbitTopBar,
+            #planetModal {
+                transition-duration: 0.01s;
+            }
+        }
+
+        body {
+            background: #050914
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(60% 50% at 12% 8%, rgba(168, 85, 247, .17), transparent),
+                radial-gradient(50% 45% at 92% 28%, rgba(59, 130, 246, .15), transparent),
+                radial-gradient(60% 50% at 50% 102%, rgba(245, 158, 11, .14), transparent)
+        }
+
+        .gold-text {
+            background: linear-gradient(100deg, #fde68a, #f59e0b, #ef4444, #f59e0b, #fde68a);
+            background-size: 250% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: fireGoldAnim 7s linear infinite;
+            filter: drop-shadow(0 0 28px rgba(245, 158, 11, .35))
+        }
+
+        #prog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            z-index: 60;
+            transform-origin: 0 50%;
+            transform: scaleX(0);
+            background: linear-gradient(90deg, #a855f7, #f59e0b, #ef4444)
+        }
+
+        #glow {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 420px;
+            height: 420px;
+            margin: -210px 0 0 -210px;
+            z-index: 15;
+            pointer-events: none;
+            background: radial-gradient(closest-side, rgba(245, 158, 11, .10), transparent);
+            will-change: transform
+        }
+
+        .shoot {
+            position: fixed;
+            z-index: 12;
+            height: 1px;
+            width: 140px;
+            background: linear-gradient(90deg, transparent, #fff);
+            opacity: 0;
+            transform: rotate(-30deg);
+            animation: shoot 9s linear infinite
+        }
+
+        @keyframes shoot {
+            0% {
+                opacity: 0;
+                translate: 0 0
+            }
+
+            2% {
+                opacity: .9
+            }
+
+            12% {
+                opacity: 0;
+                translate: -420px 242px
+            }
+
+            100% {
+                opacity: 0;
+                translate: -420px 242px
+            }
+        }
+
+        .chip {
+            padding: .45rem .9rem;
+            border-radius: 9999px;
+            font-size: .75rem;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, .1);
+            background: rgba(255, 255, 255, .04);
+            color: #cbd5e1;
+            transition: .25s
+        }
+
+        .chip:hover {
+            border-color: rgba(245, 158, 11, .5);
+            color: #fbbf24
+        }
+
+        .chip.on {
+            background: #f59e0b;
+            color: #0b1120;
+            border-color: #f59e0b
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b 50%, #d97706);
+            color: #0b1120;
+            font-weight: 800;
+            border-radius: 9999px;
+            box-shadow: 0 8px 30px -6px rgba(245, 158, 11, .6);
+            transition: .3s
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 12px 40px -6px rgba(245, 158, 11, .85)
+        }
+
+        .btn-ghost {
+            border: 1px solid rgba(255, 255, 255, .18);
+            border-radius: 9999px;
+            color: #e2e8f0;
+            font-weight: 700;
+            transition: .3s;
+            background: rgba(255, 255, 255, .03)
+        }
+
+        .btn-ghost:hover {
+            border-color: #f59e0b;
+            color: #fbbf24;
+            background: rgba(245, 158, 11, .08)
+        }
+
+        .marq {
+            display: flex;
+            gap: 2.5rem;
+            width: max-content;
+            animation: marq 55s linear infinite
+        }
+
+        @keyframes marq {
+            to {
+                transform: translateX(-50%)
+            }
+        }
+
+        .ucard {
+            --c: #f59e0b;
+            position: relative;
+            border-radius: 1.5rem;
+            padding: 1px;
+            height: 100%;
+            background: linear-gradient(160deg, color-mix(in srgb, var(--c) 75%, transparent), rgba(255, 255, 255, .05) 40%, transparent);
+            transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+            transition: transform .3s ease-out;
+            will-change: transform
+        }
+
+        .ucard .in {
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            border-radius: calc(1.5rem - 1px);
+            background: rgba(7, 12, 26, .84);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: .9rem
+        }
+
+        .ucard .halo {
+            position: absolute;
+            left: -20%;
+            right: -20%;
+            top: 12%;
+            height: 48%;
+            background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 50%, transparent), transparent);
+            opacity: .5;
+            transition: opacity .4s
+        }
+
+        .ucard:hover .halo {
+            opacity: 1
+        }
+
+        .ucard .cimg {
+            transition: transform .5s cubic-bezier(.34, 1.56, .64, 1)
+        }
+
+        .ucard:hover .cimg {
+            transform: translateY(-8px) scale(1.05)
+        }
+
+        .tag {
+            padding: .15rem .5rem;
+            border-radius: .4rem;
+            font-size: 10px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: #fcd34d
+        }
+
+        .orb-ring {
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            border: 1px solid color-mix(in srgb, var(--c) 40%, rgba(245, 158, 11, .2));
+            border-radius: 50%;
+            animation: spin var(--d) linear infinite
+        }
+
+        .orb-ring i {
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            margin-left: -6px;
+            border-radius: 50%;
+            background: var(--c);
+            box-shadow: 0 0 14px var(--c)
+        }
+
+        body.loading {
+            overflow: hidden
+        }
+
+        #loader {
+            background: radial-gradient(circle at 50% 40%, #10193a, #050914 70%);
+            transition: opacity .9s ease, transform 1.1s cubic-bezier(.7, 0, .3, 1), visibility 0s .9s
+        }
+
+        #loader.done {
+            opacity: 0;
+            transform: scale(1.4);
+            visibility: hidden;
+            pointer-events: none
+        }
+
+        #loader::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            box-shadow: 8vw 12vh #fff, 22vw 72vh #fffa, 35vw 20vh #fff, 48vw 88vh #fff8, 61vw 9vh #fff, 74vw 64vh #fffa, 86vw 30vh #fff, 93vw 82vh #fff8, 14vw 44vh #fff6, 67vw 41vh #fff6, 40vw 55vh #fff5, 82vw 8vh #fff;
+            animation: tw 2.6s ease-in-out infinite alternate
+        }
+
+        @keyframes tw {
+            from {
+                opacity: .25
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        .ld-stage {
+            position: relative;
+            width: 11rem;
+            height: 11rem
+        }
+
+        .ld-bar {
+            width: min(18rem, 70vw);
+            height: 3px;
+            border-radius: 9px;
+            background: rgba(255, 255, 255, .08);
+            overflow: hidden;
+            margin-top: 1.1rem
+        }
+
+        .ld-bar i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #a855f7, #f59e0b, #ef4444);
+            box-shadow: 0 0 12px #f59e0b
+        }
+
+        @property --c {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #f59e0b
+        }
+
+        #stage {
+            --c: #3b82f6;
+            background: rgba(6, 10, 22, .8);
+            transition: --c .7s ease
+        }
+
+        .st-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(55% 70% at 72% 48%, color-mix(in srgb, var(--c) 40%, transparent), transparent 72%), radial-gradient(45% 50% at 8% 95%, color-mix(in srgb, var(--c) 20%, transparent), transparent)
+        }
+
+        #stArt {
+            container-type: size;
+            --px: 0;
+            --py: 0;
+            touch-action: pan-y
+        }
+
+        .st-kanji {
+            position: absolute;
+            right: 2%;
+            top: 0;
+            bottom: 0;
+            writing-mode: vertical-rl;
+            font-family: 'Shippori Mincho', serif;
+            font-weight: 900;
+            font-size: clamp(2.6rem, 8vw, 5.6rem);
+            line-height: 1;
+            letter-spacing: .05em;
+            color: transparent;
+            -webkit-text-stroke: 1px color-mix(in srgb, var(--c) 60%, transparent);
+            opacity: .6;
+            white-space: nowrap;
+            translate: calc(var(--px)*-22px) calc(var(--py)*-10px);
+            transition: translate .25s ease-out
+        }
+
+        .st-ring {
+            position: absolute;
+            left: 50%;
+            top: 48%;
+            translate: -50% -50%;
+            border-radius: 50%;
+            border: 1px dashed color-mix(in srgb, var(--c) 50%, transparent);
+            animation: spin var(--d) linear infinite
+        }
+
+        .st-ring i {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            margin-left: -5px;
+            border-radius: 50%;
+            background: var(--c);
+            box-shadow: 0 0 14px var(--c)
+        }
+
+        .st-img {
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            height: 100%;
+            max-width: none;
+            translate: calc(-50% + var(--px)*14px) calc(var(--py)*8px);
+            filter: drop-shadow(0 22px 30px rgba(0, 0, 0, .7));
+            animation: artIn .8s cubic-bezier(.16, 1, .3, 1) both, bob 6s ease-in-out .8s infinite;
+            transition: translate .25s ease-out
+        }
+
+        @keyframes artIn {
+            from {
+                opacity: 0;
+                transform: translateX(calc(var(--dir, 1)*70px)) scale(.94)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @keyframes bob {
+            50% {
+                transform: translateY(-10px)
+            }
+        }
+
+        .st-info>* {
+            animation: swapIn .6s cubic-bezier(.16, 1, .3, 1) both;
+            animation-delay: calc(var(--i, 0)*.05s)
+        }
+
+        .thumb {
+            position: relative;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 9999px;
+            border: 2px solid rgba(255, 255, 255, .14);
+            overflow: hidden;
+            background: #0b1224;
+            opacity: .7;
+            transition: .35s
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top
+        }
+
+        .thumb:hover {
+            opacity: 1;
+            transform: translateY(-3px)
+        }
+
+        .thumb.on {
+            opacity: 1;
+            transform: scale(1.18);
+            border-color: var(--tc);
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--tc) 25%, transparent), 0 0 22px var(--tc)
+        }
+
+        .thumb.dim {
+            opacity: .2;
+            filter: grayscale(1)
+        }
+
+        .arrow {
+            width: 2.6rem;
+            height: 2.6rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, .15);
+            background: rgba(5, 9, 20, .6);
+            color: #e2e8f0;
+            transition: .25s
+        }
+
+        .arrow:hover {
+            border-color: var(--c);
+            color: var(--c)
+        }
+
+        .dbar {
+            display: block;
+            height: 100%;
+            width: 0;
+            border-radius: 9999px;
+            transition: width .7s cubic-bezier(.16, 1, .3, 1), background .5s
+        }
+
+        header nav a.act {
+            color: #fbbf24;
+            background: rgba(255, 255, 255, .06)
+        }
+
+        @keyframes spin {
+            to {
+                rotate: 360deg
+            }
+        }
+
+        .tl-dot {
+            position: absolute;
+            left: -2.4rem;
+            top: .35rem;
+            width: .9rem;
+            height: .9rem;
+            border-radius: 50%;
+            background: #f59e0b;
+            box-shadow: 0 0 0 5px rgba(245, 158, 11, .15), 0 0 18px #f59e0b
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+
+            .marq,
+            .orb-ring,
+            .st-ring,
+            .st-img,
+            .shoot,
+            .gold-text {
+                animation: none
+            }
+        }
+
+        /* ==========================
+   ORBIT MOBILE FIX
+   ========================== */
+
+        @media (max-width:640px) {
+
+            #orbitTopBar {
+                left: 8px !important;
+                right: 8px !important;
+                width: auto !important;
+                max-width: none !important;
+                transform: none !important;
+                translate: 0 -18px !important;
+
+                padding: 8px 12px;
+                gap: 8px;
+                border-radius: 18px;
+
+                justify-content: space-between;
+            }
+
+            #orbitTopBar span {
+                font-size: 10px;
+            }
+
+            #orbitStatusText {
+                display: none;
+            }
+
+            #orbitTopBar button {
+                padding: 6px 10px;
+                font-size: 10px;
+                white-space: nowrap;
+            }
+
+            #planetModal {
+                width: calc(100vw - 16px);
+                max-width: none;
+
+                left: 8px !important;
+                right: 8px !important;
+
+                transform: none !important;
+
+                bottom: 8px;
+
+                max-height: 32vh;
+                padding: 14px;
+
+                border-radius: 20px;
+            }
+
+            #planetModal .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            #modalName {
+                font-size: 1rem;
+            }
+
+            #modalBio {
+                font-size: 11px;
+                line-height: 1.5;
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gwDarkBg text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 min-h-screen relative overflow-x-hidden loading">
+    <div id="prog"></div>
+    <div id="glow"></div>
+    <div id="loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-4 text-center">
+        <div class="ld-stage">
+            <div class="orb-ring" style="--c:#3b82f6;--d:6s;width:36%;height:36%"><i></i></div>
+            <div class="orb-ring" style="--c:#f59e0b;--d:9s;width:52%;height:52%;animation-direction:reverse"><i></i>
+            </div>
+            <div class="orb-ring" style="--c:#ef4444;--d:12s;width:68%;height:68%"><i></i></div>
+            <div class="orb-ring" style="--c:#10b981;--d:16s;width:84%;height:84%;animation-direction:reverse"><i></i>
+            </div>
+            <div class="orb-ring" style="--c:#a855f7;--d:21s;width:100%;height:100%"><i></i></div>
+            <div
+                class="absolute inset-0 m-auto w-14 h-14 rounded-full bg-gradient-to-br from-amber-200 via-amber-500 to-amber-700 flex items-center justify-center font-serif font-black text-slate-950 sun-pulse">
+                黄金</div>
+        </div>
+        <div class="gold-text font-serif text-2xl sm:text-3xl font-black tracking-[.25em] mt-9">GOLDEN GENERATION</div>
+        <div id="ldText" class="text-xs text-slate-400 mt-2 h-4">Menyalakan matahari emas…</div>
+        <div class="ld-bar"><i id="ldBar"></i></div>
+        <div id="ldPct" class="font-mono text-xs text-amber-400 mt-2">0%</div>
+    </div>
+    <span class="shoot" style="top:8%;left:78%"></span><span class="shoot"
+        style="top:22%;left:96%;animation-delay:4.5s"></span>
+
+    <!-- INTERACTIVE CANVAS (SOLAR SYSTEM ORBITS, TWINKLING STARS & CAMERA TRACKING) -->
     <canvas id="spaceCanvas" class="fixed inset-0 pointer-events-auto z-10 cursor-pointer"></canvas>
 
     <!-- ORBIT FOCUS TOP NAVIGATION OVERLAY BAR -->
-    <div id="orbitTopBar" class="fixed top-4 left-1/2 -translate-x-1/2 z-40 opacity-0 pointer-events-none transition-all duration-500 flex items-center gap-3 bg-slate-900/85 backdrop-blur-md px-5 py-2.5 rounded-full border border-amber-500/40 shadow-2xl">
+    <div id="orbitTopBar"
+        class="fixed top-2 left-2 right-2 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-40 opacity-0 pointer-events-none transition-all duration-500 flex items-center gap-2 bg-slate-900/85 backdrop-blur-md px-3 py-2 rounded-2xl border border-amber-500/40 shadow-2xl">
+        class="fixed top-4 left-1/2 -translate-x-1/2 z-40 opacity-0 pointer-events-none transition-all duration-500 flex
+        items-center gap-3 bg-slate-900/85 backdrop-blur-md px-5 py-2.5 rounded-full border border-amber-500/40
+        shadow-2xl">
         <span class="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
             <i class="fa-solid fa-solar-system animate-pulse"></i> SOLAR ORBIT SYSTEM
         </span>
         <span class="text-slate-500">|</span>
         <span id="orbitStatusText" class="text-xs text-slate-300 font-medium">Klik planet • seret untuk memutar</span>
-        <button onclick="toggleOrbitFocus()" class="ml-2 px-3.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 text-xs font-bold transition-all shadow-md">
+        <button onclick="toggleOrbitFocus()"
+            class="ml-2 px-3.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 text-xs font-bold transition-all shadow-md">
             <i class="fa-solid fa-xmark mr-1"></i> Exit Orbit Mode
         </button>
     </div>
 
     <!-- FLOATING PLANET FOCUS DETAIL MODAL CARD -->
-    <div id="planetModal" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 opacity-0 pointer-events-none translate-y-8 transition-all duration-500 w-[92%] max-w-xl glass-card p-5 sm:p-6 rounded-3xl border border-amber-500/50 shadow-2xl text-center space-y-4">
+    <div id="planetModal"
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 opacity-0 pointer-events-none translate-y-8 transition-all duration-500 w-[92%] max-w-xl glass-card p-5 sm:p-6 rounded-3xl border border-amber-500/50 shadow-2xl text-center space-y-4">
         <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
             <div class="flex items-center space-x-3 text-left">
-                <div class="w-14 h-14 rounded-2xl bg-slate-950 border border-amber-500/40 p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    <img id="modalAvatar" src="" alt="Avatar" onerror="this.src='https://placehold.co/100x100/0f172a/f59e0b?text=Uma'" class="w-full h-full object-contain">
+                <div
+                    class="w-14 h-14 rounded-2xl bg-slate-950 border border-amber-500/40 p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <img id="modalAvatar" src="" alt="Avatar"
+                        onerror="this.src='https://placehold.co/100x100/0f172a/f59e0b?text=Uma'"
+                        class="w-full h-full object-contain">
                 </div>
                 <div>
                     <h3 id="modalName" class="text-xl font-extrabold text-white font-serif">Karakter</h3>
@@ -248,7 +825,9 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
                     <span id="modalVA" class="text-[11px] text-slate-400 block font-sans">VA: -</span>
                 </div>
             </div>
-            <button onclick="resetCamera()" class="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-amber-500 hover:text-slate-950 text-slate-300 text-sm flex items-center justify-center transition-colors flex-shrink-0" title="Reset Kamera / Tutup">
+            <button onclick="resetCamera()"
+                class="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-amber-500 hover:text-slate-950 text-slate-300 text-sm flex items-center justify-center transition-colors flex-shrink-0"
+                title="Reset Kamera / Tutup">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -279,7 +858,8 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
 
         <!-- Trophies Badges -->
         <div class="text-left space-y-1 pt-1">
-            <span class="text-[10px] font-bold text-amber-400/90 uppercase tracking-wider block"><i class="fa-solid fa-trophy mr-1"></i>Trofi Utama G1:</span>
+            <span class="text-[10px] font-bold text-amber-400/90 uppercase tracking-wider block"><i
+                    class="fa-solid fa-trophy mr-1"></i>Trofi Utama G1:</span>
             <div id="modalTrophies" class="flex flex-wrap gap-1">
                 <!-- Disuntikkan via JS -->
             </div>
@@ -287,159 +867,216 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
 
         <!-- Action Buttons -->
         <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-3">
-            <button onclick="resetCamera()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5">
+            <button onclick="resetCamera()"
+                class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5">
                 <i class="fa-solid fa-rotate-left"></i> Reset Kamera
             </button>
-            <a id="modalPageLink" href="#" class="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-bold transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5">
+            <a id="modalPageLink" href="#"
+                class="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-bold transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5">
                 <span>Kunjungi Halaman Karakter</span> <i class="fa-solid fa-arrow-right"></i>
             </a>
         </div>
     </div>
 
-    
-<div id="mainUI" class="relative z-20">
 
-<!-- NAV -->
-<header class="fixed top-3 inset-x-0 z-40 px-3">
-  <div class="mx-auto max-w-5xl flex items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/70 backdrop-blur-md px-3 py-2 shadow-2xl">
-    <a href="index.html" class="flex items-center gap-2.5 group">
-      <span class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-red-600 p-0.5 group-hover:rotate-12 transition"><span class="w-full h-full rounded-full bg-slate-950 flex items-center justify-center font-serif font-bold text-amber-400">金</span></span>
-      <span class="hidden sm:block text-sm font-extrabold tracking-wide">Golden Generation</span>
-    </a>
-    <nav class="hidden md:flex items-center gap-1 text-xs font-semibold text-slate-300">
-      <a href="#members" class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Anggota</a>
-      <a href="#duel" class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Duel</a>
-      <a href="#timeline" class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Timeline</a>
-      <a href="#matrix" class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Matrix</a>
-      <a href="#orbit" class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Orbit</a>
-    </nav>
-    <div class="flex items-center gap-2">
-      <button onclick="toggleOrbitFocus()" class="btn-gold px-4 py-2 text-xs flex items-center gap-1.5"><i class="fa-solid fa-circle-nodes"></i> Orbit Mode</button>
-      <button onclick="toggleMobileMenu()" class="md:hidden w-9 h-9 rounded-full border border-white/10 text-slate-200"><i class="fa-solid fa-bars"></i></button>
+    <div id="mainUI" class="relative z-20">
+
+        <!-- NAV -->
+        <header class="fixed top-3 inset-x-0 z-40 px-3">
+            <div
+                class="mx-auto max-w-5xl flex items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/70 backdrop-blur-md px-3 py-2 shadow-2xl">
+                <a href="index.html" class="flex items-center gap-2.5 group">
+                    <span
+                        class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-red-600 p-0.5 group-hover:rotate-12 transition"><span
+                            class="w-full h-full rounded-full bg-slate-950 flex items-center justify-center font-serif font-bold text-amber-400">金</span></span>
+                    <span class="hidden sm:block text-sm font-extrabold tracking-wide">Golden Generation</span>
+                </a>
+                <nav class="hidden md:flex items-center gap-1 text-xs font-semibold text-slate-300">
+                    <a href="#members"
+                        class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Anggota</a>
+                    <a href="#duel"
+                        class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Duel</a>
+                    <a href="#timeline"
+                        class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Timeline</a>
+                    <a href="#matrix"
+                        class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Matrix</a>
+                    <a href="#orbit"
+                        class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Orbit</a>
+                </nav>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleOrbitFocus()" class="btn-gold px-4 py-2 text-xs flex items-center gap-1.5"><i
+                            class="fa-solid fa-circle-nodes"></i> Orbit Mode</button>
+                    <button onclick="toggleMobileMenu()"
+                        class="md:hidden w-9 h-9 rounded-full border border-white/10 text-slate-200"><i
+                            class="fa-solid fa-bars"></i></button>
+                </div>
+            </div>
+            <div id="mobileMenu"
+                class="hidden md:hidden mx-auto max-w-5xl mt-2 rounded-3xl border border-white/10 bg-slate-950/95 p-4 grid grid-cols-2 gap-2 text-xs font-semibold">
+                <a href="#members" class="chip text-center">Anggota</a><a href="#duel"
+                    class="chip text-center">Duel</a><a href="#timeline" class="chip text-center">Timeline</a>
+                <a href="#matrix" class="chip text-center">Matrix</a><a href="#orbit" class="chip text-center">Orbit</a>
+                <a href="specialweek.html" class="chip text-center">Special Week</a><a href="grasswonder.html"
+                    class="chip text-center">Grass Wonder</a>
+                <a href="elcondorpasa.html" class="chip text-center">El Condor Pasa</a><a href="seiunsky.html"
+                    class="chip text-center">Seiun Sky</a>
+                <a href="kinghalo.html" class="chip text-center col-span-2">King Halo</a>
+            </div>
+        </header>
+
+        <!-- HERO -->
+        <section id="hero"
+            class="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-16 relative">
+            <p class="reveal text-amber-400 tracking-[.4em] text-[10px] sm:text-xs uppercase font-bold mb-5"><i
+                    class="fa-solid fa-star mr-2"></i>Uma Musume • Classic Era 1998</p>
+            <h1 class="reveal gold-text font-serif font-black leading-none text-[clamp(4.2rem,17vw,12rem)]">黄金世代</h1>
+            <p class="reveal font-serif text-2xl md:text-5xl font-bold mt-2 text-white">Golden Generation</p>
+            <p class="reveal max-w-xl mx-auto mt-5 text-sm md:text-base text-slate-300 leading-relaxed">Lima gadis kuda
+                legendaris, satu musim klasik yang mengubah sejarah Tracen Academy. Jelajahi mereka sebagai planet yang
+                mengorbit satu matahari emas.</p>
+            <div class="reveal flex flex-wrap justify-center gap-3 mt-8">
+                <button onclick="toggleOrbitFocus()" class="btn-gold px-7 py-3.5 text-sm flex items-center gap-2"><i
+                        class="fa-solid fa-rocket"></i> Masuk Orbit Mode</button>
+                <a href="#members" class="btn-ghost px-7 py-3.5 text-sm flex items-center gap-2">Lihat Anggota <i
+                        class="fa-solid fa-arrow-down"></i></a>
+            </div>
+            <div id="heroChips" class="reveal flex flex-wrap justify-center gap-2 mt-8"></div>
+            <button id="bday" class="reveal chip mt-4 hidden"></button>
+            <div class="reveal grid grid-cols-3 gap-3 sm:gap-8 mt-12 w-full max-w-xl">
+                <div>
+                    <div class="font-serif text-3xl sm:text-5xl font-black text-amber-400" data-count="5">0</div>
+                    <div class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Bintang</div>
+                </div>
+                <div>
+                    <div class="font-serif text-3xl sm:text-5xl font-black text-amber-400">1998</div>
+                    <div class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Era Klasik</div>
+                </div>
+                <div>
+                    <div id="g1Stat" class="font-serif text-3xl sm:text-5xl font-black text-amber-400" data-count="0">0
+                    </div>
+                    <div class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Gelar G1</div>
+                </div>
+            </div>
+            <a href="#members" class="absolute bottom-6 text-slate-500 hover:text-amber-400 animate-bounce"><i
+                    class="fa-solid fa-chevron-down"></i></a>
+        </section>
+
+        <!-- MARQUEE -->
+        <div class="border-y border-white/5 bg-slate-950/60 py-4 overflow-hidden">
+            <div id="marquee" class="marq text-xs font-bold uppercase tracking-widest text-slate-400"></div>
+        </div>
+
+        <!-- MEMBERS -->
+        <section id="members" class="max-w-6xl mx-auto px-4 lg:px-8 py-24">
+            <div class="reveal text-center mb-8">
+                <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">5 Members Showcase</span>
+                <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Konstelasi Golden Generation</h2>
+                <p class="text-xs text-slate-400 mt-3">Pilih karakter • geser / tombol panah • ← → di keyboard</p>
+            </div>
+            <div class="reveal flex flex-wrap justify-center gap-2 mb-6" id="filters">
+                <button class="chip on" onclick="filterStyle('all',this)">Semua Taktik</button>
+                <button class="chip" onclick="filterStyle('Nige',this)">Front-runner (逃げ)</button>
+                <button class="chip" onclick="filterStyle('Senko',this)">Pace Chaser (先行)</button>
+                <button class="chip" onclick="filterStyle('Sashi',this)">Betweener (差し)</button>
+                <button class="chip" onclick="filterStyle('Oikomi',this)">Chaser (追込)</button>
+            </div>
+            <div id="stage" class="reveal relative rounded-[2rem] border border-white/10 overflow-hidden">
+                <div class="st-bg"></div>
+                <div class="relative grid lg:grid-cols-2 items-center gap-4 p-5 sm:p-8 lg:p-12">
+                    <div id="stInfo" class="st-info order-2 lg:order-1 space-y-4"></div>
+                    <div class="order-1 lg:order-2 relative">
+                        <div id="stArt" class="relative h-[21rem] sm:h-[30rem] w-full"></div>
+                        <button class="arrow absolute left-0 top-1/2 -translate-y-1/2" onclick="stageStep(-1)"
+                            aria-label="Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="arrow absolute right-0 top-1/2 -translate-y-1/2" onclick="stageStep(1)"
+                            aria-label="Berikutnya"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div id="stNav" class="relative flex justify-center gap-3 sm:gap-6 pb-7 px-4"></div>
+            </div>
+        </section>
+
+        <!-- TIMELINE -->
+        <section id="timeline" class="max-w-3xl mx-auto px-4 py-24">
+            <div class="reveal text-center mb-14">
+                <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">Classic Era</span>
+                <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Garis Waktu Kejayaan</h2>
+            </div>
+            <div id="tl" class="border-l border-amber-500/30 ml-3 pl-8 space-y-12"></div>
+        </section>
+
+        <!-- DUEL -->
+        <section id="duel" class="max-w-4xl mx-auto px-4 py-24">
+            <div class="reveal text-center mb-10">
+                <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">Head-to-Head</span>
+                <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Duel Dua Bintang</h2>
+                <p class="text-xs text-slate-400 mt-3">Pilih dua karakter lalu bandingkan data resminya</p>
+            </div>
+            <div class="reveal rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 sm:p-8">
+                <div class="grid grid-cols-[1fr_auto_1fr] items-start gap-3">
+                    <div id="duelA" class="text-center"></div>
+                    <div class="font-serif text-3xl sm:text-5xl font-black text-amber-400 pt-6">VS</div>
+                    <div id="duelB" class="text-center"></div>
+                </div>
+                <div id="duelBars" class="mt-8 space-y-4"></div>
+            </div>
+        </section>
+
+        <!-- MATRIX -->
+        <section id="matrix" class="max-w-6xl mx-auto px-4 py-24">
+            <div class="reveal text-center mb-10">
+                <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">Comparison Matrix</span>
+                <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Perbandingan Spek &amp; Rekor</h2>
+            </div>
+            <div class="reveal overflow-x-auto rounded-3xl border border-white/10 bg-slate-950/70">
+                <table class="w-full text-left text-sm min-w-[820px]">
+                    <thead class="text-[10px] uppercase tracking-widest text-slate-400 border-b border-white/10">
+                        <tr>
+                            <th class="p-4">Karakter</th>
+                            <th class="p-4">Gelar</th>
+                            <th class="p-4">Taktik</th>
+                            <th class="p-4">G1 Trophies</th>
+                            <th class="p-4 w-40">Jumlah G1</th>
+                            <th class="p-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonTableBody" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ORBIT CTA -->
+        <section id="orbit" class="max-w-5xl mx-auto px-4 py-24">
+            <div
+                class="reveal rounded-[2rem] border border-amber-500/20 bg-gradient-to-br from-slate-900/85 to-slate-950/95 overflow-hidden grid md:grid-cols-2 items-center">
+                <div class="p-8 md:p-12 space-y-5">
+                    <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase"><i
+                            class="fa-solid fa-atom mr-1"></i>Orbit Focus Mode</span>
+                    <h2 class="font-serif text-3xl md:text-4xl font-black">Satu Matahari, Lima Planet</h2>
+                    <p class="text-sm text-slate-300 leading-relaxed">Masuk ke tata surya 3D interaktif: seret untuk
+                        memutar kamera, klik planet untuk zoom dan membuka profil lengkap karakter.</p>
+                    <button onclick="toggleOrbitFocus()"
+                        class="btn-gold px-7 py-3.5 text-sm inline-flex items-center gap-2"><i
+                            class="fa-solid fa-rocket"></i> Luncurkan Orbit</button>
+                </div>
+                <div class="h-72 md:h-[26rem] p-4 flex items-center justify-center">
+                    <div id="miniOrbit" class="relative h-full aspect-square max-w-full">
+                        <button onclick="toggleOrbitFocus()" aria-label="Orbit Mode"
+                            class="absolute inset-0 m-auto w-16 h-16 rounded-full bg-gradient-to-br from-amber-200 via-amber-500 to-amber-700 font-serif font-black text-slate-950 sun-pulse z-10">黄金</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="border-t border-white/10 bg-slate-950/80 px-4 py-10 text-center space-y-4">
+            <div class="flex flex-wrap justify-center gap-2 text-xs" id="footLinks"></div>
+            <p class="text-xs text-slate-400">Dipersembahkan untuk seluruh fans Golden Generation 1998 • Uma Musume:
+                Pretty Derby</p>
+            <p class="text-[11px] text-slate-600">@Finwahyu • Single File HTML Web Portal</p>
+        </footer>
     </div>
-  </div>
-  <div id="mobileMenu" class="hidden md:hidden mx-auto max-w-5xl mt-2 rounded-3xl border border-white/10 bg-slate-950/95 p-4 grid grid-cols-2 gap-2 text-xs font-semibold">
-    <a href="#members" class="chip text-center">Anggota</a><a href="#duel" class="chip text-center">Duel</a><a href="#timeline" class="chip text-center">Timeline</a>
-    <a href="#matrix" class="chip text-center">Matrix</a><a href="#orbit" class="chip text-center">Orbit</a>
-    <a href="specialweek.html" class="chip text-center">Special Week</a><a href="grasswonder.html" class="chip text-center">Grass Wonder</a>
-    <a href="elcondorpasa.html" class="chip text-center">El Condor Pasa</a><a href="seiunsky.html" class="chip text-center">Seiun Sky</a>
-    <a href="kinghalo.html" class="chip text-center col-span-2">King Halo</a>
-  </div>
-</header>
 
-<!-- HERO -->
-<section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-16 relative">
-  <p class="reveal text-amber-400 tracking-[.4em] text-[10px] sm:text-xs uppercase font-bold mb-5"><i class="fa-solid fa-star mr-2"></i>Uma Musume • Classic Era 1998</p>
-  <h1 class="reveal gold-text font-serif font-black leading-none text-[clamp(4.2rem,17vw,12rem)]">黄金世代</h1>
-  <p class="reveal font-serif text-2xl md:text-5xl font-bold mt-2 text-white">Golden Generation</p>
-  <p class="reveal max-w-xl mx-auto mt-5 text-sm md:text-base text-slate-300 leading-relaxed">Lima gadis kuda legendaris, satu musim klasik yang mengubah sejarah Tracen Academy. Jelajahi mereka sebagai planet yang mengorbit satu matahari emas.</p>
-  <div class="reveal flex flex-wrap justify-center gap-3 mt-8">
-    <button onclick="toggleOrbitFocus()" class="btn-gold px-7 py-3.5 text-sm flex items-center gap-2"><i class="fa-solid fa-rocket"></i> Masuk Orbit Mode</button>
-    <a href="#members" class="btn-ghost px-7 py-3.5 text-sm flex items-center gap-2">Lihat Anggota <i class="fa-solid fa-arrow-down"></i></a>
-  </div>
-  <div id="heroChips" class="reveal flex flex-wrap justify-center gap-2 mt-8"></div>
-  <button id="bday" class="reveal chip mt-4 hidden"></button>
-  <div class="reveal grid grid-cols-3 gap-3 sm:gap-8 mt-12 w-full max-w-xl">
-    <div><div class="font-serif text-3xl sm:text-5xl font-black text-amber-400" data-count="5">0</div><div class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Bintang</div></div>
-    <div><div class="font-serif text-3xl sm:text-5xl font-black text-amber-400">1998</div><div class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Era Klasik</div></div>
-    <div><div id="g1Stat" class="font-serif text-3xl sm:text-5xl font-black text-amber-400" data-count="0">0</div><div class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Gelar G1</div></div>
-  </div>
-  <a href="#members" class="absolute bottom-6 text-slate-500 hover:text-amber-400 animate-bounce"><i class="fa-solid fa-chevron-down"></i></a>
-</section>
-
-<!-- MARQUEE -->
-<div class="border-y border-white/5 bg-slate-950/60 py-4 overflow-hidden"><div id="marquee" class="marq text-xs font-bold uppercase tracking-widest text-slate-400"></div></div>
-
-<!-- MEMBERS -->
-<section id="members" class="max-w-6xl mx-auto px-4 lg:px-8 py-24">
-  <div class="reveal text-center mb-8">
-    <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">5 Members Showcase</span>
-    <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Konstelasi Golden Generation</h2>
-    <p class="text-xs text-slate-400 mt-3">Pilih karakter • geser / tombol panah • ← → di keyboard</p>
-  </div>
-  <div class="reveal flex flex-wrap justify-center gap-2 mb-6" id="filters">
-    <button class="chip on" onclick="filterStyle('all',this)">Semua Taktik</button>
-    <button class="chip" onclick="filterStyle('Nige',this)">Front-runner (逃げ)</button>
-    <button class="chip" onclick="filterStyle('Senko',this)">Pace Chaser (先行)</button>
-    <button class="chip" onclick="filterStyle('Sashi',this)">Betweener (差し)</button>
-    <button class="chip" onclick="filterStyle('Oikomi',this)">Chaser (追込)</button>
-  </div>
-  <div id="stage" class="reveal relative rounded-[2rem] border border-white/10 overflow-hidden">
-    <div class="st-bg"></div>
-    <div class="relative grid lg:grid-cols-2 items-center gap-4 p-5 sm:p-8 lg:p-12">
-      <div id="stInfo" class="st-info order-2 lg:order-1 space-y-4"></div>
-      <div class="order-1 lg:order-2 relative">
-        <div id="stArt" class="relative h-[21rem] sm:h-[30rem] w-full"></div>
-        <button class="arrow absolute left-0 top-1/2 -translate-y-1/2" onclick="stageStep(-1)" aria-label="Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
-        <button class="arrow absolute right-0 top-1/2 -translate-y-1/2" onclick="stageStep(1)" aria-label="Berikutnya"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-    </div>
-    <div id="stNav" class="relative flex justify-center gap-3 sm:gap-6 pb-7 px-4"></div>
-  </div>
-</section>
-
-<!-- TIMELINE -->
-<section id="timeline" class="max-w-3xl mx-auto px-4 py-24">
-  <div class="reveal text-center mb-14">
-    <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">Classic Era</span>
-    <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Garis Waktu Kejayaan</h2>
-  </div>
-  <div id="tl" class="border-l border-amber-500/30 ml-3 pl-8 space-y-12"></div>
-</section>
-
-<!-- DUEL -->
-<section id="duel" class="max-w-4xl mx-auto px-4 py-24">
-  <div class="reveal text-center mb-10">
-    <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">Head-to-Head</span>
-    <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Duel Dua Bintang</h2>
-    <p class="text-xs text-slate-400 mt-3">Pilih dua karakter lalu bandingkan data resminya</p>
-  </div>
-  <div class="reveal rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 sm:p-8">
-    <div class="grid grid-cols-[1fr_auto_1fr] items-start gap-3"><div id="duelA" class="text-center"></div><div class="font-serif text-3xl sm:text-5xl font-black text-amber-400 pt-6">VS</div><div id="duelB" class="text-center"></div></div>
-    <div id="duelBars" class="mt-8 space-y-4"></div>
-  </div>
-</section>
-
-<!-- MATRIX -->
-<section id="matrix" class="max-w-6xl mx-auto px-4 py-24">
-  <div class="reveal text-center mb-10">
-    <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">Comparison Matrix</span>
-    <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Perbandingan Spek &amp; Rekor</h2>
-  </div>
-  <div class="reveal overflow-x-auto rounded-3xl border border-white/10 bg-slate-950/70">
-    <table class="w-full text-left text-sm min-w-[820px]">
-      <thead class="text-[10px] uppercase tracking-widest text-slate-400 border-b border-white/10"><tr>
-        <th class="p-4">Karakter</th><th class="p-4">Gelar</th><th class="p-4">Taktik</th><th class="p-4">G1 Trophies</th><th class="p-4 w-40">Jumlah G1</th><th class="p-4 text-center">Aksi</th></tr></thead>
-      <tbody id="comparisonTableBody" class="divide-y divide-white/5"></tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ORBIT CTA -->
-<section id="orbit" class="max-w-5xl mx-auto px-4 py-24">
-  <div class="reveal rounded-[2rem] border border-amber-500/20 bg-gradient-to-br from-slate-900/85 to-slate-950/95 overflow-hidden grid md:grid-cols-2 items-center">
-    <div class="p-8 md:p-12 space-y-5">
-      <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase"><i class="fa-solid fa-atom mr-1"></i>Orbit Focus Mode</span>
-      <h2 class="font-serif text-3xl md:text-4xl font-black">Satu Matahari, Lima Planet</h2>
-      <p class="text-sm text-slate-300 leading-relaxed">Masuk ke tata surya 3D interaktif: seret untuk memutar kamera, klik planet untuk zoom dan membuka profil lengkap karakter.</p>
-      <button onclick="toggleOrbitFocus()" class="btn-gold px-7 py-3.5 text-sm inline-flex items-center gap-2"><i class="fa-solid fa-rocket"></i> Luncurkan Orbit</button>
-    </div>
-    <div class="h-72 md:h-[26rem] p-4 flex items-center justify-center">
-      <div id="miniOrbit" class="relative h-full aspect-square max-w-full">
-        <button onclick="toggleOrbitFocus()" aria-label="Orbit Mode" class="absolute inset-0 m-auto w-16 h-16 rounded-full bg-gradient-to-br from-amber-200 via-amber-500 to-amber-700 font-serif font-black text-slate-950 sun-pulse z-10">黄金</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer class="border-t border-white/10 bg-slate-950/80 px-4 py-10 text-center space-y-4">
-  <div class="flex flex-wrap justify-center gap-2 text-xs" id="footLinks"></div>
-  <p class="text-xs text-slate-400">Dipersembahkan untuk seluruh fans Golden Generation 1998 • Uma Musume: Pretty Derby</p>
-  <p class="text-[11px] text-slate-600">@Finwahyu • Single File HTML Web Portal</p>
-</footer>
-</div>
-
-<script>
+    <script>
 
         // -------------------------------------------------------------
         // 1. DATASET 5 KARAKTER GOLDEN GENERATION (UMA MUSUME WIKI DATA)
@@ -580,7 +1217,7 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
             const c = orbitCS[i];
             const x = Math.cos(a), z = Math.sin(a);
             const y1 = -z * c.sx, z1 = z * c.cx;                  // rotasi sumbu X
-            out[o]     = x * c.cz - y1 * c.sz;                    // rotasi sumbu Z
+            out[o] = x * c.cz - y1 * c.sz;                    // rotasi sumbu Z
             out[o + 1] = x * c.sz + y1 * c.cz;
             out[o + 2] = z1;
         }
@@ -708,7 +1345,10 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
             const hasSel = isFocused && focusedPlanetIndex !== null;
             timeScale += ((hasSel ? 0.55 : 1) - timeScale) * k(2.5);
 
-            const maxRadius = Math.min(W, H) * 0.38;
+            const maxRadius =
+                window.innerWidth <= 640
+                    ? Math.min(W, H) * 0.28
+                    : Math.min(W, H) * 0.38;
             camD = maxRadius * 3.2;                         // kekuatan perspektif relatif terhadap ukuran scene
             camCx = W / 2; camCy = H / 2;
 
@@ -728,20 +1368,56 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
             // Area kosong = ruang antara top bar dan modal; planet diletakkan di tengahnya
             let goalZoom = 1, goalOffY = 0;
             if (hasSel) {
-                const areaTop = 16 + topBarEl.offsetHeight + 14;
-                const areaBottom = Math.max(areaTop + 90, H - 24 - modalEl.offsetHeight - 14);
-                const freeH = areaBottom - areaTop;
-                goalZoom = freeH < 230 ? 1.7 : SELECT_ZOOM;      // ruang sempit (HP) -> zoom lebih kecil
-                goalOffY = Math.max(0, H / 2 - (areaTop + areaBottom) / 2);
+                const isMobile = window.innerWidth <= 640;
+
+                const areaTop =
+                    isMobile
+                        ? 8 + topBarEl.offsetHeight
+                        : 16 + topBarEl.offsetHeight + 14;
+
+                const areaBottom =
+                    isMobile
+                        ? H - modalEl.offsetHeight - 8
+                        : H - 24 - modalEl.offsetHeight - 14;
+
+                const freeH = Math.max(
+                    isMobile ? 140 : 180,
+                    areaBottom - areaTop
+                );
+
+                if (isMobile) {
+
+                    if (freeH < 220) {
+                        goalZoom = 1.25;
+                    }
+                    else if (freeH < 320) {
+                        goalZoom = 1.4;
+                    }
+                    else {
+                        goalZoom = 1.6;
+                    }
+
+                } else {
+
+                    goalZoom =
+                        freeH < 230
+                            ? 1.7
+                            : SELECT_ZOOM;
+                }
+
+                goalOffY = Math.max(
+                    0,
+                    H / 2 - (areaTop + areaBottom) / 2
+                );
             }
             const goalX = hasSel ? worldPos[focusedPlanetIndex].x : 0;
             const goalY = hasSel ? worldPos[focusedPlanetIndex].y : 0;
             const goalZ = hasSel ? worldPos[focusedPlanetIndex].z : 0;
 
-            yaw   += (tYaw - yaw) * k(3.0);
+            yaw += (tYaw - yaw) * k(3.0);
             pitch += (tPitch - pitch) * k(3.0);
-            zoom  += (goalZoom - zoom) * k(3.2);
-            offY  += (goalOffY - offY) * k(4.0);
+            zoom += (goalZoom - zoom) * k(3.2);
+            offY += (goalOffY - offY) * k(4.0);
             tx += (goalX - tx) * k(3.8);
             ty += (goalY - ty) * k(3.8);
             tz += (goalZ - tz) * k(3.8);
@@ -866,7 +1542,7 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
                 if (sel > 0.02) {
                     ctx.globalAlpha = sel;
                     ctx.beginPath();
-                    ctx.arc(sp.x, sp.y, rb + (7 + 1.5 * Math.sin(t * 3.2)) , 0, TAU);
+                    ctx.arc(sp.x, sp.y, rb + (7 + 1.5 * Math.sin(t * 3.2)), 0, TAU);
                     ctx.strokeStyle = '#FFFFFF';
                     ctx.lineWidth = 1.5;
                     ctx.stroke();
@@ -875,8 +1551,11 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
                 // label nama
                 if (fb > 0.03) {
                     const isSel = sel > 0.5;
-                    ctx.font = isSel ? '800 13px "Plus Jakarta Sans", sans-serif' : '700 11px "Plus Jakarta Sans", sans-serif';
-                    const tw = ctx.measureText(chara.name).width;
+                    const mobile = window.innerWidth <= 640;
+
+                    ctx.font = isSel
+                        ? `800 ${mobile ? 11 : 13}px "Plus Jakarta Sans", sans-serif`
+                        : `700 ${mobile ? 9 : 11}px "Plus Jakarta Sans", sans-serif`; const tw = ctx.measureText(chara.name).width;
                     const bx = sp.x + rb + 9, by = sp.y - 11;
                     ctx.globalAlpha = fb * (isSel ? 1 : 0.5 + 0.5 * front);
                     ctx.fillStyle = 'rgba(15,23,42,0.88)';
@@ -906,7 +1585,7 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
         let drag = null;
         canvas.addEventListener('pointerdown', (e) => {
             drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, lx: e.clientX, ly: e.clientY, moved: false };
-            try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+            try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
         });
         canvas.addEventListener('pointermove', (e) => {
             if (!drag || drag.id !== e.pointerId) return;
@@ -982,8 +1661,15 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
         }
 
         function selectPlanet(index) {
+
             if (index < 0 || index >= goldenMembers.length) return;
+
             focusedPlanetIndex = index;
+
+            if (window.innerWidth <= 640) {
+                zoom = 1.2;
+            }
+
             const chara = goldenMembers[index];
 
             // Populate Modal Content
@@ -999,7 +1685,7 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
             document.getElementById('modalPageLink').href = chara.fileLink;
 
             const trophiesContainer = document.getElementById('modalTrophies');
-            trophiesContainer.innerHTML = chara.g1Titles.map(t => 
+            trophiesContainer.innerHTML = chara.g1Titles.map(t =>
                 `<span class="px-2 py-0.5 rounded text-[10px] bg-slate-900 text-amber-300 border border-amber-500/30">${t}</span>`
             ).join('');
 
@@ -1181,10 +1867,12 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
             ];
             $('tl').innerHTML = ev.map(([y, items]) => `<div class="reveal relative"><span class="tl-dot"></span>
                 <div class="font-serif text-4xl font-black text-amber-400 mb-3">${y}</div>
-                <div class="space-y-2">${items.map(([i, t]) => { const c = goldenMembers[i];
-                    return `<button onclick="enterOrbitAt(${i})" class="w-full text-left flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 hover:border-white/30 hover:translate-x-1 transition">
+                <div class="space-y-2">${items.map(([i, t]) => {
+                const c = goldenMembers[i];
+                return `<button onclick="enterOrbitAt(${i})" class="w-full text-left flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 hover:border-white/30 hover:translate-x-1 transition">
                     <span class="w-2.5 h-8 rounded-full" style="background:${c.color};box-shadow:0 0 12px ${c.color}"></span>
-                    <span><span class="block text-sm font-bold text-white">${t}</span><span class="block text-xs" style="color:${c.color}">${c.name}</span></span></button>`; }).join('')}</div></div>`).join('');
+                    <span><span class="block text-sm font-bold text-white">${t}</span><span class="block text-xs" style="color:${c.color}">${c.name}</span></span></button>`;
+            }).join('')}</div></div>`).join('');
         }
 
         buildNav(); renderStage(0); renderTable(); renderExtras(); updateDuel(); initBday();
@@ -1270,4 +1958,5 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
         })();
     </script>
 </body>
+
 </html>
