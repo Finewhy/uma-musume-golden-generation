@@ -1,41 +1,14 @@
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golden Generation (黄金世代) - Uma Musume Home Portal</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Plus Jakarta Sans & Shippori Mincho -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Shippori+Mincho:wght@600;700;900&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gwNavy: '#0F172A',
-                        gwDarkBg: '#0B1120',
-                        gwCardBg: 'rgba(15, 23, 42, 0.45)',
-                        gwGold: '#D97706',
-                        gwGoldLight: '#F59E0B',
-                        gwRed: '#DC2626',
-                        gwBlue: '#1E40AF',
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        serif: ['Shippori Mincho', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Generation (黄金世代) - Uma Musume Home Portal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Shippori+Mincho:wght@600;700;900&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{colors:{gwDarkBg:'#050914'},fontFamily:{sans:['Plus Jakarta Sans','sans-serif'],serif:['Shippori Mincho','serif']}}}}</script>
+<style>
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -118,17 +91,136 @@
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            transform: scale(0.96);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: scale(0.94) translateY(12px);
         }
         #mainUI {
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        visibility 0.6s;
+            transform-origin: 50% 40%;
         }
-    </style>
-</head>
-<body class="bg-gwDarkBg text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 min-h-screen relative overflow-x-hidden">
 
-    <!-- INTERACTIVE CANVAS (SOLAR SYSTEM ORBITS, TWINKLING STARS & CAMERA TRACKING) -->
+        /* Canvas: drag-to-rotate hanya aktif saat Orbit Focus Mode */
+        body.orbit-focused #spaceCanvas { cursor: grab; touch-action: none; }
+        body.orbit-focused #spaceCanvas:active { cursor: grabbing; }
+
+        /* Top bar & modal: masuk dengan slide + sedikit scale (properti individual, tidak bentrok dengan Tailwind) */
+        #orbitTopBar {
+            translate: 0 -18px;
+            transition: opacity 0.6s ease, translate 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #orbitTopBar.opacity-100 { translate: 0 0; transition-delay: 0.3s; }
+
+        #planetModal {
+            scale: 0.94;
+            transform-origin: 50% 100%;
+            transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                        scale 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #planetModal.opacity-100 { scale: 1; }
+        #planetModal {
+            max-height: 52vh;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+
+        /* Isi modal muncul bertahap setiap ganti planet */
+        @keyframes swapIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        #planetModal.modal-swap > * { animation: swapIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        #planetModal.modal-swap > *:nth-child(2) { animation-delay: 0.04s; }
+        #planetModal.modal-swap > *:nth-child(3) { animation-delay: 0.08s; }
+        #planetModal.modal-swap > *:nth-child(4) { animation-delay: 0.12s; }
+        #planetModal.modal-swap > *:nth-child(5) { animation-delay: 0.16s; }
+
+        @media (prefers-reduced-motion: reduce) {
+            #planetModal.modal-swap > * { animation: none; }
+            #mainUI, #orbitTopBar, #planetModal { transition-duration: 0.01s; }
+        }
+    
+body{background:#050914}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:
+ radial-gradient(60% 50% at 12% 8%,rgba(168,85,247,.17),transparent),
+ radial-gradient(50% 45% at 92% 28%,rgba(59,130,246,.15),transparent),
+ radial-gradient(60% 50% at 50% 102%,rgba(245,158,11,.14),transparent)}
+.gold-text{background:linear-gradient(100deg,#fde68a,#f59e0b,#ef4444,#f59e0b,#fde68a);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fireGoldAnim 7s linear infinite;filter:drop-shadow(0 0 28px rgba(245,158,11,.35))}
+#prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#a855f7,#f59e0b,#ef4444)}
+#glow{position:fixed;left:0;top:0;width:420px;height:420px;margin:-210px 0 0 -210px;z-index:15;pointer-events:none;background:radial-gradient(closest-side,rgba(245,158,11,.10),transparent);will-change:transform}
+.shoot{position:fixed;z-index:12;height:1px;width:140px;background:linear-gradient(90deg,transparent,#fff);opacity:0;transform:rotate(-30deg);animation:shoot 9s linear infinite}
+@keyframes shoot{0%{opacity:0;translate:0 0}2%{opacity:.9}12%{opacity:0;translate:-420px 242px}100%{opacity:0;translate:-420px 242px}}
+.chip{padding:.45rem .9rem;border-radius:9999px;font-size:.75rem;font-weight:700;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#cbd5e1;transition:.25s}
+.chip:hover{border-color:rgba(245,158,11,.5);color:#fbbf24}
+.chip.on{background:#f59e0b;color:#0b1120;border-color:#f59e0b}
+.btn-gold{background:linear-gradient(135deg,#fbbf24,#f59e0b 50%,#d97706);color:#0b1120;font-weight:800;border-radius:9999px;box-shadow:0 8px 30px -6px rgba(245,158,11,.6);transition:.3s}
+.btn-gold:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 12px 40px -6px rgba(245,158,11,.85)}
+.btn-ghost{border:1px solid rgba(255,255,255,.18);border-radius:9999px;color:#e2e8f0;font-weight:700;transition:.3s;background:rgba(255,255,255,.03)}
+.btn-ghost:hover{border-color:#f59e0b;color:#fbbf24;background:rgba(245,158,11,.08)}
+.marq{display:flex;gap:2.5rem;width:max-content;animation:marq 55s linear infinite}
+@keyframes marq{to{transform:translateX(-50%)}}
+.ucard{--c:#f59e0b;position:relative;border-radius:1.5rem;padding:1px;height:100%;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 75%,transparent),rgba(255,255,255,.05) 40%,transparent);transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .3s ease-out;will-change:transform}
+.ucard .in{position:relative;overflow:hidden;height:100%;border-radius:calc(1.5rem - 1px);background:rgba(7,12,26,.84);padding:1.25rem;display:flex;flex-direction:column;gap:.9rem}
+.ucard .halo{position:absolute;left:-20%;right:-20%;top:12%;height:48%;background:radial-gradient(closest-side,color-mix(in srgb,var(--c) 50%,transparent),transparent);opacity:.5;transition:opacity .4s}
+.ucard:hover .halo{opacity:1}
+.ucard .cimg{transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.ucard:hover .cimg{transform:translateY(-8px) scale(1.05)}
+.tag{padding:.15rem .5rem;border-radius:.4rem;font-size:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fcd34d}
+.orb-ring{position:absolute;inset:0;margin:auto;border:1px solid color-mix(in srgb,var(--c) 40%,rgba(245,158,11,.2));border-radius:50%;animation:spin var(--d) linear infinite}
+.orb-ring i{position:absolute;top:-6px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--c);box-shadow:0 0 14px var(--c)}
+body.loading{overflow:hidden}
+#loader{background:radial-gradient(circle at 50% 40%,#10193a,#050914 70%);transition:opacity .9s ease,transform 1.1s cubic-bezier(.7,0,.3,1),visibility 0s .9s}
+#loader.done{opacity:0;transform:scale(1.4);visibility:hidden;pointer-events:none}
+#loader::before{content:"";position:absolute;left:0;top:0;width:2px;height:2px;border-radius:50%;box-shadow:8vw 12vh #fff,22vw 72vh #fffa,35vw 20vh #fff,48vw 88vh #fff8,61vw 9vh #fff,74vw 64vh #fffa,86vw 30vh #fff,93vw 82vh #fff8,14vw 44vh #fff6,67vw 41vh #fff6,40vw 55vh #fff5,82vw 8vh #fff;animation:tw 2.6s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.25}to{opacity:1}}
+.ld-stage{position:relative;width:11rem;height:11rem}
+.ld-bar{width:min(18rem,70vw);height:3px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:1.1rem}
+.ld-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a855f7,#f59e0b,#ef4444);box-shadow:0 0 12px #f59e0b}
+@property --c{syntax:'<color>';inherits:true;initial-value:#f59e0b}
+#stage{--c:#3b82f6;background:rgba(6,10,22,.8);transition:--c .7s ease}
+.st-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 70% at 72% 48%,color-mix(in srgb,var(--c) 40%,transparent),transparent 72%),radial-gradient(45% 50% at 8% 95%,color-mix(in srgb,var(--c) 20%,transparent),transparent)}
+#stArt{container-type:size;--px:0;--py:0;touch-action:pan-y}
+.st-kanji{position:absolute;right:2%;top:0;bottom:0;writing-mode:vertical-rl;font-family:'Shippori Mincho',serif;font-weight:900;font-size:clamp(2.6rem,8vw,5.6rem);line-height:1;letter-spacing:.05em;color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--c) 60%,transparent);opacity:.6;white-space:nowrap;translate:calc(var(--px)*-22px) calc(var(--py)*-10px);transition:translate .25s ease-out}
+.st-ring{position:absolute;left:50%;top:48%;translate:-50% -50%;border-radius:50%;border:1px dashed color-mix(in srgb,var(--c) 50%,transparent);animation:spin var(--d) linear infinite}
+.st-ring i{position:absolute;top:-5px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--c);box-shadow:0 0 14px var(--c)}
+.st-img{position:absolute;left:50%;bottom:0;height:100%;max-width:none;translate:calc(-50% + var(--px)*14px) calc(var(--py)*8px);filter:drop-shadow(0 22px 30px rgba(0,0,0,.7));animation:artIn .8s cubic-bezier(.16,1,.3,1) both,bob 6s ease-in-out .8s infinite;transition:translate .25s ease-out}
+@keyframes artIn{from{opacity:0;transform:translateX(calc(var(--dir,1)*70px)) scale(.94)}to{opacity:1;transform:none}}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.st-info>*{animation:swapIn .6s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i,0)*.05s)}
+.thumb{position:relative;width:3.5rem;height:3.5rem;border-radius:9999px;border:2px solid rgba(255,255,255,.14);overflow:hidden;background:#0b1224;opacity:.7;transition:.35s}
+.thumb img{width:100%;height:100%;object-fit:cover;object-position:top}
+.thumb:hover{opacity:1;transform:translateY(-3px)}
+.thumb.on{opacity:1;transform:scale(1.18);border-color:var(--tc);box-shadow:0 0 0 4px color-mix(in srgb,var(--tc) 25%,transparent),0 0 22px var(--tc)}
+.thumb.dim{opacity:.2;filter:grayscale(1)}
+.arrow{width:2.6rem;height:2.6rem;border-radius:9999px;border:1px solid rgba(255,255,255,.15);background:rgba(5,9,20,.6);color:#e2e8f0;transition:.25s}
+.arrow:hover{border-color:var(--c);color:var(--c)}
+.dbar{display:block;height:100%;width:0;border-radius:9999px;transition:width .7s cubic-bezier(.16,1,.3,1),background .5s}
+header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
+@keyframes spin{to{rotate:360deg}}
+.tl-dot{position:absolute;left:-2.4rem;top:.35rem;width:.9rem;height:.9rem;border-radius:50%;background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.15),0 0 18px #f59e0b}
+@media (prefers-reduced-motion:reduce){.marq,.orb-ring,.st-ring,.st-img,.shoot,.gold-text{animation:none}}
+</style>
+</head>
+<body class="bg-gwDarkBg text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 min-h-screen relative overflow-x-hidden loading">
+<div id="prog"></div><div id="glow"></div>
+<div id="loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-4 text-center">
+  <div class="ld-stage">
+    <div class="orb-ring" style="--c:#3b82f6;--d:6s;width:36%;height:36%"><i></i></div>
+    <div class="orb-ring" style="--c:#f59e0b;--d:9s;width:52%;height:52%;animation-direction:reverse"><i></i></div>
+    <div class="orb-ring" style="--c:#ef4444;--d:12s;width:68%;height:68%"><i></i></div>
+    <div class="orb-ring" style="--c:#10b981;--d:16s;width:84%;height:84%;animation-direction:reverse"><i></i></div>
+    <div class="orb-ring" style="--c:#a855f7;--d:21s;width:100%;height:100%"><i></i></div>
+    <div class="absolute inset-0 m-auto w-14 h-14 rounded-full bg-gradient-to-br from-amber-200 via-amber-500 to-amber-700 flex items-center justify-center font-serif font-black text-slate-950 sun-pulse">黄金</div>
+  </div>
+  <div class="gold-text font-serif text-2xl sm:text-3xl font-black tracking-[.25em] mt-9">GOLDEN GENERATION</div>
+  <div id="ldText" class="text-xs text-slate-400 mt-2 h-4">Menyalakan matahari emas…</div>
+  <div class="ld-bar"><i id="ldBar"></i></div>
+  <div id="ldPct" class="font-mono text-xs text-amber-400 mt-2">0%</div>
+</div>
+<span class="shoot" style="top:8%;left:78%"></span><span class="shoot" style="top:22%;left:96%;animation-delay:4.5s"></span>
+
+<!-- INTERACTIVE CANVAS (SOLAR SYSTEM ORBITS, TWINKLING STARS & CAMERA TRACKING) -->
     <canvas id="spaceCanvas" class="fixed inset-0 pointer-events-auto z-10 cursor-pointer"></canvas>
 
     <!-- ORBIT FOCUS TOP NAVIGATION OVERLAY BAR -->
@@ -137,7 +229,7 @@
             <i class="fa-solid fa-solar-system animate-pulse"></i> SOLAR ORBIT SYSTEM
         </span>
         <span class="text-slate-500">|</span>
-        <span id="orbitStatusText" class="text-xs text-slate-300 font-medium">Klik planet untuk melihat detail</span>
+        <span id="orbitStatusText" class="text-xs text-slate-300 font-medium">Klik planet • seret untuk memutar</span>
         <button onclick="toggleOrbitFocus()" class="ml-2 px-3.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 text-xs font-bold transition-all shadow-md">
             <i class="fa-solid fa-xmark mr-1"></i> Exit Orbit Mode
         </button>
@@ -204,199 +296,151 @@
         </div>
     </div>
 
-    <!-- MAIN UI WRAPPER CONTENT -->
-    <div id="mainUI" class="relative z-20">
+    
+<div id="mainUI" class="relative z-20">
 
-        <!-- TOP NAVIGATION BAR -->
-        <header class="sticky top-0 z-40 glass-card border-b border-amber-500/20 px-4 lg:px-8 py-3">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <!-- Logo -->
-                <a href="index.html" class="flex items-center space-x-3 group">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-red-600 p-0.5 shadow-lg group-hover:scale-110 transition-transform">
-                        <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center font-bold text-amber-400 font-serif text-lg">
-                            金
-                        </div>
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-bold tracking-wide text-white group-hover:text-amber-400 transition-colors">Golden Generation</h1>
-                        <p class="text-xs text-slate-400">ウマ娘 黄金世代 • 1998 Classic Era</p>
-                    </div>
-                </a>
+<!-- NAV -->
+<header class="fixed top-3 inset-x-0 z-40 px-3">
+  <div class="mx-auto max-w-5xl flex items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/70 backdrop-blur-md px-3 py-2 shadow-2xl">
+    <a href="index.html" class="flex items-center gap-2.5 group">
+      <span class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-red-600 p-0.5 group-hover:rotate-12 transition"><span class="w-full h-full rounded-full bg-slate-950 flex items-center justify-center font-serif font-bold text-amber-400">金</span></span>
+      <span class="hidden sm:block text-sm font-extrabold tracking-wide">Golden Generation</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1 text-xs font-semibold text-slate-300">
+      <a href="#members" class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Anggota</a>
+      <a href="#duel" class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Duel</a>
+      <a href="#timeline" class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Timeline</a>
+      <a href="#matrix" class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Matrix</a>
+      <a href="#orbit" class="px-3 py-1.5 rounded-full hover:bg-white/5 hover:text-amber-400 transition">Orbit</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <button onclick="toggleOrbitFocus()" class="btn-gold px-4 py-2 text-xs flex items-center gap-1.5"><i class="fa-solid fa-circle-nodes"></i> Orbit Mode</button>
+      <button onclick="toggleMobileMenu()" class="md:hidden w-9 h-9 rounded-full border border-white/10 text-slate-200"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden mx-auto max-w-5xl mt-2 rounded-3xl border border-white/10 bg-slate-950/95 p-4 grid grid-cols-2 gap-2 text-xs font-semibold">
+    <a href="#members" class="chip text-center">Anggota</a><a href="#duel" class="chip text-center">Duel</a><a href="#timeline" class="chip text-center">Timeline</a>
+    <a href="#matrix" class="chip text-center">Matrix</a><a href="#orbit" class="chip text-center">Orbit</a>
+    <a href="specialweek.html" class="chip text-center">Special Week</a><a href="grasswonder.html" class="chip text-center">Grass Wonder</a>
+    <a href="elcondorpasa.html" class="chip text-center">El Condor Pasa</a><a href="seiunsky.html" class="chip text-center">Seiun Sky</a>
+    <a href="kinghalo.html" class="chip text-center col-span-2">King Halo</a>
+  </div>
+</header>
 
-                <!-- Nav Links -->
-                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-xs font-medium text-slate-300">
-                    <a href="index.html" class="px-2.5 py-1.5 rounded-lg text-amber-400 bg-amber-500/10 border border-amber-500/30 font-bold"><i class="fa-solid fa-house mr-1"></i>Beranda</a>
-                    <span class="text-slate-700">|</span>
-                    <a href="specialweek.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">Special Week</a>
-                    <a href="grasswonder.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">Grass Wonder</a>
-                    <a href="elcondorpasa.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">El Condor Pasa</a>
-                    <a href="seiunsky.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">Seiun Sky</a>
-                    <a href="kinghalo.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">King Halo</a>
-                </nav>
+<!-- HERO -->
+<section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-16 relative">
+  <p class="reveal text-amber-400 tracking-[.4em] text-[10px] sm:text-xs uppercase font-bold mb-5"><i class="fa-solid fa-star mr-2"></i>Uma Musume • Classic Era 1998</p>
+  <h1 class="reveal gold-text font-serif font-black leading-none text-[clamp(4.2rem,17vw,12rem)]">黄金世代</h1>
+  <p class="reveal font-serif text-2xl md:text-5xl font-bold mt-2 text-white">Golden Generation</p>
+  <p class="reveal max-w-xl mx-auto mt-5 text-sm md:text-base text-slate-300 leading-relaxed">Lima gadis kuda legendaris, satu musim klasik yang mengubah sejarah Tracen Academy. Jelajahi mereka sebagai planet yang mengorbit satu matahari emas.</p>
+  <div class="reveal flex flex-wrap justify-center gap-3 mt-8">
+    <button onclick="toggleOrbitFocus()" class="btn-gold px-7 py-3.5 text-sm flex items-center gap-2"><i class="fa-solid fa-rocket"></i> Masuk Orbit Mode</button>
+    <a href="#members" class="btn-ghost px-7 py-3.5 text-sm flex items-center gap-2">Lihat Anggota <i class="fa-solid fa-arrow-down"></i></a>
+  </div>
+  <div id="heroChips" class="reveal flex flex-wrap justify-center gap-2 mt-8"></div>
+  <button id="bday" class="reveal chip mt-4 hidden"></button>
+  <div class="reveal grid grid-cols-3 gap-3 sm:gap-8 mt-12 w-full max-w-xl">
+    <div><div class="font-serif text-3xl sm:text-5xl font-black text-amber-400" data-count="5">0</div><div class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Bintang</div></div>
+    <div><div class="font-serif text-3xl sm:text-5xl font-black text-amber-400">1998</div><div class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Era Klasik</div></div>
+    <div><div id="g1Stat" class="font-serif text-3xl sm:text-5xl font-black text-amber-400" data-count="0">0</div><div class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Gelar G1</div></div>
+  </div>
+  <a href="#members" class="absolute bottom-6 text-slate-500 hover:text-amber-400 animate-bounce"><i class="fa-solid fa-chevron-down"></i></a>
+</section>
 
-                <!-- Trigger Focus Mode Button -->
-                <div class="flex items-center space-x-3">
-                    <button onclick="toggleOrbitFocus()" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-slate-950 transition-all shadow-md">
-                        <i class="fa-solid fa-solar-system"></i> Focus Orbit Mode
-                    </button>
-                    <button onclick="toggleMobileMenu()" id="mobileMenuBtn" class="md:hidden p-2 text-slate-300 hover:text-white focus:outline-none">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
-                </div>
-            </div>
+<!-- MARQUEE -->
+<div class="border-y border-white/5 bg-slate-950/60 py-4 overflow-hidden"><div id="marquee" class="marq text-xs font-bold uppercase tracking-widest text-slate-400"></div></div>
 
-            <!-- Mobile Navigation Menu -->
-            <div id="mobileMenu" class="hidden md:hidden mt-3 pt-3 border-t border-slate-800 flex flex-col space-y-2 text-sm">
-                <a href="index.html" class="px-3 py-2 rounded-lg bg-amber-500/20 text-amber-400 font-bold"><i class="fa-solid fa-house mr-2"></i>Beranda Utama (index.html)</a>
-                <div class="px-3 pt-1 text-[11px] font-bold uppercase text-slate-400 tracking-wider">Halaman Karakter:</div>
-                <div class="grid grid-cols-2 gap-1.5 px-1">
-                    <a href="specialweek.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-star text-[10px] mr-1"></i>Special Week</a>
-                    <a href="grasswonder.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-horse text-[10px] mr-1"></i>Grass Wonder</a>
-                    <a href="elcondorpasa.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-mask text-[10px] mr-1"></i>El Condor Pasa</a>
-                    <a href="seiunsky.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-cloud text-[10px] mr-1"></i>Seiun Sky</a>
-                    <a href="kinghalo.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-crown text-[10px] mr-1"></i>King Halo</a>
-                </div>
-            </div>
-        </header>
+<!-- MEMBERS -->
+<section id="members" class="max-w-6xl mx-auto px-4 lg:px-8 py-24">
+  <div class="reveal text-center mb-8">
+    <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">5 Members Showcase</span>
+    <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Konstelasi Golden Generation</h2>
+    <p class="text-xs text-slate-400 mt-3">Pilih karakter • geser / tombol panah • ← → di keyboard</p>
+  </div>
+  <div class="reveal flex flex-wrap justify-center gap-2 mb-6" id="filters">
+    <button class="chip on" onclick="filterStyle('all',this)">Semua Taktik</button>
+    <button class="chip" onclick="filterStyle('Nige',this)">Front-runner (逃げ)</button>
+    <button class="chip" onclick="filterStyle('Senko',this)">Pace Chaser (先行)</button>
+    <button class="chip" onclick="filterStyle('Sashi',this)">Betweener (差し)</button>
+    <button class="chip" onclick="filterStyle('Oikomi',this)">Chaser (追込)</button>
+  </div>
+  <div id="stage" class="reveal relative rounded-[2rem] border border-white/10 overflow-hidden">
+    <div class="st-bg"></div>
+    <div class="relative grid lg:grid-cols-2 items-center gap-4 p-5 sm:p-8 lg:p-12">
+      <div id="stInfo" class="st-info order-2 lg:order-1 space-y-4"></div>
+      <div class="order-1 lg:order-2 relative">
+        <div id="stArt" class="relative h-[21rem] sm:h-[30rem] w-full"></div>
+        <button class="arrow absolute left-0 top-1/2 -translate-y-1/2" onclick="stageStep(-1)" aria-label="Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="arrow absolute right-0 top-1/2 -translate-y-1/2" onclick="stageStep(1)" aria-label="Berikutnya"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </div>
+    <div id="stNav" class="relative flex justify-center gap-3 sm:gap-6 pb-7 px-4"></div>
+  </div>
+</section>
 
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+<!-- TIMELINE -->
+<section id="timeline" class="max-w-3xl mx-auto px-4 py-24">
+  <div class="reveal text-center mb-14">
+    <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">Classic Era</span>
+    <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Garis Waktu Kejayaan</h2>
+  </div>
+  <div id="tl" class="border-l border-amber-500/30 ml-3 pl-8 space-y-12"></div>
+</section>
 
-            <!-- HERO SECTION -->
-            <section id="hero" class="relative rounded-3xl glass-card border border-amber-500/30 p-6 md:p-10 overflow-hidden shadow-2xl reveal">
-                <!-- Background Kanji Overlay -->
-                <div class="absolute -right-10 -bottom-10 text-slate-800/20 text-9xl font-serif font-black select-none pointer-events-none">
-                    黄金世代
-                </div>
+<!-- DUEL -->
+<section id="duel" class="max-w-4xl mx-auto px-4 py-24">
+  <div class="reveal text-center mb-10">
+    <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">Head-to-Head</span>
+    <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Duel Dua Bintang</h2>
+    <p class="text-xs text-slate-400 mt-3">Pilih dua karakter lalu bandingkan data resminya</p>
+  </div>
+  <div class="reveal rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 sm:p-8">
+    <div class="grid grid-cols-[1fr_auto_1fr] items-start gap-3"><div id="duelA" class="text-center"></div><div class="font-serif text-3xl sm:text-5xl font-black text-amber-400 pt-6">VS</div><div id="duelB" class="text-center"></div></div>
+    <div id="duelBars" class="mt-8 space-y-4"></div>
+  </div>
+</section>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <!-- Text Intro Column -->
-                    <div class="lg:col-span-8 space-y-5">
-                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-extrabold uppercase tracking-widest">
-                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-                            Uma Musume Pretty Derby • Legendary Era
-                        </div>
+<!-- MATRIX -->
+<section id="matrix" class="max-w-6xl mx-auto px-4 py-24">
+  <div class="reveal text-center mb-10">
+    <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase">Comparison Matrix</span>
+    <h2 class="font-serif text-4xl md:text-5xl font-black mt-2">Perbandingan Spek &amp; Rekor</h2>
+  </div>
+  <div class="reveal overflow-x-auto rounded-3xl border border-white/10 bg-slate-950/70">
+    <table class="w-full text-left text-sm min-w-[820px]">
+      <thead class="text-[10px] uppercase tracking-widest text-slate-400 border-b border-white/10"><tr>
+        <th class="p-4">Karakter</th><th class="p-4">Gelar</th><th class="p-4">Taktik</th><th class="p-4">G1 Trophies</th><th class="p-4 w-40">Jumlah G1</th><th class="p-4 text-center">Aksi</th></tr></thead>
+      <tbody id="comparisonTableBody" class="divide-y divide-white/5"></tbody>
+    </table>
+  </div>
+</section>
 
-                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
-                            Golden Generation <br>
-                            <span class="kanji-gold-fire font-serif text-2xl sm:text-4xl lg:text-5xl mt-2 block">
-                                「黄金世代 — ５つの輝く星」
-                            </span>
-                        </h1>
+<!-- ORBIT CTA -->
+<section id="orbit" class="max-w-5xl mx-auto px-4 py-24">
+  <div class="reveal rounded-[2rem] border border-amber-500/20 bg-gradient-to-br from-slate-900/85 to-slate-950/95 overflow-hidden grid md:grid-cols-2 items-center">
+    <div class="p-8 md:p-12 space-y-5">
+      <span class="text-amber-400 text-xs font-bold tracking-[.3em] uppercase"><i class="fa-solid fa-atom mr-1"></i>Orbit Focus Mode</span>
+      <h2 class="font-serif text-3xl md:text-4xl font-black">Satu Matahari, Lima Planet</h2>
+      <p class="text-sm text-slate-300 leading-relaxed">Masuk ke tata surya 3D interaktif: seret untuk memutar kamera, klik planet untuk zoom dan membuka profil lengkap karakter.</p>
+      <button onclick="toggleOrbitFocus()" class="btn-gold px-7 py-3.5 text-sm inline-flex items-center gap-2"><i class="fa-solid fa-rocket"></i> Luncurkan Orbit</button>
+    </div>
+    <div class="h-72 md:h-[26rem] p-4 flex items-center justify-center">
+      <div id="miniOrbit" class="relative h-full aspect-square max-w-full">
+        <button onclick="toggleOrbitFocus()" aria-label="Orbit Mode" class="absolute inset-0 m-auto w-16 h-16 rounded-full bg-gradient-to-br from-amber-200 via-amber-500 to-amber-700 font-serif font-black text-slate-950 sun-pulse z-10">黄金</button>
+      </div>
+    </div>
+  </div>
+</section>
 
-                        <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
-                            Selamat datang di portal utama <b>Golden Generation (黄金世代)</b>. Pada musim balap klasik 1998, lima gadis kuda legendaris mengukir era keemasan paling ikonik di Akademi Tracen. Jelajahi kisah persaingan, gelar kejayaan G1, serta halaman khusus dari masing-masing karakter.
-                        </p>
-                    </div>
+<footer class="border-t border-white/10 bg-slate-950/80 px-4 py-10 text-center space-y-4">
+  <div class="flex flex-wrap justify-center gap-2 text-xs" id="footLinks"></div>
+  <p class="text-xs text-slate-400">Dipersembahkan untuk seluruh fans Golden Generation 1998 • Uma Musume: Pretty Derby</p>
+  <p class="text-[11px] text-slate-600">@Finwahyu • Single File HTML Web Portal</p>
+</footer>
+</div>
 
-                    <!-- Solar Orbit Emblem Badge Card (Trigger Button) -->
-                    <div class="lg:col-span-4 flex justify-center">
-                        <div class="relative w-full max-w-xs aspect-square rounded-3xl bg-slate-950/60 border border-amber-500/30 p-6 flex flex-col justify-between items-center overflow-hidden shadow-2xl group">
-                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <div class="w-28 h-28 rounded-full bg-gradient-to-tr from-amber-500 via-red-500 to-yellow-300 blur-xl opacity-30 animate-pulse"></div>
-                            </div>
+<script>
 
-                            <div class="w-full flex justify-between items-center z-10">
-                                <span class="text-xs font-bold text-amber-400 uppercase tracking-widest"><i class="fa-solid fa-atom mr-1"></i> Orbit System</span>
-                                <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">5 Stars</span>
-                            </div>
-
-                            <!-- Central Emblem Button -->
-                            <button onclick="toggleOrbitFocus()" class="relative z-10 text-center my-auto space-y-2 group/btn focus:outline-none cursor-pointer">
-                                <div class="w-20 h-20 mx-auto rounded-full bg-slate-900/90 border-2 border-amber-400 flex items-center justify-center text-amber-400 text-3xl font-serif font-black shadow-lg shadow-amber-500/20 group-hover/btn:scale-110 group-hover/btn:border-amber-300 transition-all duration-300 sun-pulse">
-                                    黄金
-                                </div>
-                                <h3 class="text-base font-bold text-white group-hover/btn:text-amber-400 transition-colors">5 Bintang Generasi Emas</h3>
-                                <span class="inline-block text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 group-hover/btn:bg-amber-500 group-hover:text-slate-950 transition-all">
-                                    Klik 「黄金」 untuk Orbit Focus Mode
-                                </span>
-                            </button>
-
-                            <div class="w-full text-center z-10 pt-2 border-t border-slate-800 text-[11px] text-amber-300/80">
-                                <i class="fa-solid fa-circle-nodes mr-1"></i> Live Orbit Visualizer Active
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 5 CHARACTER SHOWCASE (SIMETRIS ALIGN CENTER: 3 ATAS, 2 BAWAH) -->
-            <section id="karakter" class="space-y-8 reveal">
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-4">
-                    <div>
-                        <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 uppercase tracking-wider">
-                            <i class="fa-solid fa-star"></i> 5 Members Showcase
-                        </div>
-                        <h2 class="text-3xl font-extrabold text-white">Daftar Anggota Golden Generation</h2>
-                    </div>
-
-                    <!-- Taktik Filter Buttons -->
-                    <div class="flex flex-wrap gap-2 text-xs">
-                        <button onclick="filterStyle('all')" class="filter-btn px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold transition-all">Semua Taktik</button>
-                        <button onclick="filterStyle('Nige')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all">Front-runner (逃げ)</button>
-                        <button onclick="filterStyle('Senko')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all">Pace Chaser (先行)</button>
-                        <button onclick="filterStyle('Sashi')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all">Betweener (差し)</button>
-                        <button onclick="filterStyle('Oikomi')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all">Chaser (追込)</button>
-                    </div>
-                </div>
-
-                <!-- FLEX CONTAINER SIMETRIS (3 ATAS, 2 BAWAH TEPAT DI TENGAH) -->
-                <div id="characterGrid" class="flex flex-wrap justify-center gap-6 lg:gap-8 max-w-7xl mx-auto">
-                    <!-- Disuntikkan via JS -->
-                </div>
-            </section>
-
-            <!-- COMPARISON MATRIX SECTION -->
-            <section id="komparasi" class="space-y-6 reveal">
-                <div class="border-b border-slate-800 pb-4">
-                    <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 uppercase tracking-wider">
-                        <i class="fa-solid fa-chart-simple"></i> Comparison Matrix
-                    </div>
-                    <h2 class="text-3xl font-bold text-white">Tabel Perbandingan Spek & Rekor</h2>
-                </div>
-
-                <!-- Spec Table Transparan -->
-                <div class="glass-card rounded-2xl border border-slate-800 overflow-x-auto shadow-xl">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-950/80 text-xs uppercase tracking-wider text-amber-400 border-b border-slate-800">
-                            <tr>
-                                <th class="p-4">Karakter</th>
-                                <th class="p-4">Gelar Kehormatan</th>
-                                <th class="p-4">Taktik Balap</th>
-                                <th class="p-4">G1 Trophies Utama</th>
-                                <th class="p-4 text-center">Spesialisasi Rumput</th>
-                                <th class="p-4 text-center">Aksi / Link Halaman</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-800/60" id="comparisonTableBody">
-                            <!-- Diisi via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-        </main>
-
-        <!-- FOOTER -->
-        <footer class="border-t border-slate-800 bg-slate-950/90 mt-20 py-8 text-center text-xs text-slate-400 relative z-10">
-            <div class="max-w-7xl mx-auto px-4 space-y-3">
-                <div class="flex justify-center items-center space-x-2">
-                    <span class="font-bold text-white font-serif">Golden Generation Portal</span>
-                    <span>•</span>
-                    <span>Uma Musume: Pretty Derby</span>
-                </div>
-                <p class="max-w-xl mx-auto text-slate-400">
-                    Dipersembahkan untuk seluruh fans Golden Generation 1998 (Special Week, Grass Wonder, El Condor Pasa, Seiun Sky, King Halo).
-                </p>
-                <p class="text-amber-400/80 font-mono text-[11px]">
-                    @Finwahyu • Single File HTML Web Portal
-                </p>
-            </div>
-        </footer>
-
-    </div> <!-- END OF MAIN UI -->
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
         // -------------------------------------------------------------
         // 1. DATASET 5 KARAKTER GOLDEN GENERATION (UMA MUSUME WIKI DATA)
         // -------------------------------------------------------------
@@ -499,39 +543,126 @@
         ];
 
         // -------------------------------------------------------------
-        // 2. ORBIT FOCUS & CAMERA TRACKING GLOBAL STATE
+        // 2. ORBIT 3D ENGINE (proyeksi perspektif ringan, tanpa library)
         // -------------------------------------------------------------
+        // Dunia: matahari di (0,0,0), orbit berada di bidang XZ dengan inklinasi kecil.
+        // Kamera: yaw (putar horizontal), pitch (elevasi; PI/2 = tampak atas = tampilan 2D lama).
         let isFocused = false;
         let focusedPlanetIndex = null;
 
-        let currentZoom = 1.0;
-        let targetZoom = 1.0;
+        const TAU = Math.PI * 2;
+        const TOP_PITCH = Math.PI / 2;     // tampak atas (mode normal)
+        const FOCUS_PITCH = 0.95;          // miring ~54° saat Orbit Mode
+        const SELECT_ZOOM = 2.2;
+        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        let camX = 0;
-        let camY = 0;
-        let targetCamX = 0;
-        let targetCamY = 0;
+        // Kamera (nilai aktual) & target (di-ease tiap frame)
+        let yaw = 0, pitch = TOP_PITCH, zoom = 1, offY = 0;
+        let tYaw = 0, tPitch = TOP_PITCH;
+        let tx = 0, ty = 0, tz = 0;        // titik yang dilihat kamera (world space)
+        let focusBlend = 0;                // 0 = mode normal, 1 = Orbit Mode (untuk fade/ukuran)
+        let timeScale = 1;
+        let lastInteract = -1e9;
 
-        // Orbit System Angles & Keplerian Dynamics Speeds (v ∝ 1/√r)
+        // Orbit: sudut, kecepatan Kepler (v ∝ 1/√r), radius relatif, kemiringan bidang orbit
         const planetAngles = [0, 1.2, 2.4, 3.6, 4.8];
-        const keplerSpeeds = [0.003, 0.00175, 0.001125, 0.00075, 0.0004525];
-        const radiiFactors = [0.24, 0.42, 0.60, 0.78, 0.96]; // Clean fit without clipping outer orbit
-        const currentPlanetPos = goldenMembers.map(() => ({ x: 0, y: 0 }));
+        const keplerSpeeds = [0.003, 0.00175, 0.001125, 0.00075, 0.0004525]; // rad/frame @60fps
+        const radiiFactors = [0.24, 0.42, 0.60, 0.78, 0.96];
+        const orbitTilt = [
+            { x: 0.00, z: 0.00 }, { x: 0.10, z: 0.05 }, { x: -0.13, z: 0.08 },
+            { x: 0.17, z: -0.06 }, { x: -0.08, z: -0.12 }
+        ];
+        const orbitCS = orbitTilt.map(t => ({ cx: Math.cos(t.x), sx: Math.sin(t.x), cz: Math.cos(t.z), sz: Math.sin(t.z) }));
+
+        // Titik orbit (unit) -> dihitung sekali
+        const ORB_N = 96;
+        function orbitUnit(i, a, out, o) {
+            const c = orbitCS[i];
+            const x = Math.cos(a), z = Math.sin(a);
+            const y1 = -z * c.sx, z1 = z * c.cx;                  // rotasi sumbu X
+            out[o]     = x * c.cz - y1 * c.sz;                    // rotasi sumbu Z
+            out[o + 1] = x * c.sz + y1 * c.cz;
+            out[o + 2] = z1;
+        }
+        const orbitUnits = radiiFactors.map((_, i) => {
+            const arr = new Float32Array((ORB_N + 1) * 3);
+            for (let j = 0; j <= ORB_N; j++) orbitUnit(i, (j / ORB_N) * TAU, arr, j * 3);
+            return arr;
+        });
+        const orbX = new Float32Array(ORB_N + 1), orbY = new Float32Array(ORB_N + 1), orbD = new Float32Array(ORB_N + 1);
+
+        // Posisi planet (world) & hasil proyeksi layar (dipakai juga untuk hit-test)
+        const worldPos = goldenMembers.map(() => ({ x: 0, y: 0, z: 0 }));
+        const screenPos = goldenMembers.map(() => ({ x: 0, y: 0, s: 1, d: 0, r: 0 }));
+        const sunScr = { x: 0, y: 0, s: 1, d: 0 };
+        const selBlend = goldenMembers.map(() => 0);
+        const drawOrder = [0, 1, 2, 3, 4, 5]; // 5 = matahari
 
         // -------------------------------------------------------------
-        // 3. CANVAS ANIMATION LOOP (CELESTIAL SUN, PLANETS & LERP CAMERA)
+        // 3. SPRITE CACHE (glow & bola 3D di-render sekali -> tanpa shadowBlur)
         // -------------------------------------------------------------
+        function mkCanvas(sz) { const c = document.createElement('canvas'); c.width = c.height = sz; return c; }
+        function hexRgb(h) { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+        function mixRgb(c, t, a) { return c.map((v, i) => Math.round(v + (t[i] - v) * a)); }
+
+        function makeBodySprite(hex) {
+            const S = 96, c = mkCanvas(S), g = c.getContext('2d'), rgb = hexRgb(hex);
+            const gr = g.createRadialGradient(S * 0.36, S * 0.33, S * 0.03, S / 2, S / 2, S / 2);
+            gr.addColorStop(0, `rgb(${mixRgb(rgb, [255, 255, 255], 0.65)})`);
+            gr.addColorStop(0.5, hex);
+            gr.addColorStop(1, `rgb(${mixRgb(rgb, [0, 0, 0], 0.5)})`);
+            g.fillStyle = gr; g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 1, 0, TAU); g.fill();
+            return c;
+        }
+        function makeGlowSprite(hex) {
+            const S = 128, c = mkCanvas(S), g = c.getContext('2d'), [r, gg, b] = hexRgb(hex);
+            const gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+            gr.addColorStop(0, `rgba(${r},${gg},${b},0.7)`);
+            gr.addColorStop(0.25, `rgba(${r},${gg},${b},0.32)`);
+            gr.addColorStop(1, `rgba(${r},${gg},${b},0)`);
+            g.fillStyle = gr; g.fillRect(0, 0, S, S);
+            return c;
+        }
+        const bodySprites = goldenMembers.map(m => makeBodySprite(m.color));
+        const glowSprites = goldenMembers.map(m => makeGlowSprite(m.color));
+
+        const sunCoreSprite = (() => {
+            const S = 96, c = mkCanvas(S), g = c.getContext('2d');
+            const gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+            gr.addColorStop(0, '#FEF08A'); gr.addColorStop(0.4, '#F59E0B'); gr.addColorStop(1, '#D97706');
+            g.fillStyle = gr; g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 1, 0, TAU); g.fill();
+            return c;
+        })();
+        const sunGlowSprite = (() => {
+            const S = 128, c = mkCanvas(S), g = c.getContext('2d');
+            const gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+            gr.addColorStop(0, 'rgba(254,240,138,0.95)');
+            gr.addColorStop(0.18, 'rgba(245,158,11,0.9)');
+            gr.addColorStop(0.5, 'rgba(239,68,68,0.4)');
+            gr.addColorStop(1, 'rgba(245,158,11,0)');
+            g.fillStyle = gr; g.fillRect(0, 0, S, S);
+            return c;
+        })();
+
+        // -------------------------------------------------------------
+        // 4. CANVAS LOOP (kamera orbit 3D + render)
+        // -------------------------------------------------------------
+        const modalEl = document.getElementById('planetModal');
+        const topBarEl = document.getElementById('orbitTopBar');
         const canvas = document.getElementById('spaceCanvas');
         const ctx = canvas.getContext('2d');
+        let W = 0, H = 0, dpr = 1;
 
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            W = window.innerWidth; H = window.innerHeight;
+            canvas.width = Math.round(W * dpr);
+            canvas.height = Math.round(H * dpr);
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Background Twinkling Stars
+        // Background Twinkling Stars (dengan parallax halus mengikuti kamera)
         const stars = [];
         for (let i = 0; i < 90; i++) {
             stars.push({
@@ -544,214 +675,285 @@
             });
         }
 
-        function animateCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Proyeksi perspektif: world -> layar. Hasil ditulis ke `out` (tanpa alokasi).
+        let camCY = 0, camSY = 0, camCP = 0, camSP = 0, camD = 1000, camCx = 0, camCy = 0;
+        function project(x, y, z, out) {
+            const dx = x - tx, dy = y - ty, dz0 = z - tz;
+            const x1 = dx * camCY + dz0 * camSY;
+            const z1 = -dx * camSY + dz0 * camCY;
+            const dz = z1 * camCP + dy * camSP;            // + = mendekati kamera
+            const sy = z1 * camSP - dy * camCP;
+            let den = camD - dz;
+            if (den < camD * 0.25) den = camD * 0.25;
+            const s = zoom * camD / den;
+            out.x = camCx + x1 * s;
+            out.y = camCy - offY + sy * s;
+            out.s = s;
+            out.d = dz;
+        }
 
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
+        const clamp01 = v => v < 0 ? 0 : (v > 1 ? 1 : v);
+        let lastTs = performance.now();
+        const _p = { x: 0, y: 0, s: 1, d: 0 };
 
-            // 1. Render Background Twinkling Stars (Screen Space)
-            stars.forEach(s => {
-                if (s.increasing) {
-                    s.alpha += s.speed;
-                    if (s.alpha >= 0.85) s.increasing = false;
-                } else {
-                    s.alpha -= s.speed;
-                    if (s.alpha <= 0.15) s.increasing = true;
-                }
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
-                ctx.fill();
-            });
+        function animateCanvas(ts) {
+            const dt = Math.min((ts - lastTs) / 1000, 0.05);
+            lastTs = ts;
+            const t = ts / 1000;
+            const k = rate => 1 - Math.exp(-rate * dt);   // ease berbasis waktu (stabil di 60/120/144Hz)
 
-            // 2. Compute Max Radius cleanly fitting screen
-            const maxRadius = Math.min(canvas.width, canvas.height) * 0.38;
+            // ---------- state ----------
+            focusBlend += ((isFocused ? 1 : 0) - focusBlend) * k(3.2);
+            const fb = focusBlend;
+            const hasSel = isFocused && focusedPlanetIndex !== null;
+            timeScale += ((hasSel ? 0.55 : 1) - timeScale) * k(2.5);
 
-            // Update planet position coordinates in World Space
-            goldenMembers.forEach((_, i) => {
-                planetAngles[i] += keplerSpeeds[i];
+            const maxRadius = Math.min(W, H) * 0.38;
+            camD = maxRadius * 3.2;                         // kekuatan perspektif relatif terhadap ukuran scene
+            camCx = W / 2; camCy = H / 2;
+
+            for (let i = 0; i < goldenMembers.length; i++) {
+                planetAngles[i] += keplerSpeeds[i] * 60 * dt * timeScale;
+                selBlend[i] += ((focusedPlanetIndex === i ? 1 : 0) - selBlend[i]) * k(5);
                 const r = radiiFactors[i] * maxRadius;
-                currentPlanetPos[i].x = centerX + Math.cos(planetAngles[i]) * r;
-                currentPlanetPos[i].y = centerY + Math.sin(planetAngles[i]) * r;
-            });
-
-            // 3. Update Camera Target (Smooth LERP)
-            if (isFocused && focusedPlanetIndex !== null) {
-                targetZoom = 2.0;
-                targetCamX = currentPlanetPos[focusedPlanetIndex].x;
-                // Offset camera target slightly downwards so planet floats safely in upper viewport above modal
-                targetCamY = currentPlanetPos[focusedPlanetIndex].y + (70 / currentZoom);
-            } else {
-                targetZoom = 1.0;
-                targetCamX = centerX;
-                targetCamY = centerY;
+                const u = orbitUnitTmp;
+                orbitUnit(i, planetAngles[i], u, 0);
+                worldPos[i].x = u[0] * r; worldPos[i].y = u[1] * r; worldPos[i].z = u[2] * r;
             }
 
-            // Smooth Interpolation (LERP)
-            camX += (targetCamX - camX) * 0.08;
-            camY += (targetCamY - camY) * 0.08;
-            currentZoom += (targetZoom - currentZoom) * 0.08;
+            // ---------- kamera ----------
+            if (isFocused && !reduceMotion && !dragging && (ts - lastInteract) > 1800) {
+                tYaw += (hasSel ? 0.07 : 0.11) * dt;       // auto-rotate pelan, berhenti sebentar setelah user drag
+            }
+            // Area kosong = ruang antara top bar dan modal; planet diletakkan di tengahnya
+            let goalZoom = 1, goalOffY = 0;
+            if (hasSel) {
+                const areaTop = 16 + topBarEl.offsetHeight + 14;
+                const areaBottom = Math.max(areaTop + 90, H - 24 - modalEl.offsetHeight - 14);
+                const freeH = areaBottom - areaTop;
+                goalZoom = freeH < 230 ? 1.7 : SELECT_ZOOM;      // ruang sempit (HP) -> zoom lebih kecil
+                goalOffY = Math.max(0, H / 2 - (areaTop + areaBottom) / 2);
+            }
+            const goalX = hasSel ? worldPos[focusedPlanetIndex].x : 0;
+            const goalY = hasSel ? worldPos[focusedPlanetIndex].y : 0;
+            const goalZ = hasSel ? worldPos[focusedPlanetIndex].z : 0;
 
-            // 4. Apply World Camera Transform
-            ctx.save();
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-            ctx.scale(currentZoom, currentZoom);
-            ctx.translate(-camX, -camY);
+            yaw   += (tYaw - yaw) * k(3.0);
+            pitch += (tPitch - pitch) * k(3.0);
+            zoom  += (goalZoom - zoom) * k(3.2);
+            offY  += (goalOffY - offY) * k(4.0);
+            tx += (goalX - tx) * k(3.8);
+            ty += (goalY - ty) * k(3.8);
+            tz += (goalZ - tz) * k(3.8);
 
-            // 5. Draw 5 Concentric Golden Orbits
-            radiiFactors.forEach((factor, i) => {
-                const r = factor * maxRadius;
-                const isPlanetFocused = (focusedPlanetIndex === i);
+            camCY = Math.cos(yaw); camSY = Math.sin(yaw);
+            camCP = Math.cos(pitch); camSP = Math.sin(pitch);
 
+            // ---------- render ----------
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, W, H);
+
+            // 1) bintang (screen space + parallax)
+            const pox = yaw * 16, poy = (pitch - TOP_PITCH) * 40;
+            for (let n = 0; n < stars.length; n++) {
+                const s = stars[n];
+                if (s.increasing) { s.alpha += s.speed * 60 * dt; if (s.alpha >= 0.85) s.increasing = false; }
+                else { s.alpha -= s.speed * 60 * dt; if (s.alpha <= 0.15) s.increasing = true; }
+                let sx = (s.x - pox * s.r) % W; if (sx < 0) sx += W;
+                let sy = (s.y - poy * s.r) % H; if (sy < 0) sy += H;
+                ctx.globalAlpha = s.alpha;
+                ctx.fillStyle = '#fff';
                 ctx.beginPath();
-                ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
-                ctx.strokeStyle = isPlanetFocused ? 'rgba(245, 158, 11, 0.7)' : (isFocused ? 'rgba(245, 158, 11, 0.35)' : 'rgba(245, 158, 11, 0.12)');
-                ctx.lineWidth = isPlanetFocused ? 2.5 : (isFocused ? 1.5 : 1);
-                ctx.setLineDash(isFocused ? [6, 6] : []);
+                ctx.arc(sx, sy, s.r, 0, TAU);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+
+            // 2) proyeksi matahari & planet
+            project(0, 0, 0, sunScr);
+            for (let i = 0; i < goldenMembers.length; i++) {
+                const w = worldPos[i];
+                project(w.x, w.y, w.z, screenPos[i]);
+            }
+
+            // 3) orbit emas (separuh belakang lebih redup -> kesan kedalaman)
+            ctx.lineJoin = 'round';
+            for (let i = 0; i < radiiFactors.length; i++) {
+                const r = radiiFactors[i] * maxRadius;
+                const u = orbitUnits[i];
+                for (let j = 0; j <= ORB_N; j++) {
+                    project(u[j * 3] * r, u[j * 3 + 1] * r, u[j * 3 + 2] * r, _p);
+                    orbX[j] = _p.x; orbY[j] = _p.y; orbD[j] = _p.d;
+                }
+                const sel = selBlend[i];
+                const a = 0.12 + 0.23 * fb + 0.35 * sel;
+                ctx.lineWidth = 1 + 0.5 * fb + 1.0 * sel;
+                const backA = a * (1 - 0.65 * fb);
+                for (let pass = 0; pass < 2; pass++) {
+                    const far = pass === 0;
+                    ctx.strokeStyle = `rgba(245,158,11,${far ? backA : a})`;
+                    ctx.beginPath();
+                    let pen = false;
+                    for (let j = 0; j < ORB_N; j++) {
+                        if (((orbD[j] + orbD[j + 1]) < 0) === far) {
+                            if (!pen) { ctx.moveTo(orbX[j], orbY[j]); pen = true; }
+                            ctx.lineTo(orbX[j + 1], orbY[j + 1]);
+                        } else pen = false;
+                    }
+                    ctx.stroke();
+                }
+            }
+
+            // 4) tether ke matahari untuk planet terpilih (garis putus-putus "mengalir")
+            for (let i = 0; i < goldenMembers.length; i++) {
+                const sel = selBlend[i];
+                if (sel < 0.02) continue;
+                const sp = screenPos[i];
+                ctx.globalAlpha = sel * 0.9;
+                ctx.beginPath();
+                ctx.moveTo(sunScr.x, sunScr.y);
+                ctx.lineTo(sp.x, sp.y);
+                ctx.strokeStyle = goldenMembers[i].color;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([4, 4]);
+                ctx.lineDashOffset = -t * 14;
                 ctx.stroke();
                 ctx.setLineDash([]);
-            });
-
-            // 6. Draw Celestial Sun in Center (Native Canvas Render)
-            if (isFocused) {
-                // Sun Corona Flare Outer Glow
-                const coronaGrad = ctx.createRadialGradient(centerX, centerY, 10, centerX, centerY, 55);
-                coronaGrad.addColorStop(0, 'rgba(245, 158, 11, 0.9)');
-                coronaGrad.addColorStop(0.5, 'rgba(239, 68, 68, 0.4)');
-                coronaGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
-
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, 55, 0, Math.PI * 2);
-                ctx.fillStyle = coronaGrad;
-                ctx.fill();
-
-                // Radiant Sun Core
-                const coreGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 24);
-                coreGrad.addColorStop(0, '#FEF08A');
-                coreGrad.addColorStop(0.4, '#F59E0B');
-                coreGrad.addColorStop(1, '#D97706');
-
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, 24, 0, Math.PI * 2);
-                ctx.fillStyle = coreGrad;
-                ctx.shadowColor = '#F59E0B';
-                ctx.shadowBlur = 20;
-                ctx.fill();
-                ctx.shadowBlur = 0;
-
-                // Kanji Text in Sun Core
-                ctx.font = 'bold 13px "Shippori Mincho", serif';
-                ctx.fillStyle = '#0B1120';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('黄金', centerX, centerY);
+                ctx.globalAlpha = 1;
             }
 
-            // 7. Draw Planets, Energy Tethers & Name Badges
-            goldenMembers.forEach((chara, i) => {
-                const px = currentPlanetPos[i].x;
-                const py = currentPlanetPos[i].y;
-                const isSelected = (focusedPlanetIndex === i);
+            // 5) benda langit, urut dari yang terjauh (painter's algorithm)
+            const depthOf = id => id === 5 ? sunScr.d : screenPos[id].d;
+            drawOrder.sort((p, q) => depthOf(p) - depthOf(q));
 
-                // Laser Tether Beam to Sun if Selected
-                if (isFocused && isSelected) {
-                    ctx.beginPath();
-                    ctx.moveTo(centerX, centerY);
-                    ctx.lineTo(px, py);
-                    ctx.strokeStyle = chara.color;
-                    ctx.lineWidth = 2;
-                    ctx.setLineDash([4, 4]);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
+            for (let n = 0; n < drawOrder.length; n++) {
+                const id = drawOrder[n];
+
+                if (id === 5) {                                  // ---- matahari ----
+                    if (fb < 0.01) continue;
+                    const s = sunScr.s;
+                    const pulse = 1 + 0.04 * Math.sin(t * 2);
+                    const gs = 110 * s * pulse;
+                    ctx.globalAlpha = fb;
+                    ctx.drawImage(sunGlowSprite, sunScr.x - gs / 2, sunScr.y - gs / 2, gs, gs);
+                    const cs = 48 * s;
+                    ctx.drawImage(sunCoreSprite, sunScr.x - cs / 2, sunScr.y - cs / 2, cs, cs);
+                    ctx.font = `bold ${Math.max(8, Math.round(13 * s))}px "Shippori Mincho", serif`;
+                    ctx.fillStyle = '#0B1120';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('黄金', sunScr.x, sunScr.y);
+                    ctx.globalAlpha = 1;
+                    continue;
                 }
 
-                // Planet Body Glow
-                ctx.beginPath();
-                ctx.arc(px, py, isSelected ? 11 : (isFocused ? 8 : 6), 0, Math.PI * 2);
-                ctx.fillStyle = chara.color;
-                ctx.shadowColor = chara.color;
-                ctx.shadowBlur = isSelected ? 30 : (isFocused ? 14 : 6);
-                ctx.fill();
-                ctx.shadowBlur = 0;
+                // ---- planet ----
+                const i = id, chara = goldenMembers[i], sp = screenPos[i], sel = selBlend[i];
+                const rb = (6 + 2 * fb + 3.2 * sel) * sp.s;      // radius bola (px)
+                sp.r = rb;
+                const front = clamp01(sp.d / (camD * 0.2) * 0.5 + 0.5);    // 0 = jauh, 1 = dekat
+                const dim = 1 - 0.35 * fb * (1 - front) * (1 - sel);
 
-                // Pulsing Target Ring for Selected Planet
-                if (isSelected) {
+                // glow
+                const gs = rb * (4 + 2.2 * sel + 0.8 * fb);
+                ctx.globalAlpha = Math.min(1, (0.45 + 0.3 * fb + 0.25 * sel) * dim);
+                ctx.drawImage(glowSprites[i], sp.x - gs / 2, sp.y - gs / 2, gs, gs);
+                // bola
+                ctx.globalAlpha = dim;
+                ctx.drawImage(bodySprites[i], sp.x - rb, sp.y - rb, rb * 2, rb * 2);
+
+                // ring target (berdenyut)
+                if (sel > 0.02) {
+                    ctx.globalAlpha = sel;
                     ctx.beginPath();
-                    ctx.arc(px, py, 18, 0, Math.PI * 2);
+                    ctx.arc(sp.x, sp.y, rb + (7 + 1.5 * Math.sin(t * 3.2)) , 0, TAU);
                     ctx.strokeStyle = '#FFFFFF';
                     ctx.lineWidth = 1.5;
                     ctx.stroke();
                 }
 
-                // Name Badges
-                if (isFocused) {
-                    ctx.font = isSelected ? 'extrabold 12px "Plus Jakarta Sans", sans-serif' : 'bold 11px "Plus Jakarta Sans", sans-serif';
-                    const textWidth = ctx.measureText(chara.name).width;
-
-                    // Badge Pill Background
-                    ctx.fillStyle = isSelected ? 'rgba(15, 23, 42, 0.95)' : 'rgba(15, 23, 42, 0.75)';
+                // label nama
+                if (fb > 0.03) {
+                    const isSel = sel > 0.5;
+                    ctx.font = isSel ? '800 13px "Plus Jakarta Sans", sans-serif' : '700 11px "Plus Jakarta Sans", sans-serif';
+                    const tw = ctx.measureText(chara.name).width;
+                    const bx = sp.x + rb + 9, by = sp.y - 11;
+                    ctx.globalAlpha = fb * (isSel ? 1 : 0.5 + 0.5 * front);
+                    ctx.fillStyle = 'rgba(15,23,42,0.88)';
                     ctx.beginPath();
-                    ctx.roundRect(px + 14, py - 11, textWidth + 14, 22, 6);
+                    if (ctx.roundRect) ctx.roundRect(bx, by, tw + 14, 22, 6); else ctx.rect(bx, by, tw + 14, 22);
                     ctx.fill();
                     ctx.strokeStyle = chara.color;
-                    ctx.lineWidth = isSelected ? 1.5 : 1;
+                    ctx.lineWidth = isSel ? 1.5 : 1;
                     ctx.stroke();
-
-                    // Text
                     ctx.fillStyle = '#FFFFFF';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(chara.name, px + 21, py);
+                    ctx.fillText(chara.name, bx + 7, sp.y);
                 }
-            });
-
-            ctx.restore(); // Restore Canvas Camera Transform
+                ctx.globalAlpha = 1;
+            }
 
             requestAnimationFrame(animateCanvas);
         }
-
-        // Start Animation Loop
-        animateCanvas();
+        const orbitUnitTmp = new Float32Array(3);
+        let dragging = false;
+        requestAnimationFrame(animateCanvas);
 
         // -------------------------------------------------------------
-        // 4. CANVAS CLICK HIT-TESTING (WORLD SPACE DETECT)
+        // 4b. POINTER: tap = pilih planet / matahari, drag = putar kamera 3D
         // -------------------------------------------------------------
-        canvas.addEventListener('click', (e) => {
+        let drag = null;
+        canvas.addEventListener('pointerdown', (e) => {
+            drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, lx: e.clientX, ly: e.clientY, moved: false };
+            try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+        });
+        canvas.addEventListener('pointermove', (e) => {
+            if (!drag || drag.id !== e.pointerId) return;
+            if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 6) drag.moved = true;
+            if (drag.moved && isFocused) {
+                dragging = true;
+                lastInteract = performance.now();
+                tYaw += (e.clientX - drag.lx) * 0.006;
+                tPitch = Math.max(0.3, Math.min(1.45, tPitch + (e.clientY - drag.ly) * 0.005));
+            }
+            drag.lx = e.clientX; drag.ly = e.clientY;
+        });
+        function endDrag(e, isUp) {
+            if (!drag || drag.id !== e.pointerId) return;
+            const wasTap = isUp && !drag.moved;
+            drag = null; dragging = false;
+            lastInteract = performance.now();
+            if (wasTap) handleCanvasTap(e.clientX, e.clientY);
+        }
+        canvas.addEventListener('pointerup', (e) => endDrag(e, true));
+        canvas.addEventListener('pointercancel', (e) => endDrag(e, false));
+
+        function handleCanvasTap(clientX, clientY) {
             const rect = canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
+            const px = clientX - rect.left, py = clientY - rect.top;
 
-            // Transform Screen Coordinates to World Coordinates
-            const worldX = (clickX - canvas.width / 2) / currentZoom + camX;
-            const worldY = (clickY - canvas.height / 2) / currentZoom + camY;
-
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-
-            // Check distance to Central Sun
-            const distToSun = Math.hypot(worldX - centerX, worldY - centerY);
-            if (distToSun < 35) {
+            // Matahari (toggle mode)
+            if (Math.hypot(px - sunScr.x, py - sunScr.y) < Math.max(30, 35 * sunScr.s)) {
                 toggleOrbitFocus();
                 return;
             }
+            if (!isFocused) return;
 
-            // In Orbit Focus Mode: Check Distance to Planets
-            if (isFocused) {
-                let clickedIndex = -1;
-                goldenMembers.forEach((_, i) => {
-                    const dist = Math.hypot(worldX - currentPlanetPos[i].x, worldY - currentPlanetPos[i].y);
-                    if (dist < (28 / currentZoom)) {
-                        clickedIndex = i;
-                    }
-                });
-
-                if (clickedIndex !== -1) {
-                    selectPlanet(clickedIndex);
-                } else if (distToSun >= 35) {
-                    resetCamera();
+            // Planet: ambil yang terdekat ke kamera bila bertumpuk
+            let best = -1, bestD = -Infinity;
+            for (let i = 0; i < goldenMembers.length; i++) {
+                const sp = screenPos[i];
+                if (Math.hypot(px - sp.x, py - sp.y) < Math.max(28, sp.r + 14) && sp.d > bestD) {
+                    best = i; bestD = sp.d;
                 }
             }
+            if (best !== -1) selectPlanet(best); else resetCamera();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape' || !isFocused) return;
+            if (focusedPlanetIndex !== null) resetCamera(); else toggleOrbitFocus();
         });
 
         // -------------------------------------------------------------
@@ -765,10 +967,17 @@
             if (isFocused) {
                 topBar.classList.remove('opacity-0', 'pointer-events-none');
                 topBar.classList.add('opacity-100', 'pointer-events-auto');
+                // Masuk: kamera miring ke perspektif 3D sambil berputar sedikit (swoosh)
+                tPitch = FOCUS_PITCH;
+                tYaw = yaw + (reduceMotion ? 0 : 0.9);
+                lastInteract = performance.now();
             } else {
                 topBar.classList.add('opacity-0', 'pointer-events-none');
                 topBar.classList.remove('opacity-100', 'pointer-events-auto');
                 resetCamera();
+                // Keluar: kembali ke tampak atas lewat jalur putar terpendek
+                tPitch = TOP_PITCH - 0.5 * scrollP;
+                tYaw = Math.round(tYaw / TAU) * TAU + scrollP * 1.3;
             }
         }
 
@@ -799,11 +1008,14 @@
             const modal = document.getElementById('planetModal');
             modal.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-8');
             modal.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            // Retrigger animasi isi modal tiap ganti planet
+            modal.classList.remove('modal-swap');
+            void modal.offsetWidth;
+            modal.classList.add('modal-swap');
         }
 
         function resetCamera() {
             focusedPlanetIndex = null;
-            targetZoom = 1.0;
             const modal = document.getElementById('planetModal');
             if (modal) {
                 modal.classList.add('opacity-0', 'pointer-events-none', 'translate-y-8');
@@ -811,7 +1023,7 @@
             }
             const statusText = document.getElementById('orbitStatusText');
             if (statusText) {
-                statusText.textContent = "Klik planet untuk melihat detail";
+                statusText.textContent = "Klik planet • seret untuk memutar";
             }
         }
 
@@ -822,123 +1034,240 @@
             }
         }
 
+
         // -------------------------------------------------------------
-        // 6. RENDER 5 CHARACTER SHOWCASE CARDS (SIMETRIS) & TABLE
+        // 6. UI BARU (kartu, timeline, matrix, animasi scroll)
         // -------------------------------------------------------------
-        function renderCards(filter = 'all') {
-            const grid = document.getElementById('characterGrid');
-            if (!grid) return;
-            grid.innerHTML = '';
+        let scrollP = 0;
+        const $ = id => document.getElementById(id);
+        const g1Total = goldenMembers.reduce((n, c) => n + c.g1Titles.length, 0);
+        $('g1Stat').dataset.count = g1Total;
 
-            goldenMembers.forEach((chara) => {
-                if (filter !== 'all' && chara.styleTag !== filter) return;
+        const revealObs = new IntersectionObserver(es => es.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('active'); revealObs.unobserve(e.target); }
+        }), { threshold: 0.12 });
+        const countObs = new IntersectionObserver(es => es.forEach(e => {
+            if (!e.isIntersecting) return;
+            countObs.unobserve(e.target);
+            const to = +e.target.dataset.count, t0 = performance.now();
+            (function step(now) {
+                const p = Math.min((now - t0) / 1200, 1);
+                e.target.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
+                if (p < 1) requestAnimationFrame(step);
+            })(t0);
+        }), { threshold: 0.6 });
 
-                const isGrass = (chara.name === "Grass Wonder");
-                const card = document.createElement('div');
-                card.className = "w-full sm:w-[350px] glass-card glass-card-interactive rounded-2xl p-6 flex flex-col justify-between border border-slate-800/80 relative overflow-hidden group";
+        // Lompat dari kartu/chip langsung ke planet di Orbit Mode
+        function enterOrbitAt(i) {
+            const was = isFocused;
+            if (!was) toggleOrbitFocus();
+            setTimeout(() => { if (isFocused) selectPlanet(i); }, was ? 0 : 900);
+        }
 
-                card.innerHTML = `
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center z-10 relative">
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                                ${chara.styleLabel}
-                            </span>
-                            <span class="text-xs text-slate-400 font-mono">#0${chara.id + 1}</span>
-                        </div>
+        // ---------- STAGE KARAKTER ----------
+        const N = goldenMembers.length;
+        let cur = 0, filterTag = 'all';
+        const fallback = c => `https://placehold.co/300x420/0f172a/f59e0b?text=${encodeURIComponent(c.name)}`;
 
-                        <div class="w-full h-64 rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center relative border border-slate-800">
-                            <div class="absolute inset-0 bg-radial-gradient from-amber-500/10 to-transparent"></div>
-                            <img src="${chara.img}" alt="${chara.name}" 
-                                 onerror="this.src='https://placehold.co/300x400/0f172a/f59e0b?text=${chara.name}'"
-                                 class="h-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)] chara-img-hover z-10">
-                        </div>
+        function buildNav() {
+            $('stNav').innerHTML = goldenMembers.map(c => `<button class="thumb" style="--tc:${c.color}" onclick="renderStage(${c.id},${c.id >= cur ? 1 : -1})" title="${c.name}"><img src="${c.img}" alt="${c.name}" onerror="this.src='${fallback(c)}'"></button>`).join('');
+        }
+        function renderStage(i, dir = 1) {
+            cur = (i + N) % N;
+            const c = goldenMembers[cur], st = $('stage');
+            st.style.setProperty('--c', c.color);
+            st.style.setProperty('--dir', dir);
+            const box = (l, v) => `<div class="rounded-xl border border-white/10 bg-white/[.04] px-3 py-2"><div class="text-[10px] uppercase tracking-wider text-slate-400">${l}</div><div class="font-semibold text-white">${v}</div></div>`;
+            const apt = c.aptitude.split(' • ').map(a => { const m = a.match(/(.+) \((\w)\)/); return m ? `<span class="chip !py-1 flex items-center gap-1.5">${m[1]}<b class="w-5 h-5 rounded-full text-[10px] flex items-center justify-center text-slate-950" style="background:var(--c)">${m[2]}</b></span>` : ''; }).join('');
+            $('stInfo').innerHTML = `
+              <div style="--i:0" class="flex items-center gap-3 text-xs"><span class="font-mono text-slate-500">0${cur + 1} / 0${N}</span><span class="chip" style="color:var(--c);border-color:var(--c)">${c.styleLabel}</span></div>
+              <h3 style="--i:1" class="font-serif text-4xl sm:text-6xl font-black text-white leading-none">${c.name}</h3>
+              <p style="--i:2;color:var(--c)" class="text-sm italic font-semibold">${c.jpName} • ${c.title}</p>
+              <p style="--i:3" class="text-sm text-slate-300 leading-relaxed">${c.bio}</p>
+              <div style="--i:4" class="grid grid-cols-2 gap-2 text-xs">${box('Asal / Lahir', c.origin)}${box('Ulang Tahun', c.birthday)}${box('Tinggi / B-W-H', c.heightBwh)}${box('Voice Actor', c.va)}</div>
+              <div style="--i:5" class="flex flex-wrap gap-1.5">${apt}</div>
+              <div style="--i:6" class="flex flex-wrap gap-1">${c.g1Titles.map(t => `<span class="tag"><i class="fa-solid fa-trophy mr-1"></i>${t}</span>`).join('')}</div>
+              <div style="--i:7;color:var(--c)" class="text-xs font-bold"><i class="fa-solid fa-bolt mr-1"></i>${c.skill}</div>
+              <div style="--i:8" class="flex flex-wrap gap-2 pt-1 text-xs">
+                <button onclick="enterOrbitAt(${c.id})" class="btn-ghost px-5 py-2.5"><i class="fa-solid fa-circle-nodes mr-1"></i>Lihat di Orbit</button>
+                <a href="${c.fileLink}" class="btn-gold px-5 py-2.5">Detail Profil <i class="fa-solid fa-arrow-right ml-1"></i></a>
+              </div>`;
+            $('stArt').innerHTML = `<div class="st-kanji">${c.jpName}</div>
+              ${[0, 1, 2].map(k => `<div class="st-ring" style="width:${58 + k * 20}cqmin;height:${58 + k * 20}cqmin;--d:${16 + k * 8}s;animation-direction:${k % 2 ? 'reverse' : 'normal'}"><i></i></div>`).join('')}
+              <img class="st-img" src="${c.img}" alt="${c.name}" onerror="this.src='${fallback(c)}'">`;
+            document.querySelectorAll('#stNav .thumb').forEach((b, k) => b.classList.toggle('on', k === cur));
+        }
+        function stageStep(d) { renderStage(cur + d, d); }
+        function filterStyle(tag, btn) {
+            document.querySelectorAll('#filters .chip').forEach(b => b.classList.remove('on'));
+            btn.classList.add('on');
+            filterTag = tag;
+            document.querySelectorAll('#stNav .thumb').forEach((b, k) => b.classList.toggle('dim', tag !== 'all' && goldenMembers[k].styleTag !== tag));
+            if (tag !== 'all' && goldenMembers[cur].styleTag !== tag) {
+                const f = goldenMembers.find(c => c.styleTag === tag);
+                if (f) renderStage(f.id, f.id >= cur ? 1 : -1);
+            }
+        }
 
-                        <div class="space-y-1">
-                            <h3 class="text-xl font-bold text-white group-hover:text-amber-400 transition-colors font-serif">${chara.name}</h3>
-                            <p class="text-xs text-amber-400/80 italic">${chara.jpName} • ${chara.title}</p>
-                        </div>
-
-                        <p class="text-xs text-slate-300 leading-relaxed">${chara.bio}</p>
-
-                        <div class="space-y-1 pt-1">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Trofi Utama G1:</span>
-                            <div class="flex flex-wrap gap-1">
-                                ${chara.g1Titles.map(t => `<span class="px-2 py-0.5 rounded bg-slate-900 text-[10px] text-amber-300 border border-slate-800">${t}</span>`).join('')}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 mt-4 border-t border-slate-800/80 flex justify-between items-center z-10 relative">
-                        <span class="text-[11px] text-amber-400 font-semibold"><i class="fa-solid fa-bolt mr-1"></i>${chara.skill}</span>
-                        ${isGrass ? `
-                            <a href="grasswonder.html" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs hover:scale-105 transition-transform flex items-center gap-1 shadow-lg shadow-amber-500/20">
-                                Detail Grass Wonder <i class="fa-solid fa-arrow-right"></i>
-                            </a>
-                        ` : `
-                            <a href="${chara.fileLink}" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-white text-xs font-bold transition-all flex items-center gap-1">
-                                Detail Profil <i class="fa-solid fa-chevron-right"></i>
-                            </a>
-                        `}
-                    </div>
-                `;
-
-                grid.appendChild(card);
+        // ---------- DUEL ----------
+        const duel = { A: 0, B: 1 };
+        const stats = c => { const m = c.heightBwh.match(/(\d+) cm \| B(\d+)-W(\d+)-H(\d+)/); return { 'Tinggi': +m[1], 'Gelar G1': c.g1Titles.length, 'Bust': +m[2], 'Waist': +m[3], 'Hip': +m[4] }; };
+        const statMax = {};
+        goldenMembers.forEach(c => { const s = stats(c); for (const k in s) statMax[k] = Math.max(statMax[k] || 0, s[k]); });
+        function setDuel(side, i) {
+            const o = side === 'A' ? 'B' : 'A';
+            if (i === duel[o]) duel[o] = duel[side];
+            duel[side] = i; updateDuel();
+        }
+        function updateDuel() {
+            ['A', 'B'].forEach(side => {
+                const c = goldenMembers[duel[side]];
+                $('duel' + side).innerHTML = `<img src="${c.img}" alt="${c.name}" onerror="this.src='${fallback(c)}'" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover object-top mx-auto bg-slate-900" style="border:3px solid ${c.color};box-shadow:0 0 28px ${c.color}66">
+                  <div class="font-serif font-black text-lg sm:text-2xl text-white mt-3">${c.name}</div><div class="text-[11px]" style="color:${c.color}">${c.styleLabel}</div>
+                  <div class="flex justify-center gap-1.5 mt-3">${goldenMembers.map(m => `<button onclick="setDuel('${side}',${m.id})" aria-label="${m.name}" class="w-5 h-5 rounded-full transition ${m.id === duel[side] ? 'scale-125' : 'opacity-40 hover:opacity-100'}" style="background:${m.color};${m.id === duel[side] ? 'box-shadow:0 0 12px ' + m.color : ''}"></button>`).join('')}</div>`;
+            });
+            const a = goldenMembers[duel.A], b = goldenMembers[duel.B], sa = stats(a), sb = stats(b);
+            if (!$('duelBars').children.length) $('duelBars').innerHTML = Object.keys(sa).map(k => `<div class="flex items-center gap-2 text-xs" data-k="${k}">
+                <b class="w-12 text-right va"></b><div class="flex-1 h-2.5 rounded-full bg-white/5 flex justify-end overflow-hidden"><i class="dbar ba"></i></div>
+                <span class="w-16 text-center text-[10px] uppercase tracking-widest text-slate-400">${k}</span>
+                <div class="flex-1 h-2.5 rounded-full bg-white/5 overflow-hidden"><i class="dbar bb"></i></div><b class="w-12 vb"></b></div>`).join('');
+            document.querySelectorAll('#duelBars [data-k]').forEach(r => {
+                const k = r.dataset.k, x = sa[k], y = sb[k];
+                r.querySelector('.va').textContent = x; r.querySelector('.vb').textContent = y;
+                r.querySelector('.va').style.color = x >= y ? '#fff' : '#64748b'; r.querySelector('.vb').style.color = y >= x ? '#fff' : '#64748b';
+                const ba = r.querySelector('.ba'), bb = r.querySelector('.bb');
+                ba.style.width = x / statMax[k] * 100 + '%'; ba.style.background = a.color;
+                bb.style.width = y / statMax[k] * 100 + '%'; bb.style.background = b.color;
             });
         }
 
-        function filterStyle(style) {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
-                btn.classList.add('bg-slate-800', 'text-slate-300', 'font-medium');
-            });
-            event.target.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
-            event.target.classList.remove('bg-slate-800', 'text-slate-300', 'font-medium');
-            renderCards(style);
+        // ---------- ULANG TAHUN TERDEKAT ----------
+        function initBday() {
+            const MON = { Januari: 0, Februari: 1, Maret: 2, April: 3, Mei: 4, Juni: 5, Juli: 6, Agustus: 7, September: 8, Oktober: 9, November: 10, Desember: 11 };
+            const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const left = c => { const [d, m] = c.birthday.split(' '); let t = new Date(today.getFullYear(), MON[m], +d); if (t < today) t = new Date(today.getFullYear() + 1, MON[m], +d); return Math.round((t - today) / 864e5); };
+            const c = goldenMembers.reduce((x, y) => left(y) < left(x) ? y : x), n = left(c), el = $('bday');
+            el.innerHTML = `🎂 Ulang tahun terdekat: <b style="color:${c.color}">${c.name}</b> • ${n === 0 ? 'hari ini! 🎉' : n + ' hari lagi'}`;
+            el.classList.remove('hidden'); el.onclick = () => enterOrbitAt(c.id);
         }
 
         function renderTable() {
-            const tbody = document.getElementById('comparisonTableBody');
-            if (!tbody) return;
-            tbody.innerHTML = goldenMembers.map(c => `
-                <tr class="hover:bg-slate-800/40 transition-colors">
-                    <td class="p-4 font-bold text-white flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-slate-900 border border-amber-500/40 flex items-center justify-center text-xs font-serif font-bold text-amber-400">
-                            ${c.name.charAt(0)}
-                        </div>
-                        <div>
-                            <div>${c.name}</div>
-                            <div class="text-xs text-slate-400 font-normal">${c.jpName}</div>
-                        </div>
-                    </td>
-                    <td class="p-4 text-xs font-semibold text-amber-400">${c.title}</td>
-                    <td class="p-4 text-xs">${c.styleLabel}</td>
-                    <td class="p-4 text-xs text-slate-300">${c.g1Titles.join(', ')}</td>
-                    <td class="p-4 text-center font-extrabold text-emerald-400">A</td>
-                    <td class="p-4 text-center">
-                        <a href="${c.fileLink}" class="px-3 py-1 rounded bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold transition-colors">Buka Page →</a>
-                    </td>
-                </tr>
-            `).join('');
+            const max = Math.max(...goldenMembers.map(c => c.g1Titles.length));
+            $('comparisonTableBody').innerHTML = goldenMembers.map(c => `
+              <tr class="hover:bg-white/[.03] transition-colors">
+                <td class="p-4"><div class="flex items-center gap-3"><span class="w-9 h-9 rounded-full flex items-center justify-center font-serif font-bold text-slate-950" style="background:${c.color}">${c.name[0]}</span><div><div class="font-bold text-white">${c.name}</div><div class="text-xs text-slate-400">${c.jpName}</div></div></div></td>
+                <td class="p-4 text-xs font-semibold" style="color:${c.color}">${c.title}</td>
+                <td class="p-4 text-xs">${c.styleLabel}</td>
+                <td class="p-4 text-xs text-slate-300">${c.g1Titles.join(', ')}</td>
+                <td class="p-4"><div class="flex items-center gap-2"><div class="flex-1 h-2 rounded-full bg-white/10 overflow-hidden"><div class="h-full rounded-full" style="width:${c.g1Titles.length / max * 100}%;background:${c.color}"></div></div><span class="font-extrabold text-white text-xs">${c.g1Titles.length}</span></div></td>
+                <td class="p-4 text-center"><a href="${c.fileLink}" class="chip inline-block">Buka →</a></td>
+              </tr>`).join('');
         }
 
-        // -------------------------------------------------------------
-        // 7. SCROLL REVEAL ANIMATION (INTERSECTION OBSERVER)
-        // -------------------------------------------------------------
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, { threshold: 0.1 });
+        function renderExtras() {
+            $('heroChips').innerHTML = goldenMembers.map(c =>
+                `<button onclick="enterOrbitAt(${c.id})" class="chip flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:${c.color};box-shadow:0 0 10px ${c.color}"></span>${c.name}</button>`).join('');
+            const titles = goldenMembers.flatMap(c => c.g1Titles.map(t => `<span class="whitespace-nowrap"><span style="color:${c.color}">✦</span> ${t}</span>`)).join('');
+            $('marquee').innerHTML = titles + titles;
+            $('footLinks').innerHTML = goldenMembers.map(c => `<a href="${c.fileLink}" class="chip">${c.name}</a>`).join('');
+            $('miniOrbit').insertAdjacentHTML('afterbegin', goldenMembers.map((c, i) =>
+                `<div class="orb-ring" style="--c:${c.color};--d:${14 + i * 9}s;width:${30 + i * 16}%;height:${30 + i * 16}%;animation-direction:${i % 2 ? 'reverse' : 'normal'}"><i></i></div>`).join(''));
 
-        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+            const ev = [
+                ['1997', [[1, 'Asahi Hai Futurity Stakes']]],
+                ['1998', [[3, 'Satsuki Sho & Kikuka Sho'], [2, 'NHK Mile Cup & Japan Cup'], [0, 'Japan Derby'], [1, 'Arima Kinen']]],
+                ['1999', [[0, 'Tenno Sho (Spring/Fall) & Japan Cup'], [1, 'Takarazuka Kinen & Arima Kinen'], [2, "Prix de l'Arc de Triomphe (2nd)"]]],
+                ['2000', [[4, 'Takamatsunomiya Kinen']]]
+            ];
+            $('tl').innerHTML = ev.map(([y, items]) => `<div class="reveal relative"><span class="tl-dot"></span>
+                <div class="font-serif text-4xl font-black text-amber-400 mb-3">${y}</div>
+                <div class="space-y-2">${items.map(([i, t]) => { const c = goldenMembers[i];
+                    return `<button onclick="enterOrbitAt(${i})" class="w-full text-left flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 hover:border-white/30 hover:translate-x-1 transition">
+                    <span class="w-2.5 h-8 rounded-full" style="background:${c.color};box-shadow:0 0 12px ${c.color}"></span>
+                    <span><span class="block text-sm font-bold text-white">${t}</span><span class="block text-xs" style="color:${c.color}">${c.name}</span></span></button>`; }).join('')}</div></div>`).join('');
+        }
 
-        // -------------------------------------------------------------
-        // INITIALIZATION ON LOAD
-        // -------------------------------------------------------------
-        renderCards();
-        renderTable();
+        buildNav(); renderStage(0); renderTable(); renderExtras(); updateDuel(); initBday();
+
+        // Reveal & counter baru aktif setelah loading screen selesai
+        let revealReady = false;
+        const pendingReveal = [...document.querySelectorAll('.reveal')];
+        function startReveals() {
+            revealReady = true;
+            document.querySelectorAll('#hero .reveal').forEach((el, i) => el.style.transitionDelay = (i * 0.12) + 's');
+            pendingReveal.forEach(el => revealObs.observe(el));
+            document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+        }
+
+        // Cursor glow + parallax art + swipe + keyboard
+        if (window.matchMedia('(hover:hover)').matches) {
+            const glow = $('glow');
+            window.addEventListener('pointermove', e => { glow.style.transform = `translate(${e.clientX}px,${e.clientY}px)`; }, { passive: true });
+        }
+        const art = $('stArt');
+        let swipeX = null;
+        art.addEventListener('pointermove', e => {
+            const r = art.getBoundingClientRect();
+            art.style.setProperty('--px', ((e.clientX - r.left) / r.width * 2 - 1).toFixed(2));
+            art.style.setProperty('--py', ((e.clientY - r.top) / r.height * 2 - 1).toFixed(2));
+        });
+        art.addEventListener('pointerleave', () => { art.style.setProperty('--px', 0); art.style.setProperty('--py', 0); });
+        art.addEventListener('pointerdown', e => { swipeX = e.clientX; });
+        art.addEventListener('pointerup', e => { if (swipeX !== null && Math.abs(e.clientX - swipeX) > 50) stageStep(e.clientX < swipeX ? 1 : -1); swipeX = null; });
+        window.addEventListener('keydown', e => {
+            if (isFocused || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+            const r = $('stage').getBoundingClientRect();
+            if (r.top < innerHeight * 0.8 && r.bottom > innerHeight * 0.2) stageStep(e.key === 'ArrowRight' ? 1 : -1);
+        });
+
+        // Scroll: progress bar + tata surya latar ikut miring/berputar (mode normal)
+        function onScroll() {
+            const m = document.documentElement.scrollHeight - innerHeight;
+            scrollP = m > 0 ? Math.min(1, Math.max(0, scrollY / m)) : 0;
+            $('prog').style.transform = `scaleX(${scrollP})`;
+            if (!isFocused) {
+                tPitch = TOP_PITCH - 0.5 * scrollP;
+                tYaw = Math.round(tYaw / TAU) * TAU + scrollP * 1.3;
+            }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        // Scroll-spy navbar
+        const spy = new IntersectionObserver(es => es.forEach(e => {
+            if (e.isIntersecting) document.querySelectorAll('header nav a').forEach(a => a.classList.toggle('act', a.getAttribute('href') === '#' + e.target.id));
+        }), { rootMargin: '-45% 0px -50% 0px' });
+        ['members', 'duel', 'timeline', 'matrix', 'orbit'].forEach(id => spy.observe($(id)));
+
+        // ---------- LOADING SCREEN (progres nyata: font + gambar karakter + window load) ----------
+        (function () {
+            const msgs = ['Menyalakan matahari emas…', 'Menata lima orbit…', 'Memanggil para bintang…', 'Siap meluncur!'];
+            const total = N + 2; let done = 0, shown = 0, finished = false;
+            const tick = () => { done++; };
+            goldenMembers.forEach(c => { const im = new Image(); im.onload = im.onerror = tick; im.src = c.img; });
+            (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(tick);
+            if (document.readyState === 'complete') tick(); else window.addEventListener('load', tick);
+            const t0 = performance.now();
+            function finish() {
+                finished = true;
+                setTimeout(() => {
+                    $('loader').classList.add('done');
+                    document.body.classList.remove('loading');
+                    startReveals();
+                    setTimeout(() => $('loader').remove(), 1500);
+                }, 450);
+            }
+            (function loop(now) {
+                const real = (now - t0 > 6000 ? 1 : done / total) * 100;
+                const goal = Math.min(real, (now - t0) / 1800 * 100);
+                shown += (goal - shown) * 0.08;
+                if (shown > 99.4) shown = 100;
+                $('ldBar').style.width = shown + '%';
+                $('ldPct').textContent = Math.round(shown) + '%';
+                $('ldText').textContent = msgs[Math.min(3, Math.floor(shown / 26))];
+                if (shown < 100) requestAnimationFrame(loop); else if (!finished) finish();
+            })(t0);
+        })();
     </script>
 </body>
 </html>
