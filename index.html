@@ -2,6 +2,121 @@
 <html lang="id" class="scroll-smooth">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+/* Golden Generation - Loading Screen & Page Transition
+   Pasang di bagian head SETIAP halaman: tag script dengan src="loader.js"  */
+(function () {
+  if (window.__ggLoader) return;
+  window.__ggLoader = true;
+  var doc = document.documentElement;
+
+  var css = `
+#gg-loader{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;text-align:center;background:radial-gradient(circle at 50% 40%,#10193a,#050914 70%);color:#e2e8f0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;transition:opacity .35s ease,transform .5s ease,visibility 0s}
+#gg-loader.gg-done{opacity:0;transform:scale(1.4);visibility:hidden;pointer-events:none;transition:opacity .9s ease,transform 1.1s cubic-bezier(.7,0,.3,1),visibility 0s .9s}
+html.gg-lock{overflow:hidden}
+#gg-loader::before{content:"";position:absolute;left:0;top:0;width:2px;height:2px;border-radius:50%;box-shadow:8vw 12vh #fff,22vw 72vh #fffa,35vw 20vh #fff,48vw 88vh #fff8,61vw 9vh #fff,74vw 64vh #fffa,86vw 30vh #fff,93vw 82vh #fff8,14vw 44vh #fff6,67vw 41vh #fff6,40vw 55vh #fff5,82vw 8vh #fff;animation:gg-tw 2.6s ease-in-out infinite alternate}
+.gg-stage{position:relative;width:11rem;height:11rem}
+.gg-ring{position:absolute;inset:0;margin:auto;border-radius:50%;border:1px solid rgba(245,158,11,.28);animation:gg-spin var(--d) linear infinite}
+.gg-ring i{position:absolute;top:-6px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--c);box-shadow:0 0 14px var(--c)}
+.gg-sun{position:absolute;inset:0;margin:auto;width:3.5rem;height:3.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font:900 1rem 'Shippori Mincho',serif;color:#0b1120;background:radial-gradient(circle at 35% 30%,#fef08a,#f59e0b 55%,#d97706);box-shadow:0 0 40px rgba(245,158,11,.7);animation:gg-pulse 2.2s ease-in-out infinite}
+.gg-title{margin-top:2.2rem;font:900 clamp(1.3rem,5vw,1.9rem) 'Shippori Mincho',serif;letter-spacing:.25em;background:linear-gradient(100deg,#fde68a,#f59e0b,#ef4444,#f59e0b,#fde68a);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gg-shine 6s linear infinite}
+.gg-text{margin-top:.5rem;height:1rem;font-size:.75rem;color:#94a3b8}
+.gg-bar{width:min(18rem,70vw);height:3px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:1.1rem}
+.gg-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a855f7,#f59e0b,#ef4444);box-shadow:0 0 12px #f59e0b}
+.gg-pct{margin-top:.5rem;font:12px ui-monospace,monospace;color:#fbbf24}
+@keyframes gg-spin{to{rotate:360deg}}
+@keyframes gg-pulse{50%{transform:scale(1.08);box-shadow:0 0 60px rgba(245,158,11,.9)}}
+@keyframes gg-shine{to{background-position:-250% 0}}
+@keyframes gg-tw{from{opacity:.25}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.gg-ring,.gg-sun,.gg-title{animation:none}}`;
+
+  var st = document.createElement('style');
+  st.textContent = css;
+  (document.head || doc).appendChild(st);
+
+  var rings = [['#3b82f6', 6, 36, 0], ['#f59e0b', 9, 52, 1], ['#ef4444', 12, 68, 0], ['#10b981', 16, 84, 1], ['#a855f7', 21, 100, 0]]
+    .map(function (r) {
+      return '<div class="gg-ring" style="--c:' + r[0] + ';--d:' + r[1] + 's;width:' + r[2] + '%;height:' + r[2] + '%;' + (r[3] ? 'animation-direction:reverse' : '') + '"><i></i></div>';
+    }).join('');
+  var el = document.createElement('div');
+  el.id = 'gg-loader';
+  el.innerHTML = '<div class="gg-stage">' + rings + '<div class="gg-sun">黄金</div></div>' +
+    '<div class="gg-title">GOLDEN GENERATION</div><div class="gg-text"></div>' +
+    '<div class="gg-bar"><i></i></div><div class="gg-pct">0%</div>';
+  doc.appendChild(el);
+  doc.classList.add('gg-lock');
+
+  var bar = el.querySelector('.gg-bar i'), pct = el.querySelector('.gg-pct'), txt = el.querySelector('.gg-text');
+  var msgs = ['Menyalakan matahari emas…', 'Menata lima orbit…', 'Memanggil para bintang…', 'Siap meluncur!'];
+  var shown = 0, mode = 'load', tStart = performance.now(), running = false;
+  var fontsDone = false, loadDone = document.readyState === 'complete';
+
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fontsDone = true; }); else fontsDone = true;
+  if (!loadDone) window.addEventListener('load', function () { loadDone = true; });
+
+  function imgRatio() {
+    var im = document.images, d = 0;
+    if (!im.length) return 1;
+    for (var i = 0; i < im.length; i++) if (im[i].complete) d++;
+    return d / im.length;
+  }
+  function finish() {
+    setTimeout(function () {
+      el.classList.add('gg-done');
+      doc.classList.remove('gg-lock');
+      window.dispatchEvent(new Event('gg-loaded'));
+    }, 450);
+  }
+  function frame(now) {
+    var goal;
+    if (mode === 'leave') goal = Math.min(96, (now - tStart) / 450 * 100);
+    else {
+      var real = (now - tStart > 7000) ? 100 : 100 * (0.2 * (fontsDone ? 1 : 0) + 0.5 * imgRatio() + 0.3 * (loadDone ? 1 : 0));
+      goal = Math.min(real, (now - tStart) / 900 * 100);
+    }
+    shown += (goal - shown) * 0.12;
+    if (shown > 99.4) shown = 100;
+    bar.style.width = shown + '%';
+    pct.textContent = Math.round(shown) + '%';
+    txt.textContent = mode === 'leave' ? 'Menuju halaman berikutnya…' : msgs[Math.min(3, Math.floor(shown / 26))];
+    if (mode === 'load' && shown >= 100) { running = false; finish(); return; }
+    requestAnimationFrame(frame);
+  }
+  function run() { if (!running) { running = true; requestAnimationFrame(frame); } }
+  run();
+
+  // Pindah halaman: tampilkan loading screen dulu, baru navigasi
+  function leave(url) {
+    if (mode === 'leave') return;
+    mode = 'leave'; shown = 0; tStart = performance.now();
+    doc.classList.add('gg-lock');
+    el.classList.remove('gg-done');
+    run();
+    setTimeout(function () { location.href = url; }, 480);
+  }
+  document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+    var u;
+    try { u = new URL(a.href, location.href); } catch (_) { return; }
+    if (u.origin !== location.origin || !/^(https?|file):$/.test(u.protocol)) return;
+    if (u.pathname === location.pathname && u.search === location.search) {
+      if (!u.hash) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      return;                                   // anchor di halaman yang sama: biarkan default
+    }
+    e.preventDefault();
+    leave(u.href);
+  }, true);
+
+  // Tombol Back (bfcache): jangan biarkan loading screen menggantung
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    mode = 'load'; shown = 100; el.classList.add('gg-done'); doc.classList.remove('gg-lock');
+  });
+})();
+
+</script>
 <title>Golden Generation (黄金世代) - Uma Musume Home Portal</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -169,14 +284,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .tag{padding:.15rem .5rem;border-radius:.4rem;font-size:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fcd34d}
 .orb-ring{position:absolute;inset:0;margin:auto;border:1px solid color-mix(in srgb,var(--c) 40%,rgba(245,158,11,.2));border-radius:50%;animation:spin var(--d) linear infinite}
 .orb-ring i{position:absolute;top:-6px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--c);box-shadow:0 0 14px var(--c)}
-body.loading{overflow:hidden}
-#loader{background:radial-gradient(circle at 50% 40%,#10193a,#050914 70%);transition:opacity .9s ease,transform 1.1s cubic-bezier(.7,0,.3,1),visibility 0s .9s}
-#loader.done{opacity:0;transform:scale(1.4);visibility:hidden;pointer-events:none}
-#loader::before{content:"";position:absolute;left:0;top:0;width:2px;height:2px;border-radius:50%;box-shadow:8vw 12vh #fff,22vw 72vh #fffa,35vw 20vh #fff,48vw 88vh #fff8,61vw 9vh #fff,74vw 64vh #fffa,86vw 30vh #fff,93vw 82vh #fff8,14vw 44vh #fff6,67vw 41vh #fff6,40vw 55vh #fff5,82vw 8vh #fff;animation:tw 2.6s ease-in-out infinite alternate}
-@keyframes tw{from{opacity:.25}to{opacity:1}}
-.ld-stage{position:relative;width:11rem;height:11rem}
-.ld-bar{width:min(18rem,70vw);height:3px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:1.1rem}
-.ld-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a855f7,#f59e0b,#ef4444);box-shadow:0 0 12px #f59e0b}
 @property --c{syntax:'<color>';inherits:true;initial-value:#f59e0b}
 #stage{--c:#3b82f6;background:rgba(6,10,22,.8);transition:--c .7s ease}
 .st-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 70% at 72% 48%,color-mix(in srgb,var(--c) 40%,transparent),transparent 72%),radial-gradient(45% 50% at 8% 95%,color-mix(in srgb,var(--c) 20%,transparent),transparent)}
@@ -202,22 +309,9 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
 @media (prefers-reduced-motion:reduce){.marq,.orb-ring,.st-ring,.st-img,.shoot,.gold-text{animation:none}}
 </style>
 </head>
-<body class="bg-gwDarkBg text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 min-h-screen relative overflow-x-hidden loading">
+<body class="bg-gwDarkBg text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 min-h-screen relative overflow-x-hidden">
 <div id="prog"></div><div id="glow"></div>
-<div id="loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-4 text-center">
-  <div class="ld-stage">
-    <div class="orb-ring" style="--c:#3b82f6;--d:6s;width:36%;height:36%"><i></i></div>
-    <div class="orb-ring" style="--c:#f59e0b;--d:9s;width:52%;height:52%;animation-direction:reverse"><i></i></div>
-    <div class="orb-ring" style="--c:#ef4444;--d:12s;width:68%;height:68%"><i></i></div>
-    <div class="orb-ring" style="--c:#10b981;--d:16s;width:84%;height:84%;animation-direction:reverse"><i></i></div>
-    <div class="orb-ring" style="--c:#a855f7;--d:21s;width:100%;height:100%"><i></i></div>
-    <div class="absolute inset-0 m-auto w-14 h-14 rounded-full bg-gradient-to-br from-amber-200 via-amber-500 to-amber-700 flex items-center justify-center font-serif font-black text-slate-950 sun-pulse">黄金</div>
-  </div>
-  <div class="gold-text font-serif text-2xl sm:text-3xl font-black tracking-[.25em] mt-9">GOLDEN GENERATION</div>
-  <div id="ldText" class="text-xs text-slate-400 mt-2 h-4">Menyalakan matahari emas…</div>
-  <div class="ld-bar"><i id="ldBar"></i></div>
-  <div id="ldPct" class="font-mono text-xs text-amber-400 mt-2">0%</div>
-</div>
+
 <span class="shoot" style="top:8%;left:78%"></span><span class="shoot" style="top:22%;left:96%;animation-delay:4.5s"></span>
 
 <!-- INTERACTIVE CANVAS (SOLAR SYSTEM ORBITS, TWINKLING STARS & CAMERA TRACKING) -->
@@ -374,7 +468,7 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
         <button class="arrow absolute right-0 top-1/2 -translate-y-1/2" onclick="stageStep(1)" aria-label="Berikutnya"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
     </div>
-    <div id="stNav" class="relative flex justify-center gap-3 sm:gap-6 pb-7 px-4"></div>
+    <div id="stNav" class="relative flex flex-wrap justify-center gap-2.5 sm:gap-6 pb-7 px-3"></div>
   </div>
 </section>
 
@@ -457,7 +551,7 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
                 aptitude: "Turf (A) • Medium (A) • Long (A)",
                 styleTag: "Senko",
                 styleLabel: "Pace Chaser / Betweener",
-                color: "#3b82f6",
+                color: "#ec4899",
                 img: "https://umamusu.wiki/w/images/6/63/Game_Asset_chara_stand_1001_100101.png",
                 g1Titles: ["Japan Derby (1998)", "Tenno Sho Spring/Fall (1999)", "Japan Cup (1999)"],
                 skill: "Shooting Star (Shooting☆Star)",
@@ -476,7 +570,7 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
                 aptitude: "Turf (A) • Medium (A) • Long (A)",
                 styleTag: "Sashi",
                 styleLabel: "Betweener (差し)",
-                color: "#f59e0b",
+                color: "#3b82f6",
                 img: "https://umamusu.wiki/w/images/0/0a/Game_Asset_chara_stand_1011_101101.png",
                 g1Titles: ["Arima Kinen (1998, 1999)", "Takarazuka Kinen (1999)", "Asahi Hai (1997)"],
                 skill: "Spirit of the Phoenix (精神一到)",
@@ -533,7 +627,7 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
                 aptitude: "Turf (A) • Short (A) • Mile (A)",
                 styleTag: "Oikomi",
                 styleLabel: "Chaser / Sprinter (追込)",
-                color: "#a855f7",
+                color: "#8b5cf6",
                 img: "https://umamusu.wiki/w/images/f/fa/Game_Asset_chara_stand_1061_106101.png",
                 g1Titles: ["Takamatsunomiya Kinen (2000)"],
                 skill: "Pride of King (Call me KING)",
@@ -654,10 +748,12 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
         let W = 0, H = 0, dpr = 1;
 
         function resizeCanvas() {
-            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 1.5 : 2);
             W = window.innerWidth; H = window.innerHeight;
             canvas.width = Math.round(W * dpr);
             canvas.height = Math.round(H * dpr);
+            canvas.style.width = W + 'px';
+            canvas.style.height = H + 'px';
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
@@ -877,7 +973,8 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
                     const isSel = sel > 0.5;
                     ctx.font = isSel ? '800 13px "Plus Jakarta Sans", sans-serif' : '700 11px "Plus Jakarta Sans", sans-serif';
                     const tw = ctx.measureText(chara.name).width;
-                    const bx = sp.x + rb + 9, by = sp.y - 11;
+                    let bx = sp.x + rb + 9; const by = sp.y - 11;
+                    if (bx + tw + 14 > W - 6) bx = sp.x - rb - 9 - tw - 14;
                     ctx.globalAlpha = fb * (isSel ? 1 : 0.5 + 0.5 * front);
                     ctx.fillStyle = 'rgba(15,23,42,0.88)';
                     ctx.beginPath();
@@ -1239,35 +1336,10 @@ header nav a.act{color:#fbbf24;background:rgba(255,255,255,.06)}
         }), { rootMargin: '-45% 0px -50% 0px' });
         ['members', 'duel', 'timeline', 'matrix', 'orbit'].forEach(id => spy.observe($(id)));
 
-        // ---------- LOADING SCREEN (progres nyata: font + gambar karakter + window load) ----------
-        (function () {
-            const msgs = ['Menyalakan matahari emas…', 'Menata lima orbit…', 'Memanggil para bintang…', 'Siap meluncur!'];
-            const total = N + 2; let done = 0, shown = 0, finished = false;
-            const tick = () => { done++; };
-            goldenMembers.forEach(c => { const im = new Image(); im.onload = im.onerror = tick; im.src = c.img; });
-            (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(tick);
-            if (document.readyState === 'complete') tick(); else window.addEventListener('load', tick);
-            const t0 = performance.now();
-            function finish() {
-                finished = true;
-                setTimeout(() => {
-                    $('loader').classList.add('done');
-                    document.body.classList.remove('loading');
-                    startReveals();
-                    setTimeout(() => $('loader').remove(), 1500);
-                }, 450);
-            }
-            (function loop(now) {
-                const real = (now - t0 > 6000 ? 1 : done / total) * 100;
-                const goal = Math.min(real, (now - t0) / 1800 * 100);
-                shown += (goal - shown) * 0.08;
-                if (shown > 99.4) shown = 100;
-                $('ldBar').style.width = shown + '%';
-                $('ldPct').textContent = Math.round(shown) + '%';
-                $('ldText').textContent = msgs[Math.min(3, Math.floor(shown / 26))];
-                if (shown < 100) requestAnimationFrame(loop); else if (!finished) finish();
-            })(t0);
-        })();
+        window.addEventListener('gg-loaded', startReveals);
+        // Deep-link dari halaman karakter: index.html#planet-N langsung terbang ke planet N
+        const planetHash = location.hash.match(/^#planet-(\d)$/);
+        if (planetHash) window.addEventListener('gg-loaded', () => setTimeout(() => enterOrbitAt(+planetHash[1]), 500));
     </script>
 </body>
 </html>
