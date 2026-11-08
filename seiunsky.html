@@ -1,931 +1,338 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seiun Sky (セイウンスカイ) - Uma Musume Portal</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Shippori+Mincho:wght@600;700;900&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        skyEmerald: '#10B981',
-                        skyEmeraldDark: '#047857',
-                        skyCyan: '#06B6D4',
-                        skyTeal: '#0D9488',
-                        skyDarkBg: '#0B1120',
-                        skyCardBg: 'rgba(15, 23, 42, 0.75)',
-                        skyGold: '#D97706',
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        serif: ['Shippori Mincho', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0b1120;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #10b981;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #06b6d4;
-        }
-
-        /* Glassmorphism Styles */
-        .glass-card {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .glass-card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glass-card-hover:hover {
-            transform: translateY(-6px) scale(1.01);
-            border-color: rgba(16, 185, 129, 0.5);
-            box-shadow: 0 15px 35px -10px rgba(16, 185, 129, 0.4);
-        }
-
-        /* ANIMASI KANJI TEKS AWAN & EMERALD */
-        @keyframes skyAnim {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .kanji-sky-text {
-            background: linear-gradient(-45deg, #10b981, #34d399, #06b6d4, #f59e0b, #10b981);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: skyAnim 4s ease infinite;
-            filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
-        }
-
-        /* Ambient Orbs */
-        @keyframes orbPulse {
-            0%, 100% { transform: scale(1) translateY(0); opacity: 0.2; }
-            50% { transform: scale(1.15) translateY(-10px); opacity: 0.35; }
-        }
-        .animate-orb {
-            animation: orbPulse 8s ease-in-out infinite;
-        }
-
-        /* Hero Image Float */
-        @keyframes floatAnim {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-        .hero-float {
-            animation: floatAnim 5s ease-in-out infinite;
-        }
-
-        .badge-gold {
-            background: linear-gradient(90deg, #D97706 0%, #B45309 100%);
-            color: #FFF;
-        }
-    </style>
-</head>
-<body class="bg-skyDarkBg text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-slate-950 min-h-screen relative overflow-x-hidden">
-
-    <!-- CANVAS ANIMASI PARTIKEL AWAN & ANGIN LAUT -->
-    <canvas id="cloudCanvas" class="fixed inset-0 pointer-events-none z-40"></canvas>
-
-    <!-- Background Ambient Glow Effects -->
-    <div class="fixed -top-40 -left-40 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none animate-orb"></div>
-    <div class="fixed top-1/3 -right-40 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none animate-orb" style="animation-delay: 3s;"></div>
-    <div class="fixed bottom-10 left-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none animate-orb" style="animation-delay: 5s;"></div>
-
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 glass-card border-b border-slate-800 px-4 lg:px-8 py-3">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <!-- Logo / Name -->
-            <a href="index.html" class="flex items-center space-x-3 group">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-600 via-teal-400 to-amber-500 p-0.5 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center font-bold text-emerald-400 font-serif text-lg">
-                        雲
-                    </div>
-                </div>
-                <div>
-                    <h1 class="text-lg font-bold tracking-wide text-white group-hover:text-emerald-400 transition-colors">Seiun Sky</h1>
-                    <p class="text-xs text-slate-400">セイウンスカイ • Golden Generation</p>
-                </div>
-            </a>
-
-            <!-- Desktop Nav Links -->
-            <nav class="hidden md:flex items-center space-x-1 text-xs font-medium text-slate-300">
-                <a href="index.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all flex items-center gap-1 font-bold text-amber-400"><i class="fa-solid fa-house"></i> Home</a>
-                <span class="text-slate-700">|</span>
-                <a href="specialweek.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">Special Week</a>
-                <a href="grasswonder.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">Grass Wonder</a>
-                <a href="elcondorpasa.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">El Condor Pasa</a>
-                <a href="seiunsky.html" class="px-2.5 py-1.5 rounded-lg text-emerald-400 bg-emerald-900/40 border border-emerald-500/30 font-bold">Seiun Sky</a>
-                <a href="kinghalo.html" class="px-2.5 py-1.5 rounded-lg hover:text-amber-400 hover:bg-slate-800/60 transition-all">King Halo</a>
-            </nav>
-
-            <!-- Quick Action Badge & Home Button -->
-            <div class="flex items-center space-x-3">
-                <a href="index.html" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-slate-950 transition-all shadow-sm">
-                    <i class="fa-solid fa-house text-xs"></i>
-                    <span>Beranda Utama</span>
-                </a>
-                <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-300 hover:text-white focus:outline-none">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Navigation Menu -->
-        <div id="mobileMenu" class="hidden md:hidden mt-3 pt-3 border-t border-slate-800 flex flex-col space-y-2 text-sm">
-            <a href="index.html" class="px-3 py-2 rounded-lg bg-amber-500/20 text-amber-400 font-semibold"><i class="fa-solid fa-house mr-2"></i>Beranda Utama (index.html)</a>
-            <div class="px-3 pt-1 text-[11px] font-bold uppercase text-slate-400 tracking-wider">Navigasi Karakter:</div>
-            <div class="grid grid-cols-2 gap-1.5 px-1">
-                <a href="specialweek.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-star text-[10px] mr-1"></i>Special Week</a>
-                <a href="grasswonder.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-horse text-[10px] mr-1"></i>Grass Wonder</a>
-                <a href="elcondorpasa.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-mask text-[10px] mr-1"></i>El Condor Pasa</a>
-                <a href="seiunsky.html" class="px-2.5 py-1.5 rounded bg-emerald-900/50 text-emerald-400 font-bold text-xs"><i class="fa-solid fa-cloud text-[10px] mr-1"></i>Seiun Sky</a>
-                <a href="kinghalo.html" class="px-2.5 py-1.5 rounded bg-slate-800/60 text-slate-300 hover:text-amber-400 text-xs"><i class="fa-solid fa-crown text-[10px] mr-1"></i>King Halo</a>
-            </div>
-            <a href="#pengenalan" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-300 text-xs">Pengenalan</a>
-            <a href="#variasi" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-300 text-xs">Kostum & Karusel</a>
-            <a href="#biografi" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-300 text-xs">Profil & Stat</a>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
-
-        <!-- HERO / PENGENALAN SECTION -->
-        <section id="pengenalan" class="relative rounded-3xl overflow-hidden glass-card border border-slate-700/50 p-6 md:p-10">
-            <!-- Decorative Japanese Text Overlay in Background -->
-            <div class="absolute right-4 bottom-0 text-slate-800/30 text-8xl lg:text-9xl font-serif font-black select-none pointer-events-none">
-                セイウンスカイ
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-                <!-- Text Intro Column -->
-                <div class="lg:col-span-7 space-y-6">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold hover:bg-amber-500 hover:text-slate-950 transition-all">
-                            <i class="fa-solid fa-arrow-left text-[11px]"></i> Kembali ke Home
-                        </a>
-                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-900/40 border border-emerald-500/30 text-emerald-300 text-xs font-semibold uppercase tracking-wider">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            Trickster Master • Golden Generation
-                        </div>
-                    </div>
-                    
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                        Seiun Sky <br>
-                        <!-- KANJI TEKS API BERGERAK -->
-                        <span class="kanji-sky-text text-2xl sm:text-3xl lg:text-4xl font-serif mt-1 block">「気ままに流れる雲の如く」</span>
-                    </h1>
-
-                    <p class="text-slate-300 leading-relaxed text-base sm:text-lg">
-                        Seiun Sky adalah gadis kuda (<b>Uma Musume</b>) yang tampak santai, pemalas, dan hobi memancing di tepi sungai. Namun di balik sikapnya yang tampak acuh tak acuh, ia adalah seorang <b>genius taktik pacuan kuda</b> yang sanggup mengontrol ritme balapan dari posisi paling depan (<i>Front-runner / 逃げ</i>) dengan strategi jebakan yang tak terduga!
-                    </p>
-
-                    <!-- Student Quote Box -->
-                    <div class="p-4 rounded-xl bg-slate-900/80 border-l-4 border-emerald-500 text-slate-300 text-sm italic relative hover:border-amber-500 transition-colors">
-                        <i class="fa-solid fa-quote-left text-emerald-500/20 text-3xl absolute right-3 bottom-2 pointer-events-none"></i>
-                        "Yah... memancing memang menyenangkan, tapi mengatur jebakan di lintasan pacu jauh lebih seru. Mau lihat rencanaku, Trainer-san?"
-                        <div class="not-italic text-xs font-semibold text-emerald-400 mt-2">— Intro Siswa (Student Introduction)</div>
-                    </div>
-
-                    <!-- Quick Info Badges -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                        <div class="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center hover:border-emerald-500/50 hover:scale-105 transition-all cursor-default">
-                            <span class="text-xs text-slate-400 block">Ulang Tahun</span>
-                            <span class="text-sm font-bold text-slate-100">26 April</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center hover:border-emerald-500/50 hover:scale-105 transition-all cursor-default">
-                            <span class="text-xs text-slate-400 block">Tinggi Badan</span>
-                            <span class="text-sm font-bold text-slate-100">155 cm</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center hover:border-emerald-500/50 hover:scale-105 transition-all cursor-default">
-                            <span class="text-xs text-slate-400 block">VA / Pengisi Suara</span>
-                            <span class="text-sm font-bold text-slate-100">Kito Akari</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center hover:border-emerald-500/50 hover:scale-105 transition-all cursor-default">
-                            <span class="text-xs text-slate-400 block">Favorit</span>
-                            <span class="text-sm font-bold text-emerald-400">Memancing & Tidur Siang</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Featured Highlight Showcase Image -->
-                <div class="lg:col-span-5 flex justify-center relative">
-                    <div class="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border border-slate-700/80 group hero-float">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent z-10"></div>
-                        
-                        <!-- Main Hero Image -->
-                        <img src="https://umamusu.wiki/w/images/5/5a/Seiun_Sky_%28Race%29.png" 
-                             alt="Seiun Sky Banner Illustration" 
-                             onerror="this.src='https://placehold.co/400x600/0f172a/10b981?text=Seiun+Sky'"
-                             class="w-full h-full object-cover object-center transform group-hover:scale-110 transition-transform duration-700">
-                        
-                        <div class="absolute inset-0 border-2 border-emerald-500/30 rounded-2xl pointer-events-none z-20 m-2 group-hover:border-emerald-400 transition-colors"></div>
-                        
-                        <!-- Bottom Info Tag -->
-                        <div class="absolute bottom-4 left-4 right-4 z-20 bg-slate-900/90 backdrop-blur-md p-3 rounded-xl border border-slate-700 group-hover:border-emerald-500/50 transition-all">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h4 class="text-xs font-semibold text-emerald-400 uppercase tracking-wide">Main Race Attire</h4>
-                                    <p class="text-sm font-bold text-white">Top of Blue Sky (恵みのささめき)</p>
-                                </div>
-                                <span class="px-2 py-1 rounded bg-emerald-600 text-[10px] font-bold text-white uppercase animate-pulse">Grade I</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CAROUSEL SECTION: 4 OUTFIT VERSIONS -->
-        <section id="variasi" class="space-y-6">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-4">
-                <div>
-                    <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-                        <i class="fa-solid fa-layer-group"></i> Uma Musume Wiki Costumes
-                    </div>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Galeri Variasi Karakter (4 Versi)</h2>
-                </div>
-                <p class="text-slate-400 text-sm max-w-md">
-                    Gunakan tombol navigasi untuk melihat 4 iterasi kostum Seiun Sky yang tersedia dalam waralaba.
-                </p>
-            </div>
-
-            <!-- Carousel Box Container -->
-            <div class="relative glass-card rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-                <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[460px]">
-                    
-                    <!-- Carousel Image Area -->
-                    <div class="lg:col-span-6 relative bg-slate-950 flex items-center justify-center overflow-hidden p-6">
-                        <div class="absolute inset-0 bg-radial-gradient from-emerald-900/30 to-transparent"></div>
-                        
-                        <div class="relative z-10 w-full h-80 sm:h-96 flex items-center justify-center">
-                            <img id="carouselImg" 
-                                 src="" 
-                                 alt="Seiun Sky Outfit" 
-                                 onerror="this.src='https://placehold.co/400x600/0f172a/10b981?text=Seiun+Sky+Outfit'"
-                                 class="max-h-full max-w-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] transition-all duration-500 opacity-0 scale-95 hover:scale-105 cursor-pointer">
-                        </div>
-
-                        <div class="absolute top-4 left-4 z-20">
-                            <span id="versionBadge" class="px-3 py-1 rounded-full text-xs font-bold badge-gold shadow">
-                                Versi 1 dari 4
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Carousel Content Area -->
-                    <div class="lg:col-span-6 p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-slate-900/60">
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <span id="outfitType" class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20">
-                                    Racing Outfit
-                                </span>
-                                <span id="outfitRarity" class="text-xs text-slate-400">
-                                    3★ Base Character
-                                </span>
-                            </div>
-
-                            <h3 id="outfitTitle" class="text-2xl font-bold text-white font-serif">
-                                Top of Blue Sky
-                            </h3>
-                            <p id="outfitJpTitle" class="text-sm text-slate-400 italic">
-                                [恵みのささめき] Seiun Sky
-                            </p>
-
-                            <p id="outfitDescription" class="text-slate-300 text-sm leading-relaxed">
-                                Seragam balap resmi bernuansa hijau zamrud, cyan, dan putih. Dilengkapi aksen tali pancingan dan topi santai yang mencerminkan kecerdikan uniknya di garis depan pacuan.
-                            </p>
-
-                            <div class="pt-2">
-                                <h4 class="text-xs font-semibold text-slate-400 uppercase mb-2">Ciri Khas & Keahlian:</h4>
-                                <div id="outfitTags" class="flex flex-wrap gap-2">
-                                    <!-- Dynamic Tags Filled by JS -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Controls & Navigation Indicators -->
-                        <div class="space-y-4 pt-4 border-t border-slate-800">
-                            <div class="flex items-center justify-between">
-                                <div class="flex space-x-2" id="carouselDots">
-                                    <!-- Dots generated via JS -->
-                                </div>
-
-                                <div class="flex space-x-3">
-                                    <button id="prevBtn" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-white transition-all active:scale-95 flex items-center justify-center border border-slate-700 shadow-md">
-                                        <i class="fa-solid fa-chevron-left"></i>
-                                    </button>
-                                    <button id="nextBtn" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-white transition-all active:scale-95 flex items-center justify-center border border-slate-700 shadow-md">
-                                        <i class="fa-solid fa-chevron-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- WIKI CONTENTS TABBED SECTION -->
-        <section id="biografi" class="space-y-6">
-            <div class="border-b border-slate-800 pb-4">
-                <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-                    <i class="fa-solid fa-book-bookmark"></i> Information Database
-                </div>
-                <h2 class="text-2xl sm:text-3xl font-bold text-white">Profil & Detail Wiki</h2>
-            </div>
-
-            <!-- Tab Buttons Header -->
-            <div class="flex space-x-2 border-b border-slate-800 overflow-x-auto pb-1">
-                <button onclick="switchTab('tab-bio')" id="btn-tab-bio" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-sm border-b-2 border-amber-500 text-amber-400 bg-slate-800/40 transition-all whitespace-nowrap">
-                    <i class="fa-regular fa-user mr-2"></i>Biografi & Statistik
-                </button>
-                <button onclick="switchTab('tab-appearance')" id="btn-tab-appearance" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all whitespace-nowrap">
-                    <i class="fa-solid fa-shirt mr-2"></i>Penampilan & Desain
-                </button>
-                <button onclick="switchTab('tab-irl')" id="btn-tab-irl" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all whitespace-nowrap">
-                    <i class="fa-solid fa-horse-head mr-2"></i>Kuda Pacu Nyata (IRL)
-                </button>
-            </div>
-
-            <!-- TAB 1: BIOGRAPHY & STATS -->
-            <div id="tab-bio" class="tab-content block space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Stat Card -->
-                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-4 hover:border-emerald-500/40 transition-colors">
-                        <h3 class="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                            <i class="fa-solid fa-sliders text-amber-400"></i> Spesifikasi Karakter
-                        </h3>
-                        <div class="space-y-3 text-sm">
-                            <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                                <span class="text-slate-400">Nama Jepang</span>
-                                <span class="font-semibold text-white">セイウンスカイ</span>
-                            </div>
-                            <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                                <span class="text-slate-400">Asal Tempat</span>
-                                <span class="font-semibold text-white">Aomori, Jepang</span>
-                            </div>
-                            <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                                <span class="text-slate-400">Tinggi / Berat</span>
-                                <span class="font-semibold text-white">155 cm / Tidak ada perubahan</span>
-                            </div>
-                            <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                                <span class="text-slate-400">Ukuran B-W-H</span>
-                                <span class="font-semibold text-white">77 - 55 - 80</span>
-                            </div>
-                            <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                                <span class="text-slate-400">Kamar Asrama</span>
-                                <span class="font-semibold text-white">Asrama Ritto (Kamar 102)</span>
-                            </div>
-                            <div class="flex justify-between py-1.5">
-                                <span class="text-slate-400">Teman Kamar</span>
-                                <span class="font-semibold text-emerald-400">Nishino Flower</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Biography Narrative -->
-                    <div class="lg:col-span-2 glass-card p-6 rounded-2xl border border-slate-800 space-y-4 hover:border-emerald-500/40 transition-colors">
-                        <h3 class="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                            <i class="fa-solid fa-feather-pointed text-amber-400"></i> Biografi Kepribadian
-                        </h3>
-                        <p class="text-slate-300 text-sm leading-relaxed">
-                            Seiun Sky sering terlihat bolos dari latihan keras untuk memancing di tepi sungai atau sekadar tidur di bawah pohon rindang. Karakter santai ini sering membuat lawan-lawannya meremehkan kekuatannya sebelum garis start dimulai.
-                        </p>
-                        <p class="text-slate-300 text-sm leading-relaxed">
-                            Namun saat pistol balapan dibunyikan, ia berubah menjadi perancang taktik ulung. Dengan keahlian uniknya (*Angling x Scheming*), ia mampu mengatur kecepatan agar kuda lain kelelahan di tengah balapan sebelum ia melakukan akselerasi tak terkejar di tikungan terakhir.
-                        </p>
-
-                        <div class="pt-2">
-                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Kemampuan Balap (Aptitude)</h4>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-                                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 hover:border-amber-400/50 hover:scale-105 transition-all">
-                                    <span class="text-slate-400 block text-[10px]">Rumput (Turf)</span>
-                                    <span class="text-base font-extrabold text-emerald-400">A</span>
-                                </div>
-                                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 hover:border-amber-400/50 hover:scale-105 transition-all">
-                                    <span class="text-slate-400 block text-[10px]">Jarak Menengah</span>
-                                    <span class="text-base font-extrabold text-emerald-400">A</span>
-                                </div>
-                                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 hover:border-amber-400/50 hover:scale-105 transition-all">
-                                    <span class="text-slate-400 block text-[10px]">Jarak Jauh</span>
-                                    <span class="text-base font-extrabold text-emerald-400">A</span>
-                                </div>
-                                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 hover:border-amber-400/50 hover:scale-105 transition-all">
-                                    <span class="text-slate-400 block text-[10px]">Taktik Front-runner</span>
-                                    <span class="text-base font-extrabold text-emerald-400">A</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 2: APPEARANCE -->
-            <div id="tab-appearance" class="tab-content hidden glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
-                <h3 class="text-lg font-bold text-white border-b border-slate-800 pb-3">Ciri Visual & Desain Karakter</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-300">
-                    <div class="space-y-3">
-                        <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-800/40 transition-colors">
-                            <div class="p-2 rounded bg-emerald-500/10 text-emerald-400 mt-1"><i class="fa-solid fa-cloud"></i></div>
-                            <div>
-                                <h4 class="font-bold text-white">Rambut Biru Awan Soft</h4>
-                                <p class="text-xs text-slate-400">Rambut pendek berwarna hijau-cyan lembut menyerupai awan langit berangin segar di musim panas.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-800/40 transition-colors">
-                            <div class="p-2 rounded bg-emerald-500/10 text-emerald-400 mt-1"><i class="fa-solid fa-fish"></i></div>
-                            <div>
-                                <h4 class="font-bold text-white">Aksesoris Kail Pancing</h4>
-                                <p class="text-xs text-slate-400">Sering mengenakan topi santai dengan umpan pancing atau membawa joran pancingan kecil ke manapun ia pergi.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-800/40 transition-colors">
-                            <div class="p-2 rounded bg-emerald-500/10 text-emerald-400 mt-1"><i class="fa-solid fa-vest"></i></div>
-                            <div>
-                                <h4 class="font-bold text-white">Jaket Santai Hijau Zamrud</h4>
-                                <p class="text-xs text-slate-400">Desain seragam balap gaya kasual bertali yang elastis untuk memudahkan gerakan lari cepat tanpa hambatan.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-800/40 transition-colors">
-                            <div class="p-2 rounded bg-emerald-500/10 text-emerald-400 mt-1"><i class="fa-solid fa-cat"></i></div>
-                            <div>
-                                <h4 class="font-bold text-white">Senyuman Licik Kucing</h4>
-                                <p class="text-xs text-slate-400">Ekspresi wajah khas dengan senyuman miring yang menunjukkan pikiran licik perencana taktiknya.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: REAL HORSE INFO -->
-            <div id="tab-irl" class="tab-content hidden glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
-                <h3 class="text-lg font-bold text-white border-b border-slate-800 pb-3">Sejarah Kuda Pacu Asli (Seiun Sky 1995-2011)</h3>
-                <div class="space-y-3 text-sm text-slate-300">
-                    <p>
-                        Seiun Sky (lahir 26 April 1995 di Nishiki, Hokkaido) adalah kuda pacu jantan murni (<b>thoroughbred</b>) legendaris. Pada musim klasik 1998, ia memenangkan dua mahkota dari Tiga Mahkota Jepang (<b>Satsuki Sho</b> & <b>Kikuka Sho</b>), di mana pada Kikuka Sho ia memecahkan rekor dunia waktu tercepat jarak 3000m (3:03.2).
-                    </p>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 hover:border-amber-500/50 hover:scale-105 transition-all">
-                            <span class="text-xs text-slate-400 block">Total Rekor Balap</span>
-                            <span class="text-xl font-bold text-emerald-400">13 Laga / 7 Kemenangan</span>
-                        </div>
-                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 hover:border-amber-500/50 hover:scale-105 transition-all">
-                            <span class="text-xs text-slate-400 block">Rival Utama</span>
-                            <span class="text-xl font-bold text-blue-400">Special Week & King Halo</span>
-                        </div>
-                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 hover:border-amber-500/50 hover:scale-105 transition-all">
-                            <span class="text-xs text-slate-400 block">Gelar Legendaris</span>
-                            <span class="text-xl font-bold text-yellow-400">World Record Kikuka Sho</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- RELATIONSHIPS SECTION (GOLDEN GENERATION) -->
-        <section id="hubungan" class="space-y-6">
-            <div class="border-b border-slate-800 pb-4">
-                <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-                    <i class="fa-solid fa-people-group"></i> Golden Generation
-                </div>
-                <h2 class="text-2xl sm:text-3xl font-bold text-white">Hubungan Karakter (Relationships)</h2>
-            </div>
-
-            <!-- Grid Cards for Friends / Rivals -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Special Week -->
-                <div class="glass-card p-5 rounded-2xl glass-card-hover border border-slate-800 flex flex-col justify-between group">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">Rival Triple Crown</span>
-                            <i class="fa-solid fa-trophy text-amber-400 text-sm group-hover:rotate-12 transition-transform"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">Special Week</h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Rival utama dalam perebutan mahkota klasik 1998. Seiun Sky mengalahkan Special Week di Satsuki Sho & Kikuka Sho dengan taktik melesat cepatnya.
-                        </p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-amber-400 font-semibold flex justify-between items-center">
-                        <span>Hubungan: Rivalry Klasik</span>
-                        <a href="specialweek.html" class="hover:underline text-[10px] text-blue-400">Spe Page →</a>
-                    </div>
-                </div>
-
-                <!-- King Halo -->
-                <div class="glass-card p-5 rounded-2xl glass-card-hover border border-slate-800 flex flex-col justify-between group">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">Sahabat Teman Debat</span>
-                            <i class="fa-solid fa-comments text-purple-400 text-sm group-hover:scale-110 transition-transform"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">King Halo</h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Seiun Sky suka memprovokasi kebanggaan King Halo untuk melihat reaksinya yang lucu, namun sebenarnya sangat menghargai kerja kerasnya.
-                        </p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-amber-400 font-semibold flex justify-between items-center">
-                        <span>Hubungan: Teasing Friends</span>
-                        <a href="kinghalo.html" class="hover:underline text-[10px] text-purple-400">King Page →</a>
-                    </div>
-                </div>
-
-                <!-- Grass Wonder -->
-                <div class="glass-card p-5 rounded-2xl glass-card-hover border border-slate-800 flex flex-col justify-between group">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Sahabat Angkatan</span>
-                            <i class="fa-solid fa-horse text-amber-400 text-sm group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">Grass Wonder</h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Rekan seangkatan Generasi Emas. Seiun Sky selalu berhati-hati jika Grass Wonder mulai menunjukkan tatapan "api dingin"-nya.
-                        </p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between items-center">
-                        <span>Hubungan: Mutual Respect</span>
-                        <a href="grasswonder.html" class="hover:underline text-[10px] text-amber-400 font-bold">Grass Page →</a>
-                    </div>
-                </div>
-
-                <!-- El Condor Pasa -->
-                <div class="glass-card p-5 rounded-2xl glass-card-hover border border-slate-800 flex flex-col justify-between group">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">Rekan Seperjuangan</span>
-                            <i class="fa-solid fa-mask text-red-400 text-sm group-hover:rotate-12 transition-transform"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">El Condor Pasa</h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            El sering mengajak Seiun Sky latihan heboh, sementara Seiun mencoba mengajarinya seni santai memancing di pinggir danau.
-                        </p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between items-center">
-                        <span>Hubungan: Generasi Emas</span>
-                        <a href="elcondorpasa.html" class="hover:underline text-[10px] text-red-400 font-bold">El Condor Page →</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- MEDIA APPEARANCES & TRIVIA ACCORDION -->
-        <section id="media-trivia" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            <!-- Left: Media Appearances -->
-            <div class="lg:col-span-6 space-y-4">
-                <div class="border-b border-slate-800 pb-3">
-                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-tv text-amber-400"></i> Penampilan Media
-                    </h3>
-                </div>
-                
-                <div class="space-y-3 text-sm">
-                    <!-- Anime -->
-                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 hover:border-slate-700 transition-colors">
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-white"><i class="fa-solid fa-film text-emerald-400 mr-2"></i>Anime Adaptasi</span>
-                            <span class="text-xs text-amber-400 font-semibold">Season 1 Key Character</span>
-                        </div>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Di Anime **Season 1**, Seiun Sky digambarkan sebagai penghalang utama Special Week di Satsuki Sho dengan gaya larinya yang tak bisa dikejar dari depan.
-                        </p>
-                    </div>
-
-                    <!-- Manga -->
-                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 hover:border-slate-700 transition-colors">
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-white"><i class="fa-solid fa-book-open text-cyan-400 mr-2"></i>Manga</span>
-                            <span class="text-xs text-slate-400">Umayon & Spin-off</span>
-                        </div>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Karakter utama dalam episode komedi memancing dan bersantai bersama Nishino Flower di manga spin-off **Umayon**.
-                        </p>
-                    </div>
-
-                    <!-- Discography / Songs -->
-                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 hover:border-slate-700 transition-colors">
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-white"><i class="fa-solid fa-music text-purple-400 mr-2"></i>Lagu Karakter</span>
-                            <span class="text-xs text-slate-400">WINNING LIVE</span>
-                        </div>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Menyanyikan lagu solo khas bersuasana santai: <span class="text-amber-400 italic">"My Against Fight"</span> serta vokal utama lagu tema **Make debut!** dan **GIRLS' LEGEND U**.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right: Interactive Trivia Accordion -->
-            <div class="lg:col-span-6 space-y-4">
-                <div class="border-b border-slate-800 pb-3">
-                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-lightbulb text-amber-400"></i> Fakta Menarik (Trivia)
-                    </h3>
-                </div>
-
-                <div class="space-y-3" id="triviaAccordion">
-                    <!-- Trivia Item 1 -->
-                    <div class="rounded-xl bg-slate-900/80 border border-slate-800 overflow-hidden">
-                        <button onclick="toggleAccordion(1)" class="w-full p-4 text-left flex justify-between items-center font-semibold text-sm text-white hover:bg-slate-800/60 transition-colors">
-                            <span>1. Rekor Dunia Kikuka Sho 3:03.2</span>
-                            <i id="acc-icon-1" class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-300"></i>
-                        </button>
-                        <div id="acc-content-1" class="hidden p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-slate-800/50 mt-2">
-                            Kuda pacu aslinya memecahkan rekor waktu tercepat balapan 3000 meter di Kikuka Sho 1998 dengan catatan waktu 3 menit 3,2 detik, rekor fantastis yang bertahan bertahun-tahun.
-                        </div>
-                    </div>
-
-                    <!-- Trivia Item 2 -->
-                    <div class="rounded-xl bg-slate-900/80 border border-slate-800 overflow-hidden">
-                        <button onclick="toggleAccordion(2)" class="w-full p-4 text-left flex justify-between items-center font-semibold text-sm text-white hover:bg-slate-800/60 transition-colors">
-                            <span>2. Hubungan Manis Dengan Nishino Flower</span>
-                            <i id="acc-icon-2" class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-300"></i>
-                        </button>
-                        <div id="acc-content-2" class="hidden p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-slate-800/50 mt-2">
-                            Di dunia nyata, Seiun Sky dan Nishino Flower dikawinkan di peternakan setelah pensiun. Dalam Uma Musume, hubungan manis ini diadaptasi menjadi teman satu kamar asrama yang saling menyayangi.
-                        </div>
-                    </div>
-
-                    <!-- Trivia Item 3 -->
-                    <div class="rounded-xl bg-slate-900/80 border border-slate-800 overflow-hidden">
-                        <button onclick="toggleAccordion(3)" class="w-full p-4 text-left flex justify-between items-center font-semibold text-sm text-white hover:bg-slate-800/60 transition-colors">
-                            <span>3. Taktik "Escape King" (Nige)</span>
-                            <i id="acc-icon-3" class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-300"></i>
-                        </button>
-                        <div id="acc-content-3" class="hidden p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-slate-800/50 mt-2">
-                            Seiun Sky diakui sebagai salah satu pelari terdepan (*Escape King*) paling cerdik karena kemampuannya menurunkan tempo balapan saat memimpin, membuat lawan kehabisan stamina tanpa menyadarinya.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="border-t border-slate-800 bg-slate-950 mt-20 py-8 text-center text-xs text-slate-400">
-        <div class="max-w-7xl mx-auto px-4 space-y-3">
-            <div class="flex justify-center items-center space-x-2">
-                <span class="font-bold text-white font-serif">Seiun Sky Fan Portal</span>
-                <span>•</span>
-                <span>Uma Musume: Pretty Derby</span>
-            </div>
-            <p class="max-w-xl mx-auto text-slate-400">
-                Data dan informasi dirangkum dari Uma Musume Official Wiki. Karakter Seiun Sky merupakan hak cipta dari Cygames, Inc.
-            </p>
-            <p class="text-slate-400 text-[10px]">
-                 @Finwahyu - Golden Generation Portal
-            </p>
-        </div>
-    </footer>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // -------------------------------------------------------------
-        // ANIMASI PARTIKEL AWAN & ANGIN LAUT (CANVAS)
-        // -------------------------------------------------------------
-        const canvas = document.getElementById('cloudCanvas');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        const clouds = [];
-        const cloudCount = 18;
-
-        for (let i = 0; i < cloudCount; i++) {
-            clouds.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: Math.random() * 8 + 4,
-                speedX: Math.random() * 0.8 + 0.3,
-                speedY: Math.random() * 0.4 - 0.2,
-                opacity: Math.random() * 0.35 + 0.15
-            });
-        }
-
-        function drawCloud(c) {
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(52, 211, 153, ${c.opacity})`;
-            ctx.fill();
-            ctx.restore();
-        }
-
-        function animateClouds() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            clouds.forEach(c => {
-                c.x += c.speedX;
-                c.y += c.speedY;
-
-                if (c.x > canvas.width + 20) {
-                    c.x = -20;
-                    c.y = Math.random() * canvas.height;
-                }
-
-                drawCloud(c);
-            });
-            requestAnimationFrame(animateClouds);
-        }
-        animateClouds();
-
-        // -------------------------------------------------------------
-        // CAROUSEL DATA: 4 OUTFIT VERSIONS OF SEIUN SKY
-        // -------------------------------------------------------------
-        const outfitData = [
-            {
-                id: 1,
-                title: "Top of Blue Sky",
-                jpTitle: "[恵みのささめき] Seiun Sky",
-                type: "Racing Outfit (Main)",
-                rarity: "3★ Base Character",
-                img: "https://umamusu.wiki/w/images/b/b0/Game_Asset_chara_stand_1020_102001.png", 
-                description: "Seragam balap resmi bernuansa hijau zamrud, cyan, dan putih. Dilengkapi aksen tali pancingan dan topi santai yang mencerminkan kecerdikan uniknya di garis depan pacuan.",
-                tags: ["Turf Specialist", "Medium/Long Distance", "Front-runner (Escape)"],
-                badge: "Versi 1 dari 4"
-            },
-            {
-                id: 2,
-                title: "Soiree de Chaton (Wedding Dress Alt)",
-                jpTitle: "[ソワレ・ド・シャトン] Seiun Sky Alt",
-                type: "Event Outfit (June Bride)",
-                rarity: "3★ Alt Costume",
-                img: "https://umamusu.wiki/w/images/6/67/Game_Asset_chara_stand_1020_102020.png",
-                description: "Gaun pengantin elegan gaya modern bernuansa putih bersih dan aksen kembang pita hijau pastel. Menampilkan sisi manis nan anggun yang mengejutkan dari sang genius pemalas.",
-                tags: ["June Bride Event", "Wedding Style", "Pace Control Boost"],
-                badge: "Versi 2 dari 4"
-            },
-            {
-                id: 3,
-                title: "Tracen Academy Uniform",
-                jpTitle: "[Tracen Academy] School Uniform",
-                type: "School Uniform",
-                rarity: "Standard Outfit",
-                img: "https://umamusu.wiki/w/images/d/d2/Game_Asset_chara_stand_1020_000005.png",
-                description: "Seragam musim panas / musim dingin resmi Akademi Tracen. Desain blazer ungu yang sering dipakai Seiun Sky saat membolos tidur di atap atau tepi danau sekolah.",
-                tags: ["Campus Life", "Ritto Dormitory", "Student"],
-                badge: "Versi 3 dari 4"
-            },
-            {
-                id: 4,
-                title: "Casual / Private Outfit",
-                jpTitle: "[Casual Wear] Private Outfit",
-                type: "Casual Wear",
-                rarity: "Event / Private",
-                img: "https://umamusu.wiki/w/images/2/2a/Game_Asset_chara_stand_1020_901020.png",
-                description: "Pakaian santai kasual bergaya sweter longgar dan celana nyaman yang dikenakan Seiun Sky saat pergi memancing ikan bersama Trainer di hari libur.",
-                tags: ["Private Outfit", "Fishing Trip", "Casual"],
-                badge: "Versi 4 dari 4"
-            }
-        ];
-
-        let currentIndex = 0;
-
-        const carouselImg = document.getElementById('carouselImg');
-        const outfitTitle = document.getElementById('outfitTitle');
-        const outfitJpTitle = document.getElementById('outfitJpTitle');
-        const outfitType = document.getElementById('outfitType');
-        const outfitRarity = document.getElementById('outfitRarity');
-        const outfitDescription = document.getElementById('outfitDescription');
-        const outfitTags = document.getElementById('outfitTags');
-        const versionBadge = document.getElementById('versionBadge');
-        const carouselDots = document.getElementById('carouselDots');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-
-        function renderDots() {
-            carouselDots.innerHTML = '';
-            outfitData.forEach((_, idx) => {
-                const dot = document.createElement('button');
-                dot.className = `w-3 h-3 rounded-full transition-all ${idx === currentIndex ? 'bg-amber-500 w-8' : 'bg-slate-700 hover:bg-slate-500'}`;
-                dot.onclick = () => goToSlide(idx);
-                carouselDots.appendChild(dot);
-            });
-        }
-
-        function updateSlide() {
-            const item = outfitData[currentIndex];
-            carouselImg.classList.add('opacity-0', 'scale-95');
-
-            setTimeout(() => {
-                carouselImg.src = item.img;
-                outfitTitle.textContent = item.title;
-                outfitJpTitle.textContent = item.jpTitle;
-                outfitType.textContent = item.type;
-                outfitRarity.textContent = item.rarity;
-                outfitDescription.textContent = item.description;
-                versionBadge.textContent = item.badge;
-
-                outfitTags.innerHTML = item.tags.map(tag => 
-                    `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:border-amber-400 transition-colors">${tag}</span>`
-                ).join('');
-
-                renderDots();
-                carouselImg.classList.remove('opacity-0', 'scale-95');
-            }, 200);
-        }
-
-        function goToSlide(index) {
-            currentIndex = index;
-            updateSlide();
-        }
-
-        prevBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex === 0) ? outfitData.length - 1 : currentIndex - 1;
-            updateSlide();
-        });
-
-        nextBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex === outfitData.length - 1) ? 0 : currentIndex + 1;
-            updateSlide();
-        });
-
-        updateSlide();
-
-        // -------------------------------------------------------------
-        // TAB SYSTEM LOGIC
-        // -------------------------------------------------------------
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => {
-                el.classList.add('hidden');
-                el.classList.remove('block');
-            });
-
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('border-amber-500', 'text-amber-400', 'bg-slate-800/40');
-                btn.classList.add('border-transparent', 'text-slate-400');
-            });
-
-            const activeTab = document.getElementById(tabId);
-            if (activeTab) {
-                activeTab.classList.remove('hidden');
-                activeTab.classList.add('block');
-            }
-
-            const activeBtn = document.getElementById(`btn-${tabId}`);
-            if (activeBtn) {
-                activeBtn.classList.add('border-amber-500', 'text-amber-400', 'bg-slate-800/40');
-                activeBtn.classList.remove('border-transparent', 'text-slate-400');
-            }
-        }
-
-        // -------------------------------------------------------------
-        // ACCORDION LOGIC
-        // -------------------------------------------------------------
-        function toggleAccordion(id) {
-            const content = document.getElementById(`acc-content-${id}`);
-            const icon = document.getElementById(`acc-icon-${id}`);
-
-            if (content.classList.contains('hidden')) {
-                content.classList.remove('hidden');
-                icon.classList.add('rotate-180');
-            } else {
-                content.classList.add('hidden');
-                icon.classList.remove('rotate-180');
-            }
-        }
-
-        // -------------------------------------------------------------
-        // MOBILE MENU TOGGLE
-        // -------------------------------------------------------------
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-    </script>
-</body>
-</html>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>/* Golden Generation - Loading Screen & Page Transition
+   Pasang di bagian head SETIAP halaman: tag script dengan src="loader.js"  */
+(function () {
+  if (window.__ggLoader) return;
+  window.__ggLoader = true;
+  var doc = document.documentElement;
+
+  var css = `
+#gg-loader{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;text-align:center;background:radial-gradient(circle at 50% 40%,#10193a,#050914 70%);color:#e2e8f0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;transition:opacity .35s ease,transform .5s ease,visibility 0s}
+#gg-loader.gg-done{opacity:0;transform:scale(1.4);visibility:hidden;pointer-events:none;transition:opacity .9s ease,transform 1.1s cubic-bezier(.7,0,.3,1),visibility 0s .9s}
+html.gg-lock{overflow:hidden}
+#gg-loader::before{content:"";position:absolute;left:0;top:0;width:2px;height:2px;border-radius:50%;box-shadow:8vw 12vh #fff,22vw 72vh #fffa,35vw 20vh #fff,48vw 88vh #fff8,61vw 9vh #fff,74vw 64vh #fffa,86vw 30vh #fff,93vw 82vh #fff8,14vw 44vh #fff6,67vw 41vh #fff6,40vw 55vh #fff5,82vw 8vh #fff;animation:gg-tw 2.6s ease-in-out infinite alternate}
+.gg-stage{position:relative;width:11rem;height:11rem}
+.gg-ring{position:absolute;inset:0;margin:auto;border-radius:50%;border:1px solid rgba(245,158,11,.28);animation:gg-spin var(--d) linear infinite}
+.gg-ring i{position:absolute;top:-6px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--c);box-shadow:0 0 14px var(--c)}
+.gg-sun{position:absolute;inset:0;margin:auto;width:3.5rem;height:3.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font:900 1rem 'Shippori Mincho',serif;color:#0b1120;background:radial-gradient(circle at 35% 30%,#fef08a,#f59e0b 55%,#d97706);box-shadow:0 0 40px rgba(245,158,11,.7);animation:gg-pulse 2.2s ease-in-out infinite}
+.gg-title{margin-top:2.2rem;font:900 clamp(1.3rem,5vw,1.9rem) 'Shippori Mincho',serif;letter-spacing:.25em;background:linear-gradient(100deg,#fde68a,#f59e0b,#ef4444,#f59e0b,#fde68a);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gg-shine 6s linear infinite}
+.gg-text{margin-top:.5rem;height:1rem;font-size:.75rem;color:#94a3b8}
+.gg-bar{width:min(18rem,70vw);height:3px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:1.1rem}
+.gg-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a855f7,#f59e0b,#ef4444);box-shadow:0 0 12px #f59e0b}
+.gg-pct{margin-top:.5rem;font:12px ui-monospace,monospace;color:#fbbf24}
+@keyframes gg-spin{to{rotate:360deg}}
+@keyframes gg-pulse{50%{transform:scale(1.08);box-shadow:0 0 60px rgba(245,158,11,.9)}}
+@keyframes gg-shine{to{background-position:-250% 0}}
+@keyframes gg-tw{from{opacity:.25}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.gg-ring,.gg-sun,.gg-title{animation:none}}`;
+
+  var st = document.createElement('style');
+  st.textContent = css;
+  (document.head || doc).appendChild(st);
+
+  var rings = [['#3b82f6', 6, 36, 0], ['#f59e0b', 9, 52, 1], ['#ef4444', 12, 68, 0], ['#10b981', 16, 84, 1], ['#a855f7', 21, 100, 0]]
+    .map(function (r) {
+      return '<div class="gg-ring" style="--c:' + r[0] + ';--d:' + r[1] + 's;width:' + r[2] + '%;height:' + r[2] + '%;' + (r[3] ? 'animation-direction:reverse' : '') + '"><i></i></div>';
+    }).join('');
+  var el = document.createElement('div');
+  el.id = 'gg-loader';
+  el.innerHTML = '<div class="gg-stage">' + rings + '<div class="gg-sun">黄金</div></div>' +
+    '<div class="gg-title">GOLDEN GENERATION</div><div class="gg-text"></div>' +
+    '<div class="gg-bar"><i></i></div><div class="gg-pct">0%</div>';
+  doc.appendChild(el);
+  doc.classList.add('gg-lock');
+
+  var bar = el.querySelector('.gg-bar i'), pct = el.querySelector('.gg-pct'), txt = el.querySelector('.gg-text');
+  var msgs = ['Menyalakan matahari emas…', 'Menata lima orbit…', 'Memanggil para bintang…', 'Siap meluncur!'];
+  var shown = 0, mode = 'load', tStart = performance.now(), running = false;
+  var fontsDone = false, loadDone = document.readyState === 'complete';
+
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fontsDone = true; }); else fontsDone = true;
+  if (!loadDone) window.addEventListener('load', function () { loadDone = true; });
+
+  function imgRatio() {
+    var im = document.images, d = 0;
+    if (!im.length) return 1;
+    for (var i = 0; i < im.length; i++) if (im[i].complete) d++;
+    return d / im.length;
+  }
+  function finish() {
+    setTimeout(function () {
+      el.classList.add('gg-done');
+      doc.classList.remove('gg-lock');
+      window.dispatchEvent(new Event('gg-loaded'));
+    }, 450);
+  }
+  function frame(now) {
+    var goal;
+    if (mode === 'leave') goal = Math.min(96, (now - tStart) / 450 * 100);
+    else {
+      var real = (now - tStart > 7000) ? 100 : 100 * (0.2 * (fontsDone ? 1 : 0) + 0.5 * imgRatio() + 0.3 * (loadDone ? 1 : 0));
+      goal = Math.min(real, (now - tStart) / 900 * 100);
+    }
+    shown += (goal - shown) * 0.12;
+    if (shown > 99.4) shown = 100;
+    bar.style.width = shown + '%';
+    pct.textContent = Math.round(shown) + '%';
+    txt.textContent = mode === 'leave' ? 'Menuju halaman berikutnya…' : msgs[Math.min(3, Math.floor(shown / 26))];
+    if (mode === 'load' && shown >= 100) { running = false; finish(); return; }
+    requestAnimationFrame(frame);
+  }
+  function run() { if (!running) { running = true; requestAnimationFrame(frame); } }
+  run();
+
+  // Pindah halaman: tampilkan loading screen dulu, baru navigasi
+  function leave(url) {
+    if (mode === 'leave') return;
+    mode = 'leave'; shown = 0; tStart = performance.now();
+    doc.classList.add('gg-lock');
+    el.classList.remove('gg-done');
+    run();
+    setTimeout(function () { location.href = url; }, 480);
+  }
+  document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+    var u;
+    try { u = new URL(a.href, location.href); } catch (_) { return; }
+    if (u.origin !== location.origin || !/^(https?|file):$/.test(u.protocol)) return;
+    if (u.pathname === location.pathname && u.search === location.search) {
+      if (!u.hash) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      return;                                   // anchor di halaman yang sama: biarkan default
+    }
+    e.preventDefault();
+    leave(u.href);
+  }, true);
+
+  // Tombol Back (bfcache): jangan biarkan loading screen menggantung
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    mode = 'load'; shown = 100; el.classList.add('gg-done'); doc.classList.remove('gg-lock');
+  });
+})();
+</script>
+<title>Seiun Sky - Golden Generation Portal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Shippori+Mincho:wght@600;700;900&display=swap" rel="stylesheet">
+<style>:root{--p:#10b981;--s:#06b6d4}
+:root{--g:#f59e0b}*{-webkit-tap-highlight-color:transparent}html{scroll-behavior:smooth}
+body{background:#050914;color:#e2e8f0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(60% 50% at 10% 5%,color-mix(in srgb,var(--p) 24%,transparent),transparent),radial-gradient(50% 45% at 95% 30%,color-mix(in srgb,var(--s) 16%,transparent),transparent),radial-gradient(60% 50% at 50% 105%,rgba(245,158,11,.13),transparent)}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#050914}::-webkit-scrollbar-thumb{background:var(--p);border-radius:4px}
+#fx{position:fixed;left:0;top:0;z-index:1;pointer-events:none}
+#prog{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--p),var(--s),var(--g))}
+#glow{position:fixed;left:0;top:0;width:420px;height:420px;margin:-210px 0 0 -210px;z-index:2;pointer-events:none;background:radial-gradient(closest-side,color-mix(in srgb,var(--p) 14%,transparent),transparent);will-change:transform}
+header,main,footer{position:relative;z-index:10}
+.glass{background:rgba(8,13,28,.76);border:1px solid rgba(255,255,255,.09);border-radius:1.5rem}
+.gt{background:linear-gradient(100deg,var(--p),var(--s),var(--g),var(--s),var(--p));background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s linear infinite}
+@keyframes shine{to{background-position:-250% 0}}@keyframes spin{to{rotate:360deg}}@keyframes bob{50%{transform:translateY(-10px)}}
+@keyframes artIn{from{opacity:0;transform:translateX(calc(var(--dir,1)*60px)) scale(.94)}to{opacity:1;transform:none}}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.chip{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .9rem;border-radius:9999px;font-size:.75rem;font-weight:700;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#cbd5e1;transition:.25s}
+a.chip:hover,button.chip:hover{border-color:var(--p);color:#fff}
+.chip.on{background:linear-gradient(135deg,var(--p),var(--s));border-color:transparent;color:#fff}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.5rem;border-radius:9999px;font-weight:800;font-size:.85rem;transition:.3s}
+.btn-p{background:linear-gradient(135deg,var(--p),var(--s));color:#fff;box-shadow:0 10px 30px -8px color-mix(in srgb,var(--p) 80%,transparent)}.btn-p:hover{transform:translateY(-2px) scale(1.03)}
+.btn-g{border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.04);color:#e2e8f0}.btn-g:hover{border-color:var(--g);color:var(--g)}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}.reveal.on{opacity:1;transform:none}
+.eyebrow{color:var(--p);font-size:.7rem;font-weight:800;letter-spacing:.3em;text-transform:uppercase}
+.h2{font-family:'Shippori Mincho',serif;font-weight:900;font-size:clamp(2rem,5vw,3rem);margin-top:.4rem;color:#fff}
+nav a.act{color:#fff;background:rgba(255,255,255,.08)}
+.art{position:relative;height:clamp(22rem,75vw,34rem);container-type:size;--px:0;--py:0;touch-action:pan-y}
+.a-kanji{position:absolute;right:0;top:0;bottom:0;writing-mode:vertical-rl;font:900 clamp(2.4rem,7vw,5rem)/1 'Shippori Mincho',serif;letter-spacing:.05em;color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--p) 60%,transparent);opacity:.6;white-space:nowrap;translate:calc(var(--px)*-24px) calc(var(--py)*-10px);transition:translate .25s}
+.a-ring{position:absolute;left:50%;top:50%;translate:-50% -50%;border-radius:50%;border:1px dashed color-mix(in srgb,var(--p) 55%,transparent);animation:spin var(--d) linear infinite}
+.a-ring i{position:absolute;top:-5px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--s);box-shadow:0 0 14px var(--s)}
+.a-glow{position:absolute;left:50%;top:50%;translate:-50% -50%;width:85cqmin;height:85cqmin;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--p) 48%,transparent),transparent)}
+.a-img{position:absolute;left:50%;bottom:0;height:100%;max-width:100%;object-fit:contain;translate:calc(-50% + var(--px)*14px) calc(var(--py)*8px);filter:drop-shadow(0 22px 30px rgba(0,0,0,.7));animation:artIn .9s cubic-bezier(.16,1,.3,1) both,bob 6s ease-in-out .9s infinite;transition:translate .25s}
+.thumb{width:3.6rem;height:3.6rem;border-radius:9999px;border:2px solid rgba(255,255,255,.14);overflow:hidden;background:#0b1224;opacity:.65;transition:.3s;flex:none}
+.thumb img{width:100%;height:100%;object-fit:cover;object-position:top}.thumb:hover{opacity:1;transform:translateY(-3px)}
+.thumb.on{opacity:1;transform:scale(1.15);border-color:var(--p);box-shadow:0 0 0 4px color-mix(in srgb,var(--p) 25%,transparent),0 0 20px var(--p)}
+.arrow{width:2.6rem;height:2.6rem;border-radius:9999px;border:1px solid rgba(255,255,255,.15);background:rgba(5,9,20,.6);color:#e2e8f0;transition:.25s}.arrow:hover{border-color:var(--p);color:var(--p)}
+.swap>*{animation:up .55s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i,0)*.05s)}
+.tab{padding:.65rem 1.1rem;border-radius:9999px;font-size:.8rem;font-weight:700;color:#94a3b8;transition:.3s;display:inline-flex;gap:.5rem;align-items:center}.tab:hover{color:#fff}
+.tab.on{background:linear-gradient(135deg,var(--p),var(--s));color:#fff;box-shadow:0 8px 24px -8px var(--p)}
+.panel{display:none}.panel.on{display:block;animation:up .5s cubic-bezier(.16,1,.3,1)}
+.row{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 0;border-bottom:1px dashed rgba(255,255,255,.1);font-size:.8rem}.row span:first-child{color:#94a3b8}.row span:last-child{font-weight:700;color:#fff;text-align:right}
+.id{position:relative;overflow:hidden}.id::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent calc(var(--mx,50%) - 25%),rgba(255,255,255,.1) var(--mx,50%),transparent calc(var(--mx,50%) + 25%))}
+.gauge circle{fill:none;stroke-width:7;stroke-linecap:round}.gauge .bg{stroke:rgba(255,255,255,.08)}.gauge .fg{stroke:url(#gg);stroke-dasharray:226.2;stroke-dashoffset:226.2;transition:stroke-dashoffset 1.2s cubic-bezier(.16,1,.3,1)}
+.feat{padding:1.25rem;border-radius:1.25rem;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);transition:.35s}.feat:hover{transform:translateY(-6px);border-color:var(--p);background:color-mix(in srgb,var(--p) 10%,transparent)}
+.feat .ic{width:3rem;height:3rem;border-radius:1rem;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--p),var(--s));color:#fff;font-size:1.1rem;transition:.4s}.feat:hover .ic{transform:rotate(-8deg) scale(1.1)}
+.cons{position:relative;width:100%;max-width:26rem;aspect-ratio:1;margin:auto}
+.cons svg{position:absolute;inset:0;width:100%;height:100%}.cons line{stroke:rgba(255,255,255,.18);stroke-width:.4;stroke-dasharray:1.5 1.5;transition:.4s}.cons line.on{stroke:var(--p);stroke-width:.7;animation:dash 1s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-3}}
+.node{position:absolute;translate:-50% -50%;display:flex;flex-direction:column;align-items:center;gap:.3rem;transition:.35s;width:5.5rem}
+.node .av{width:3.6rem;height:3.6rem;border-radius:9999px;border:2px solid var(--nc);background:#0b1224;display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--nc);transition:.35s;box-shadow:0 0 0 0 transparent}
+.node .av img{width:100%;height:100%;object-fit:cover;object-position:top}.node .av img+img{margin-left:-.9rem}
+.node small{font-size:.62rem;font-weight:700;color:#94a3b8;text-align:center;line-height:1.15}.node:hover .av,.node.on .av{transform:scale(1.18);box-shadow:0 0 0 5px color-mix(in srgb,var(--nc) 25%,transparent),0 0 24px var(--nc)}.node.on small{color:#fff}
+.cons .core{position:absolute;left:50%;top:50%;translate:-50% -50%;width:5.5rem;height:5.5rem;border-radius:9999px;overflow:hidden;border:3px solid var(--p);box-shadow:0 0 40px color-mix(in srgb,var(--p) 60%,transparent);background:#0b1224}.cons .core img{width:100%;height:100%;object-fit:cover;object-position:top}
+.cons .orbit{position:absolute;inset:6%;border-radius:50%;border:1px dashed rgba(255,255,255,.1);animation:spin 60s linear infinite}
+.acc{border:1px solid rgba(255,255,255,.09);border-radius:1.1rem;background:rgba(255,255,255,.03);overflow:hidden;transition:.3s}.acc.on{border-color:var(--p);background:color-mix(in srgb,var(--p) 8%,transparent)}
+.acc .b{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.16,1,.3,1)}.acc.on .b{grid-template-rows:1fr}.acc .b>div{overflow:hidden}
+.opt{width:100%;text-align:left;padding:.85rem 1.1rem;border-radius:1rem;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);font-weight:600;font-size:.85rem;transition:.25s}.opt:hover:not(:disabled){border-color:var(--p);transform:translateX(4px)}
+.opt.ok{border-color:#10b981;background:rgba(16,185,129,.15);color:#6ee7b7}.opt.no{border-color:#ef4444;background:rgba(239,68,68,.15);color:#fca5a5}
+.ncard{display:flex;align-items:center;gap:1rem;padding:1rem;border-radius:1.25rem;border:1px solid rgba(255,255,255,.1);background:rgba(8,13,28,.76);transition:.35s}.ncard:hover{border-color:var(--c);transform:translateY(-4px);box-shadow:0 14px 40px -14px var(--c)}
+.ncard img{width:4rem;height:4rem;border-radius:9999px;object-fit:cover;object-position:top;border:2px solid var(--c)}
+#top{position:fixed;right:1rem;bottom:1rem;z-index:45;width:2.8rem;height:2.8rem;border-radius:9999px;background:linear-gradient(135deg,var(--p),var(--s));color:#fff;opacity:0;pointer-events:none;transform:translateY(12px);transition:.35s}#top.on{opacity:1;pointer-events:auto;transform:none}
+@media (prefers-reduced-motion:reduce){.a-ring,.a-img,.gt,.cons .orbit{animation:none}}
+</style></head>
+<body><div id="prog"></div><div id="glow"></div><canvas id="fx"></canvas>
+<header class="fixed top-3 inset-x-0 z-40 px-3"><div class="mx-auto max-w-6xl flex items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/70 backdrop-blur-md px-3 py-2 shadow-2xl">
+ <a href="index.html" class="flex items-center gap-2" title="Beranda Golden Generation"><span class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-red-600 p-0.5"><span class="w-full h-full rounded-full bg-slate-950 flex items-center justify-center font-serif font-bold text-amber-400">金</span></span><span class="hidden sm:block text-sm font-extrabold">Golden Generation</span></a>
+ <nav id="nav" class="hidden lg:flex items-center gap-1 text-xs font-semibold text-slate-300"></nav>
+ <div class="flex items-center gap-2"><div id="dots" class="flex items-center gap-1.5"></div><button id="burger" class="lg:hidden w-9 h-9 rounded-full border border-white/10"><i class="fa-solid fa-bars"></i></button></div></div>
+ <div id="mmenu" class="hidden lg:hidden mx-auto max-w-6xl mt-2 rounded-3xl border border-white/10 bg-slate-950/95 p-4 grid grid-cols-2 gap-2"></div></header>
+<main id="app"></main>
+<footer class="border-t border-white/10 bg-slate-950/80 px-4 py-10 text-center space-y-2" id="foot"></footer>
+<button id="top" aria-label="Ke atas"><i class="fa-solid fa-arrow-up"></i></button>
+<script>
+const D={"file": "seiunsky.html", "jpBg": "セイウンスカイ", "motto": "「気ままに流れる雲の如く」", "name": "Seiun Sky", "tagline": "Trickster Master • Golden Generation", "intro": "Seiun Sky adalah gadis kuda (<b>Uma Musume</b>) yang tampak santai, pemalas, dan hobi memancing di tepi sungai. Namun di balik sikapnya yang tampak acuh tak acuh, ia adalah seorang <b>genius taktik pacuan kuda</b> yang sanggup mengontrol ritme balapan dari posisi paling depan (<i>Front-runner / 逃げ</i>) dengan strategi jebakan yang tak terduga!", "quoteSrc": "— Intro Siswa (Student Introduction)", "quote": "Yah... memancing memang menyenangkan, tapi mengatur jebakan di lintasan pacu jauh lebih seru. Mau lihat rencanaku, Trainer-san?", "badges": [["Ulang Tahun", "26 April"], ["Tinggi Badan", "155 cm"], ["VA / Pengisi Suara", "Kito Akari"], ["Favorit", "Memancing & Tidur Siang"]], "heroImg": "https://umamusu.wiki/w/images/5/5a/Seiun_Sky_%28Race%29.png", "attire": ["Main Race Attire", "Top of Blue Sky (恵みのささめき)", "Grade I"], "outfits": [{"id": 1, "title": "Top of Blue Sky", "jpTitle": "[恵みのささめき] Seiun Sky", "type": "Racing Outfit (Main)", "rarity": "3★ Base Character", "img": "https://umamusu.wiki/w/images/b/b0/Game_Asset_chara_stand_1020_102001.png", "description": "Seragam balap resmi bernuansa hijau zamrud, cyan, dan putih. Dilengkapi aksen tali pancingan dan topi santai yang mencerminkan kecerdikan uniknya di garis depan pacuan.", "tags": ["Turf Specialist", "Medium/Long Distance", "Front-runner (Escape)"], "badge": "Versi 1 dari 4"}, {"id": 2, "title": "Soiree de Chaton (Wedding Dress Alt)", "jpTitle": "[ソワレ・ド・シャトン] Seiun Sky Alt", "type": "Event Outfit (June Bride)", "rarity": "3★ Alt Costume", "img": "https://umamusu.wiki/w/images/6/67/Game_Asset_chara_stand_1020_102020.png", "description": "Gaun pengantin elegan gaya modern bernuansa putih bersih dan aksen kembang pita hijau pastel. Menampilkan sisi manis nan anggun yang mengejutkan dari sang genius pemalas.", "tags": ["June Bride Event", "Wedding Style", "Pace Control Boost"], "badge": "Versi 2 dari 4"}, {"id": 3, "title": "Tracen Academy Uniform", "jpTitle": "[Tracen Academy] School Uniform", "type": "School Uniform", "rarity": "Standard Outfit", "img": "https://umamusu.wiki/w/images/d/d2/Game_Asset_chara_stand_1020_000005.png", "description": "Seragam musim panas / musim dingin resmi Akademi Tracen. Desain blazer ungu yang sering dipakai Seiun Sky saat membolos tidur di atap atau tepi danau sekolah.", "tags": ["Campus Life", "Ritto Dormitory", "Student"], "badge": "Versi 3 dari 4"}, {"id": 4, "title": "Casual / Private Outfit", "jpTitle": "[Casual Wear] Private Outfit", "type": "Casual Wear", "rarity": "Event / Private", "img": "https://umamusu.wiki/w/images/2/2a/Game_Asset_chara_stand_1020_901020.png", "description": "Pakaian santai kasual bergaya sweter longgar dan celana nyaman yang dikenakan Seiun Sky saat pergi memancing ikan bersama Trainer di hari libur.", "tags": ["Private Outfit", "Fishing Trip", "Casual"], "badge": "Versi 4 dari 4"}], "specTitle": "Spesifikasi Karakter", "stats": [["Nama Jepang", "セイウンスカイ"], ["Asal Tempat", "Aomori, Jepang"], ["Tinggi / Berat", "155 cm / Tidak ada perubahan"], ["Ukuran B-W-H", "77 - 55 - 80"], ["Kamar Asrama", "Asrama Ritto (Kamar 102)"], ["Teman Kamar", "Nishino Flower"]], "bioTitle": "Biografi Kepribadian", "bio": ["Seiun Sky sering terlihat bolos dari latihan keras untuk memancing di tepi sungai atau sekadar tidur di bawah pohon rindang. Karakter santai ini sering membuat lawan-lawannya meremehkan kekuatannya sebelum garis start dimulai.", "Namun saat pistol balapan dibunyikan, ia berubah menjadi perancang taktik ulung. Dengan keahlian uniknya (<i>Angling x Scheming</i>), ia mampu mengatur kecepatan agar kuda lain kelelahan di tengah balapan sebelum ia melakukan akselerasi tak terkejar di tikungan terakhir."], "aptTitle": "Kemampuan Balap (Aptitude)", "apt": [["Rumput (Turf)", "A"], ["Jarak Menengah", "A"], ["Jarak Jauh", "A"], ["Taktik Front-runner", "A"]], "appTitle": "Ciri Visual & Desain Karakter", "features": [{"t": "Rambut Biru Awan Soft", "d": "Rambut pendek berwarna hijau-cyan lembut menyerupai awan langit berangin segar di musim panas.", "i": "fa-solid fa-cloud"}, {"t": "Aksesoris Kail Pancing", "d": "Sering mengenakan topi santai dengan umpan pancing atau membawa joran pancingan kecil ke manapun ia pergi.", "i": "fa-solid fa-fish"}, {"t": "Jaket Santai Hijau Zamrud", "d": "Desain seragam balap gaya kasual bertali yang elastis untuk memudahkan gerakan lari cepat tanpa hambatan.", "i": "fa-solid fa-vest"}, {"t": "Senyuman Licik Kucing", "d": "Ekspresi wajah khas dengan senyuman miring yang menunjukkan pikiran licik perencana taktiknya.", "i": "fa-solid fa-cat"}], "irlTitle": "Sejarah Kuda Pacu Asli (Seiun Sky 1995-2011)", "irl": "Seiun Sky (lahir 26 April 1995 di Nishiki, Hokkaido) adalah kuda pacu jantan murni (<b>thoroughbred</b>) legendaris. Pada musim klasik 1998, ia memenangkan dua mahkota dari Tiga Mahkota Jepang (<b>Satsuki Sho</b> &amp; <b>Kikuka Sho</b>), di mana pada Kikuka Sho ia memecahkan rekor dunia waktu tercepat jarak 3000m (3:03.2).", "irlStats": [["Total Rekor Balap", "13 Laga / 7 Kemenangan"], ["Rival Utama", "Special Week & King Halo"], ["Gelar Legendaris", "World Record Kikuka Sho"]], "tabs": ["Biografi & Statistik", "Penampilan & Desain", "Kuda Pacu Nyata (IRL)"], "varTitle": "Galeri Variasi Karakter (4 Versi)", "varSub": "Gunakan tombol navigasi untuk melihat 4 iterasi kostum Seiun Sky yang tersedia dalam waralaba.", "wikiTitle": "Profil & Detail Wiki", "relTitle": "Hubungan Karakter (Relationships)", "rels": [{"label": "Rival Triple Crown", "name": "Special Week", "desc": "Rival utama dalam perebutan mahkota klasik 1998. Seiun Sky mengalahkan Special Week di Satsuki Sho &amp; Kikuka Sho dengan taktik melesat cepatnya.", "rel": "Hubungan: Rivalry Klasik", "links": [["Spe Page →", "specialweek.html"]]}, {"label": "Sahabat Teman Debat", "name": "King Halo", "desc": "Seiun Sky suka memprovokasi kebanggaan King Halo untuk melihat reaksinya yang lucu, namun sebenarnya sangat menghargai kerja kerasnya.", "rel": "Hubungan: Teasing Friends", "links": [["King Page →", "kinghalo.html"]]}, {"label": "Sahabat Angkatan", "name": "Grass Wonder", "desc": "Rekan seangkatan Generasi Emas. Seiun Sky selalu berhati-hati jika Grass Wonder mulai menunjukkan tatapan \"api dingin\"-nya.", "rel": "Hubungan: Mutual Respect", "links": [["Grass Page →", "grasswonder.html"]]}, {"label": "Rekan Seperjuangan", "name": "El Condor Pasa", "desc": "El sering mengajak Seiun Sky latihan heboh, sementara Seiun mencoba mengajarinya seni santai memancing di pinggir danau.", "rel": "Hubungan: Generasi Emas", "links": [["El Condor Page →", "elcondorpasa.html"]]}], "media": [{"label": "Anime Adaptasi", "badge": "Season 1 Key Character", "text": "Di Anime <b>Season 1</b>, Seiun Sky digambarkan sebagai penghalang utama Special Week di Satsuki Sho dengan gaya larinya yang tak bisa dikejar dari depan.", "icon": "fa-solid fa-film"}, {"label": "Manga", "badge": "Umayon & Spin-off", "text": "Karakter utama dalam episode komedi memancing dan bersantai bersama Nishino Flower di manga spin-off <b>Umayon</b>.", "icon": "fa-solid fa-book-open"}, {"label": "Lagu Karakter", "badge": "WINNING LIVE", "text": "Menyanyikan lagu solo khas bersuasana santai: <span class=\"text-amber-400 italic\">\"My Against Fight\"</span> serta vokal utama lagu tema <b>Make debut!</b> dan <b>GIRLS' LEGEND U</b>.", "icon": "fa-solid fa-music"}], "mediaTitle": "Penampilan Media", "triviaTitle": "Fakta Menarik (Trivia)", "trivia": [{"q": "1. Rekor Dunia Kikuka Sho 3:03.2", "a": "Kuda pacu aslinya memecahkan rekor waktu tercepat balapan 3000 meter di Kikuka Sho 1998 dengan catatan waktu 3 menit 3,2 detik, rekor fantastis yang bertahan bertahun-tahun."}, {"q": "2. Hubungan Manis Dengan Nishino Flower", "a": "Di dunia nyata, Seiun Sky dan Nishino Flower dikawinkan di peternakan setelah pensiun. Dalam Uma Musume, hubungan manis ini diadaptasi menjadi teman satu kamar asrama yang saling menyayangi."}, {"q": "3. Taktik \"Escape King\" (Nige)", "a": "Seiun Sky diakui sebagai salah satu pelari terdepan (<i>Escape King</i>) paling cerdik karena kemampuannya menurunkan tempo balapan saat memimpin, membuat lawan kehabisan stamina tanpa menyadarinya."}], "footer": ["Seiun Sky Fan Portal • Uma Musume: Pretty Derby", "Seiun Sky Fan Portal", "Uma Musume: Pretty Derby", "Data dan informasi dirangkum dari Uma Musume Official Wiki. Karakter Seiun Sky merupakan hak cipta dari Cygames, Inc.", "@Finwahyu - Golden Generation Portal"], "theme": {"p": "#10b981", "s": "#06b6d4", "fx": "cloud", "rgb": "167,243,208", "icon": "fa-cloud"}},M=[{"n": "Special Week", "jp": "スペシャルウィーク", "f": "specialweek.html", "img": "https://umamusu.wiki/w/images/6/63/Game_Asset_chara_stand_1001_100101.png", "c": "#ec4899"}, {"n": "Grass Wonder", "jp": "グラスワンダー", "f": "grasswonder.html", "img": "https://umamusu.wiki/w/images/0/0a/Game_Asset_chara_stand_1011_101101.png", "c": "#3b82f6"}, {"n": "El Condor Pasa", "jp": "エルコンドルパサー", "f": "elcondorpasa.html", "img": "https://umamusu.wiki/w/images/a/aa/Game_Asset_chara_stand_1014_101401.png", "c": "#ef4444"}, {"n": "Seiun Sky", "jp": "セイウンスカイ", "f": "seiunsky.html", "img": "https://umamusu.wiki/w/images/b/b0/Game_Asset_chara_stand_1020_102001.png", "c": "#10b981"}, {"n": "King Halo", "jp": "キングヘイロー", "f": "kinghalo.html", "img": "https://umamusu.wiki/w/images/f/fa/Game_Asset_chara_stand_1061_106101.png", "c": "#8b5cf6"}],Q=[{"Ulang Tahun": "2 Mei", "Tinggi Badan": "158 cm", "VA / Pengisi Suara": "Waki Azumi", "Favorit": "Wortel & Makan Banyak", "Asal Tempat": "Hokkaido, Jepang", "Ukuran B-W-H": "79 - 57 - 81", "Kamar Asrama": "Asrama Miho (Kamar 201)", "Teman Kamar": "Silence Suzuka", "Total Rekor Balap": "17 Laga / 10 Kemenangan"}, {"Ulang Tahun": "18 September", "Tinggi Badan": "152 cm", "VA / Pengisi Suara": "Maeda Rena", "Favorit": "Kue Manis Tradisional", "Asal Tempat": "Amerika Serikat (Import)", "Ukuran B-W-H": "77 - 53 - 84", "Kamar Asrama": "Asrama Miho (Kamar 208)", "Teman Kamar": "El Condor Pasa", "Total Rekor Balap": "15 Laga / 9 Kemenangan"}, {"Ulang Tahun": "17 Maret", "Tinggi Badan": "163 cm", "VA / Pengisi Suara": "Takahashi Minami", "Favorit": "Tacos & Makanan Pedas", "Asal Tempat": "Amerika Serikat (Import)", "Ukuran B-W-H": "89 - 58 - 86", "Kamar Asrama": "Asrama Miho (Kamar 208)", "Teman Kamar": "Grass Wonder", "Total Rekor Balap": "11 Laga / 6 Kemenangan"}, {"Ulang Tahun": "26 April", "Tinggi Badan": "155 cm", "VA / Pengisi Suara": "Kito Akari", "Favorit": "Memancing & Tidur Siang", "Asal Tempat": "Aomori, Jepang", "Ukuran B-W-H": "77 - 55 - 80", "Kamar Asrama": "Asrama Ritto (Kamar 102)", "Teman Kamar": "Nishino Flower", "Total Rekor Balap": "13 Laga / 7 Kemenangan"}, {"Ulang Tahun": "28 April", "Tinggi Badan": "159 cm", "VA / Pengisi Suara": "Saeki Iori", "Favorit": "Teh Herbal & Keanggunan", "Asal Tempat": "Hokkaido, Jepang", "Ukuran B-W-H": "85 - 56 - 82", "Kamar Asrama": "Asrama Miho (Kamar 305)", "Teman Kamar": "Kawakami Princess", "Total Rekor Balap": "27 Laga / 6 Kemenangan"}];
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const me=M.findIndex(m=>m.f===D.file),I=D.theme.icon,N=D.name;
+const fb=n=>'https://placehold.co/300x420/0f172a/f59e0b?text='+encodeURIComponent(n);
+const img=(src,n,cls='')=>`<img src="${src}" alt="${n}" class="${cls}" onerror="this.onerror=null;this.src='${fb(n)}'">`;
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const SEC=[['pengenalan','Pengenalan'],['variasi','Kostum'],['biografi','Dossier'],['hubungan','Relasi'],['media-trivia','Media'],['kuis','Kuis']];
+
+/* ---------- NAV ---------- */
+$('#nav').innerHTML=SEC.map(([id,t])=>`<a href="#${id}" class="px-3 py-1.5 rounded-full hover:bg-white/5 transition">${t}</a>`).join('');
+$('#mmenu').innerHTML=SEC.map(([id,t])=>`<a href="#${id}" class="chip justify-center">${t}</a>`).join('')+M.map(m=>`<a href="${m.f}" class="chip justify-center" style="${m.f===D.file?'border-color:'+m.c:''}">${m.n}</a>`).join('');
+$('#dots').innerHTML=M.map(m=>`<a href="${m.f}" title="${m.n}" class="w-7 h-7 rounded-full overflow-hidden border-2 transition hover:scale-125 ${m.f===D.file?'scale-110':'opacity-60 hover:opacity-100'}" style="border-color:${m.c};${m.f===D.file?'box-shadow:0 0 12px '+m.c:''}">${img(m.img,m.n,'w-full h-full object-cover object-top')}</a>`).join('');
+$('#burger').onclick=()=>$('#mmenu').classList.toggle('hidden');
+
+/* ---------- RENDER ---------- */
+const badgeIc=['fa-cake-candles','fa-ruler-vertical','fa-microphone-lines','fa-heart'];
+const hero=`<section id="pengenalan" class="min-h-screen pt-28 pb-14 px-4"><div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+<div class="order-2 lg:order-1 space-y-5">
+ <div class="reveal flex flex-wrap gap-2"><a href="index.html" class="chip"><i class="fa-solid fa-arrow-left"></i>Kembali ke Home</a><span class="chip" style="color:var(--p);border-color:color-mix(in srgb,var(--p) 50%,transparent)"><i class="fa-solid ${I}"></i>${D.tagline}</span></div>
+ <h1 class="reveal gt font-serif font-black leading-[.95] text-[clamp(3rem,10vw,6.5rem)]">${N}</h1>
+ <p class="reveal gt font-serif font-bold text-xl md:text-3xl">${D.motto}</p>
+ <p class="reveal text-slate-300 leading-relaxed text-sm md:text-base">${D.intro}</p>
+ <blockquote id="quote" class="reveal glass p-5 relative" style="border-left:3px solid var(--p)"><i class="fa-solid fa-quote-left absolute -top-3 left-4 text-xl" style="color:var(--p)"></i><p class="italic text-slate-200 text-sm min-h-[3.2rem]"><span id="qt"></span><span class="animate-pulse">|</span></p><footer class="text-[11px] text-slate-400 mt-2">${D.quoteSrc}</footer></blockquote>
+ <div class="reveal grid grid-cols-2 gap-2">${D.badges.map(([k,v],i)=>`<div class="glass !rounded-2xl px-3 py-2.5 flex items-center gap-3"><i class="fa-solid ${badgeIc[i]||'fa-star'} w-8 h-8 rounded-xl flex items-center justify-center text-xs text-white shrink-0" style="background:linear-gradient(135deg,var(--p),var(--s))"></i><div class="min-w-0"><div class="text-[10px] uppercase tracking-wider text-slate-400">${k}</div><div class="text-sm font-bold text-white truncate" title="${v}">${v}</div></div></div>`).join('')}</div>
+ <div class="reveal flex flex-wrap gap-3 pt-1"><a href="#variasi" class="btn btn-p"><i class="fa-solid fa-shirt"></i>Lihat Kostum</a><a href="index.html#planet-${me}" class="btn btn-g"><i class="fa-solid fa-circle-nodes"></i>Lihat di Orbit</a></div>
+</div>
+<div class="order-1 lg:order-2 reveal"><div id="hArt" class="art"><div class="a-kanji">${D.jpBg}</div><div class="a-glow"></div>${[0,1,2].map(k=>`<div class="a-ring" style="width:${58+k*20}cqmin;height:${58+k*20}cqmin;--d:${16+k*8}s;animation-direction:${k%2?'reverse':'normal'}"><i></i></div>`).join('')}${img(D.heroImg,N,'a-img')}
+<div class="absolute bottom-0 inset-x-0 glass !rounded-2xl px-4 py-3 flex items-center justify-between gap-3 backdrop-blur" style="--px:0"><div class="min-w-0"><div class="text-[10px] uppercase tracking-wider" style="color:var(--p)">${D.attire[0]}</div><div class="text-sm font-bold text-white truncate">${D.attire[1]}</div></div><span class="chip on shrink-0">${D.attire[2]}</span></div></div></div>
+</div></section>`;
+
+let oi=0,auto=null;
+const wardrobe=`<section id="variasi" class="max-w-6xl mx-auto px-4 py-20"><div class="reveal text-center mb-10"><span class="eyebrow">Wardrobe</span><h2 class="h2">${D.varTitle}</h2><p class="text-xs text-slate-400 mt-3">${D.varSub}</p></div>
+<div class="reveal glass p-5 sm:p-8"><div class="grid lg:grid-cols-2 gap-6 items-center"><div class="relative"><div id="wArt" class="art"></div><button class="arrow absolute left-0 top-1/2 -translate-y-1/2" onclick="step(-1)" aria-label="Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button><button class="arrow absolute right-0 top-1/2 -translate-y-1/2" onclick="step(1)" aria-label="Berikutnya"><i class="fa-solid fa-chevron-right"></i></button></div><div id="wInfo" class="swap space-y-4"></div></div>
+<div class="flex items-center justify-center gap-3 mt-6 flex-wrap" id="wThumbs">${D.outfits.map((o,i)=>`<button class="thumb" onclick="show(${i},${i>=oi?1:-1})" title="${o.title}">${img(o.img,o.title)}</button>`).join('')}<button id="autoBtn" class="chip ml-2" onclick="toggleAuto()"><i class="fa-solid fa-play"></i><span>Auto</span></button></div></div></section>`;
+
+const R=D.apt.map(([k,v])=>`<div class="text-center"><svg viewBox="0 0 80 80" class="gauge w-24 h-24 mx-auto -rotate-90"><circle class="bg" cx="40" cy="40" r="36"/><circle class="fg" cx="40" cy="40" r="36" data-g="${v.trim()[0]}"/></svg><div class="-mt-[3.9rem] mb-7 font-serif font-black text-2xl text-white">${v}</div><div class="text-[11px] text-slate-300 font-semibold">${k}</div></div>`).join('');
+const rec=(D.irlStats[0][1].match(/(\d+)\D+(\d+)/)||[]);const wr=rec[1]?Math.round(rec[2]/rec[1]*100):0;
+const dossier=`<section id="biografi" class="max-w-6xl mx-auto px-4 py-20"><div class="reveal text-center mb-8"><span class="eyebrow">Dossier</span><h2 class="h2">${D.wikiTitle}</h2></div>
+<div class="reveal flex flex-wrap justify-center gap-2 mb-8" id="tabs">${D.tabs.map((t,i)=>`<button class="tab ${i?'':'on'}" data-t="${i}"><i class="fa-solid ${['fa-id-card','fa-palette','fa-horse'][i]}"></i>${t}</button>`).join('')}</div>
+<div class="reveal">
+<div class="panel on" data-p="0"><div class="grid lg:grid-cols-[20rem_1fr] gap-5"><div class="glass id p-6" id="idc"><div class="flex items-center gap-4 mb-3">${img(D.heroImg,N,'w-16 h-16 rounded-full object-cover object-top border-2 shrink-0" style="border-color:var(--p)')}<div><div class="font-serif font-black text-xl text-white leading-tight">${N}</div><div class="text-[11px]" style="color:var(--p)">${D.stats[0][1]}</div></div></div><h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">${D.specTitle}</h3>${D.stats.map(([k,v])=>`<div class="row"><span>${k}</span><span>${v}</span></div>`).join('')}</div>
+<div class="space-y-5"><div class="glass p-6 space-y-3"><h3 class="font-serif font-black text-xl text-white"><i class="fa-solid ${I} mr-2" style="color:var(--p)"></i>${D.bioTitle}</h3>${D.bio.map(p=>`<p class="text-sm text-slate-300 leading-relaxed">${p}</p>`).join('')}</div>
+<div class="glass p-6"><h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">${D.aptTitle}</h3><div class="grid grid-cols-2 sm:grid-cols-4 gap-4">${R}</div></div></div></div></div>
+<div class="panel" data-p="1"><div class="glass p-6 sm:p-8"><h3 class="font-serif font-black text-2xl text-white mb-6">${D.appTitle}</h3><div class="grid sm:grid-cols-2 gap-4">${D.features.map((f,i)=>`<div class="feat flex gap-4"><div class="ic shrink-0"><i class="${f.i}"></i></div><div><div class="text-[10px] font-mono text-slate-500">0${i+1}</div><h4 class="font-bold text-white">${f.t}</h4><p class="text-xs text-slate-300 mt-1 leading-relaxed">${f.d}</p></div></div>`).join('')}</div></div></div>
+<div class="panel" data-p="2"><div class="glass p-6 sm:p-8"><h3 class="font-serif font-black text-2xl text-white mb-4">${D.irlTitle}</h3><div class="grid md:grid-cols-[1fr_auto] gap-6 items-center"><div class="space-y-4"><p class="text-sm text-slate-300 leading-relaxed">${D.irl}</p><div class="grid sm:grid-cols-3 gap-3">${D.irlStats.map(([k,v])=>`<div class="feat !p-4"><div class="text-[10px] uppercase tracking-wider text-slate-400">${k}</div><div class="font-bold text-white text-sm mt-1">${v}</div></div>`).join('')}</div></div>
+${rec[1]?`<div class="text-center"><svg viewBox="0 0 80 80" class="gauge w-36 h-36 mx-auto -rotate-90"><circle class="bg" cx="40" cy="40" r="36"/><circle class="fg" cx="40" cy="40" r="36" data-pct="${wr}"/></svg><div class="-mt-[5.6rem] mb-12 font-serif font-black text-3xl text-white"><span data-count="${wr}">0</span>%</div><div class="text-[11px] text-slate-400">Win rate • ${rec[2]} dari ${rec[1]} laga</div></div>`:''}</div></div></div>
+</div></section>`;
+
+const cons=`<section id="hubungan" class="max-w-6xl mx-auto px-4 py-20"><div class="reveal text-center mb-10"><span class="eyebrow"><i class="fa-solid fa-circle-nodes mr-1"></i>Golden Generation</span><h2 class="h2">${D.relTitle}</h2><p class="text-xs text-slate-400 mt-3">Klik planet relasi untuk melihat hubungan</p></div>
+<div class="reveal glass p-6 sm:p-10 grid md:grid-cols-2 gap-8 items-center"><div class="cons" id="cons"><div class="orbit"></div><svg viewBox="0 0 100 100" id="lines"></svg><div class="core">${img(D.heroImg,N)}</div></div><div id="relInfo" class="swap space-y-3 min-h-[15rem]"></div></div></section>`;
+
+const media=`<section id="media-trivia" class="max-w-6xl mx-auto px-4 py-20 grid lg:grid-cols-2 gap-10"><div><div class="reveal mb-6"><span class="eyebrow">Media</span><h2 class="h2">${D.mediaTitle}</h2></div><div class="space-y-4">${D.media.map(m=>`<div class="reveal feat flex gap-4"><div class="ic shrink-0"><i class="${m.icon}"></i></div><div><div class="flex flex-wrap items-center gap-2"><span class="font-bold text-white">${m.label}</span><span class="chip !py-0.5 !text-[10px]" style="color:var(--p)">${m.badge}</span></div><p class="text-xs text-slate-300 mt-1.5 leading-relaxed">${m.text}</p></div></div>`).join('')}</div></div>
+<div><div class="reveal mb-6 flex items-end justify-between gap-3"><div><span class="eyebrow">Trivia</span><h2 class="h2">${D.triviaTitle}</h2></div><button class="chip" onclick="rndFact()"><i class="fa-solid fa-dice"></i>Acak</button></div><div class="space-y-3" id="acc">${D.trivia.map((t,i)=>`<div class="reveal acc ${i?'':'on'}"><button class="w-full flex items-center justify-between gap-3 text-left p-4 font-bold text-sm text-white" onclick="openAcc(${i})"><span>${t.q}</span><i class="fa-solid fa-chevron-down text-xs transition" style="color:var(--p)"></i></button><div class="b"><div><p class="px-4 pb-4 text-xs text-slate-300 leading-relaxed">${t.a}</p></div></div></div>`).join('')}</div></div></section>`;
+
+const quiz=`<section id="kuis" class="max-w-2xl mx-auto px-4 py-20"><div class="reveal text-center mb-8"><span class="eyebrow">Kuis Kilat</span><h2 class="h2">Seberapa Kenal Kamu dengan ${N}?</h2></div><div class="reveal glass p-6 sm:p-8" id="qz"></div></section>`;
+
+const nx=d=>{const m=M[(me+d+M.length)%M.length];return `<a href="${m.f}" class="ncard" style="--c:${m.c}">${img(m.img,m.n)}<div class="${d>0?'text-right ml-auto':''}"><div class="text-[10px] uppercase tracking-widest text-slate-400">${d>0?'Berikutnya':'Sebelumnya'}</div><div class="font-serif font-black text-lg text-white">${m.n}</div><div class="text-[11px]" style="color:${m.c}">${m.jp}</div></div></a>`};
+const next=`<section class="max-w-4xl mx-auto px-4 pb-16"><div class="reveal grid sm:grid-cols-2 gap-4">${nx(-1)}${nx(1)}</div><div class="reveal text-center mt-6"><a href="index.html#planet-${me}" class="btn btn-g"><i class="fa-solid fa-rocket"></i>Terbang ke planet ${N} di Orbit Mode</a></div></section>`;
+
+$('#app').innerHTML=hero+wardrobe+dossier+cons+media+quiz+next;
+$('#foot').innerHTML=`<p class="text-sm font-bold text-white">${D.footer[0]}</p><p class="text-xs text-slate-400 max-w-xl mx-auto">${D.footer[3]}</p><p class="text-[11px] text-slate-600">${D.footer[4]}</p>`;
+
+/* ---------- WARDROBE ---------- */
+function show(i,dir=1){oi=(i+D.outfits.length)%D.outfits.length;const o=D.outfits[oi];const st=$('#wArt');st.style.setProperty('--dir',dir);
+ st.innerHTML=`<div class="a-glow"></div>${[0,1].map(k=>`<div class="a-ring" style="width:${62+k*22}cqmin;height:${62+k*22}cqmin;--d:${18+k*9}s;animation-direction:${k%2?'reverse':'normal'}"><i></i></div>`).join('')}${img(o.img,o.title,'a-img')}`;
+ $('#wInfo').innerHTML=`<div style="--i:0" class="flex flex-wrap gap-2"><span class="chip on">${o.badge}</span><span class="chip">${o.type}</span><span class="chip" style="color:var(--g)"><i class="fa-solid fa-star"></i>${o.rarity}</span></div><h3 style="--i:1" class="font-serif font-black text-3xl sm:text-4xl text-white leading-tight">${o.title}</h3><p style="--i:2;color:var(--p)" class="text-sm italic font-semibold">${o.jpTitle}</p><p style="--i:3" class="text-sm text-slate-300 leading-relaxed">${o.description}</p><div style="--i:4" class="flex flex-wrap gap-1.5">${o.tags.map(t=>`<span class="chip !py-1 !text-[11px]">${t}</span>`).join('')}</div>`;
+ $$('#wThumbs .thumb').forEach((b,k)=>b.classList.toggle('on',k===oi))}
+const step=d=>show(oi+d,d);
+function toggleAuto(){const b=$('#autoBtn');if(auto){clearInterval(auto);auto=null;b.classList.remove('on');b.firstChild.className='fa-solid fa-play'}else{auto=setInterval(()=>step(1),5000);b.classList.add('on');b.firstChild.className='fa-solid fa-pause'}}
+show(0);
+{const w=$('#wArt');let sx=null;w.addEventListener('pointerdown',e=>sx=e.clientX);w.addEventListener('pointerup',e=>{if(sx!==null&&Math.abs(e.clientX-sx)>50)step(e.clientX<sx?1:-1);sx=null})}
+addEventListener('keydown',e=>{if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;const r=$('#variasi').getBoundingClientRect();if(r.top<innerHeight*.7&&r.bottom>innerHeight*.3)step(e.key==='ArrowRight'?1:-1)});
+
+/* ---------- TABS + GAUGE ---------- */
+const GR={S:100,A:90,B:75,C:60,D:45,E:30,F:15,G:5};
+function fire(root){$$('.fg',root).forEach(c=>{const p=c.dataset.pct?+c.dataset.pct:(GR[c.dataset.g]||50);c.style.strokeDashoffset=226.2*(1-p/100)});
+ $$('[data-count]',root).forEach(el=>{const to=+el.dataset.count,t0=performance.now();(function f(n){const p=Math.min((n-t0)/1200,1);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)})(t0)})}
+$$('#tabs .tab').forEach(b=>b.onclick=()=>{$$('#tabs .tab').forEach(x=>x.classList.toggle('on',x===b));$$('.panel').forEach(p=>{const on=p.dataset.p===b.dataset.t;p.classList.toggle('on',on);if(on)fire(p)})});
+$('#idc').addEventListener('pointermove',e=>{const r=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%')});
+$('#biografi').insertAdjacentHTML('beforeend','<svg width="0" height="0"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--p)"/><stop offset="1" stop-color="var(--s)"/></linearGradient></defs></svg>');
+
+/* ---------- KONSTELASI RELASI ---------- */
+{const n=D.rels.length,box=$('#cons'),ln=$('#lines');let h='',l='';
+ D.rels.forEach((r,k)=>{const a=(-90+k*360/n)*Math.PI/180,x=50+37*Math.cos(a),y=50+37*Math.sin(a);const ms=r.links.map(([,f])=>M.find(m=>m.f===f)).filter(Boolean);const c=ms[0]?ms[0].c:'var(--p)';
+  h+=`<button class="node" data-k="${k}" style="left:${x}%;top:${y}%;--nc:${c}"><div class="av">${ms.length?ms.map(m=>img(m.img,m.n)).join(''):`<i class="fa-solid fa-user-large"></i>`}</div><small>${r.name}</small></button>`;l+=`<line x1="50" y1="50" x2="${x}" y2="${y}" data-k="${k}"/>`});
+ ln.innerHTML=l;box.insertAdjacentHTML('beforeend',h);
+ const pick=k=>{const r=D.rels[k];$$('.node').forEach(x=>x.classList.toggle('on',+x.dataset.k===k));$$('#lines line').forEach(x=>x.classList.toggle('on',+x.dataset.k===k));
+  $('#relInfo').innerHTML=`<div style="--i:0"><span class="chip on">${r.label}</span></div><h3 style="--i:1" class="font-serif font-black text-3xl text-white">${r.name}</h3><p style="--i:2" class="text-sm text-slate-300 leading-relaxed">${r.desc}</p>${r.rel?`<p style="--i:3" class="text-xs font-bold" style="color:var(--p)"><i class="fa-solid fa-link mr-1"></i>${r.rel}</p>`:''}<div style="--i:4" class="flex flex-wrap gap-2 pt-1">${r.links.map(([t,f])=>`<a href="${f}" class="btn btn-p !py-2.5 !text-xs">${t}</a>`).join('')}</div>`};
+ $$('.node').forEach(x=>x.onclick=()=>pick(+x.dataset.k));pick(0)}
+
+/* ---------- TRIVIA ---------- */
+function openAcc(i){$$('#acc .acc').forEach((a,k)=>a.classList.toggle('on',k===i&&!a.classList.contains('on')||false));}
+function rndFact(){openAcc(Math.random()*D.trivia.length|0)}
+
+/* ---------- KUIS ---------- */
+const QT={'Ulang Tahun':'Kapan ulang tahun','Tinggi Badan':'Berapa tinggi badan','VA / Pengisi Suara':'Siapa pengisi suara','Favorit':'Apa yang menjadi favorit','Asal Tempat':'Dari mana asal','Ukuran B-W-H':'Berapa ukuran B-W-H','Kamar Asrama':'Di mana kamar asrama','Teman Kamar':'Siapa teman sekamar','Total Rekor Balap':'Berapa total rekor balap kuda pacu asli'};
+let qs=[],qi=0,sc=0;
+function startQuiz(){const all=[];Object.keys(QT).forEach(l=>{const own=Q[me][l];if(!own)return;const o=[...new Set(Q.map(c=>c[l]).filter(v=>v&&v!==own))];if(o.length<2)return;all.push({q:`${QT[l]} <b style="color:var(--p)">${N}</b>?`,a:own,o:shuf([own,...shuf(o).slice(0,3)])})});
+ all.push({q:`Siapa pemilik semboyan <b class="font-serif" style="color:var(--p)">${D.motto}</b> ?`,a:N,o:shuf([N,...shuf(M.filter(m=>m.n!==N).map(m=>m.n)).slice(0,3)])});
+ qs=shuf(all).slice(0,5);qi=0;sc=0;drawQ()}
+function drawQ(){const z=$('#qz');if(qi>=qs.length){const p=sc/qs.length,msg=p===1?'Sempurna! Kamu fans sejati '+N+'!':p>=.6?'Bagus! Kamu cukup kenal '+N+'.':'Ayo kenalan lagi dengan '+N+'!';
+  z.innerHTML=`<div class="text-center space-y-4"><i class="fa-solid ${I} text-4xl" style="color:var(--p)"></i><div class="font-serif font-black text-6xl gt">${sc}/${qs.length}</div><p class="text-slate-300">${msg}</p><div class="flex justify-center gap-3"><button class="btn btn-p" onclick="startQuiz()"><i class="fa-solid fa-rotate"></i>Main Lagi</button><a href="#pengenalan" class="btn btn-g">Baca Ulang</a></div></div>`;if(p>=.6&&window.burst)burst(innerWidth/2,innerHeight/2,26);return}
+ const q=qs[qi];z.innerHTML=`<div class="swap"><div style="--i:0" class="flex justify-between items-center mb-4 text-xs text-slate-400"><span>Pertanyaan ${qi+1} / ${qs.length}</span><span>Skor: <b class="text-white">${sc}</b></span></div><div style="--i:1" class="h-1.5 rounded-full bg-white/10 mb-5 overflow-hidden"><div class="h-full rounded-full" style="width:${qi/qs.length*100}%;background:linear-gradient(90deg,var(--p),var(--s))"></div></div><p style="--i:2" class="font-bold text-white mb-4">${q.q}</p><div style="--i:3" class="space-y-2.5">${q.o.map(o=>`<button class="opt">${o}</button>`).join('')}</div></div>`;
+ $$('.opt',z).forEach(b=>b.onclick=()=>{const ok=b.textContent===q.a;if(ok)sc++;$$('.opt',z).forEach(x=>{x.disabled=true;if(x.textContent===q.a)x.classList.add('ok')});if(!ok)b.classList.add('no');else if(window.burst){const r=b.getBoundingClientRect();burst(r.left+r.width/2,r.top,12)}setTimeout(()=>{qi++;drawQ()},1100)})}
+startQuiz();
+
+/* ---------- ANIMASI & INTERAKSI ---------- */
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');ro.unobserve(e.target)}}),{threshold:.1});
+function go(){$$('.reveal').forEach((el,i)=>{if(el.closest('#pengenalan'))el.style.transitionDelay=(i*.1)+'s';ro.observe(el)});fire($('.panel.on'))}
+addEventListener('gg-loaded',go);
+{const q=D.quote,el=$('#qt');const o=new IntersectionObserver(es=>{if(es[0].isIntersecting){o.disconnect();let i=0;const t=setInterval(()=>{el.textContent=q.slice(0,++i);if(i>=q.length)clearInterval(t)},22)}});o.observe($('#quote'))}
+{const a=$('#hArt');a.addEventListener('pointermove',e=>{const r=a.getBoundingClientRect();a.style.setProperty('--px',((e.clientX-r.left)/r.width*2-1).toFixed(2));a.style.setProperty('--py',((e.clientY-r.top)/r.height*2-1).toFixed(2))});a.addEventListener('pointerleave',()=>{a.style.setProperty('--px',0);a.style.setProperty('--py',0)})}
+if(matchMedia('(hover:hover)').matches){const g=$('#glow');addEventListener('pointermove',e=>{g.style.transform=`translate(${e.clientX}px,${e.clientY}px)`},{passive:true})}
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)$$('#nav a').forEach(a=>a.classList.toggle('act',a.getAttribute('href')==='#'+e.target.id))}),{rootMargin:'-45% 0px -50% 0px'});SEC.forEach(([id])=>spy.observe($('#'+id)));
+const onS=()=>{const m=document.documentElement.scrollHeight-innerHeight,p=m>0?scrollY/m:0;$('#prog').style.transform=`scaleX(${p})`;$('#top').classList.toggle('on',scrollY>700)};addEventListener('scroll',onS,{passive:true});onS();
+$('#top').onclick=()=>scrollTo({top:0,behavior:'smooth'});$$('#mmenu a[href^="#"]').forEach(a=>a.addEventListener('click',()=>$('#mmenu').classList.add('hidden')));
+
+/* ---------- FX: bintang + partikel tema + ledakan klik ---------- */
+(()=>{const c=$('#fx'),x=c.getContext&&c.getContext('2d');if(!x)return;const fx=D.theme.fx,rgb=D.theme.rgb;let W,H,dpr;
+ const rs=()=>{dpr=Math.min(devicePixelRatio||1,innerWidth<768?1.25:1.75);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px'};rs();addEventListener('resize',rs);
+ const stars=Array.from({length:70},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.2+.3,a:Math.random()*6,v:Math.random()+.5}));
+ const cloud=document.createElement('canvas');cloud.width=cloud.height=64;{const g=cloud.getContext('2d'),r=g.createRadialGradient(32,32,0,32,32,32);r.addColorStop(0,`rgba(${rgb},.9)`);r.addColorStop(1,`rgba(${rgb},0)`);g.fillStyle=r;g.fillRect(0,0,64,64)}
+ const star=(s,r)=>{x.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,d=i%2?r*.28:r;x.lineTo(s.x+Math.cos(a)*d,s.y+Math.sin(a)*d)}x.closePath();x.fill()};
+ const spawn=(top)=>{const p={x:Math.random()*W,y:Math.random()*H,a:Math.random()*6,s:0,vx:0,vy:0,al:.3};
+  if(fx==='sakura'||fx==='petal'){p.s=Math.random()*5+4;p.vy=40+Math.random()*50;p.vx=Math.random()*30-15;if(top)p.y=-20}
+  else if(fx==='ember'){p.s=Math.random()*2.5+1.2;p.vy=-(30+Math.random()*70);p.vx=Math.random()*20-10;if(top)p.y=H+10}
+  else if(fx==='cloud'){p.s=70+Math.random()*90;p.vx=8+Math.random()*18;p.y=Math.random()*H*.8;p.al=.05+Math.random()*.09;if(top)p.x=-p.s}
+  else{p.s=Math.random()*5+3}return p};
+ const P=Array.from({length:fx==='cloud'?9:fx==='sparkle'?26:22},()=>spawn(false)),B=[];
+ window.burst=(bx,by,n=14)=>{for(let i=0;i<n;i++){const a=Math.random()*6.283,v=70+Math.random()*190;B.push({x:bx,y:by,vx:Math.cos(a)*v,vy:Math.sin(a)*v-(fx==='ember'?60:0),life:0,max:.7+Math.random()*.6,s:3+Math.random()*5,a})}};
+ addEventListener('pointerdown',e=>{if(e.target.closest('a,button,input'))return;burst(e.clientX,e.clientY)});
+ let last=performance.now();
+ (function loop(now){const dt=Math.min((now-last)/1000,.05),t=now/1000;last=now;x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H);
+  x.fillStyle='#fff';stars.forEach(s=>{x.globalAlpha=.25+.6*Math.abs(Math.sin(t*s.v+s.a));x.beginPath();x.arc(s.x*W,s.y*H,s.r,0,6.283);x.fill()});
+  x.fillStyle=`rgb(${rgb})`;
+  P.forEach((p,i)=>{p.a+=dt;
+   if(fx==='sakura'||fx==='petal'){p.y+=p.vy*dt;p.x+=(p.vx+Math.sin(p.a*1.5)*20)*dt;x.globalAlpha=.45;x.save();x.translate(p.x,p.y);x.rotate(p.a*1.5);x.beginPath();x.ellipse(0,0,p.s,p.s/2,0,0,6.283);x.fill();x.restore();if(p.y>H+20)P[i]=spawn(true)}
+   else if(fx==='ember'){p.y+=p.vy*dt;p.x+=(p.vx+Math.sin(p.a*3)*14)*dt;x.globalAlpha=.25+.55*Math.abs(Math.sin(p.a*4));x.beginPath();x.arc(p.x,p.y,p.s,0,6.283);x.fill();if(p.y<-10)P[i]=spawn(true)}
+   else if(fx==='cloud'){p.x+=p.vx*dt;x.globalAlpha=p.al;x.drawImage(cloud,p.x-p.s,p.y-p.s,p.s*2,p.s*2);if(p.x>W+p.s)P[i]=spawn(true)}
+   else{x.globalAlpha=.15+.75*Math.abs(Math.sin(p.a*1.6));star(p,p.s)}});
+  for(let i=B.length-1;i>=0;i--){const b=B[i];b.life+=dt;if(b.life>b.max){B.splice(i,1);continue}b.x+=b.vx*dt;b.y+=b.vy*dt;b.vy+=(fx==='ember'?-20:120)*dt;b.vx*=.985;const k=1-b.life/b.max;x.globalAlpha=k;x.fillStyle=i%3?`rgb(${rgb})`:'#f59e0b';
+   if(fx==='petal'){x.save();x.translate(b.x,b.y);x.rotate(b.a);x.fillRect(-b.s*2.5,-1,b.s*5*k,2);x.restore()}
+   else if(fx==='sparkle')star(b,b.s*1.6*k+2);else if(fx==='cloud'){x.drawImage(cloud,b.x-b.s*3*(2-k),b.y-b.s*3*(2-k),b.s*6*(2-k),b.s*6*(2-k))}
+   else{x.beginPath();x.ellipse(b.x,b.y,b.s*k+1,(b.s*k+1)/(fx==='sakura'?2:1),b.a,0,6.283);x.fill()}}
+  x.globalAlpha=1;requestAnimationFrame(loop)})(last);
+})();
+</script></body></html>
