@@ -355,7 +355,11 @@ function openChat(){$('#chat').classList.add('open');$('#chatBtn').style.display
 function closeChat(){$('#chat').classList.remove('open');$('#chatBtn').style.display='flex'}
 $('#chatBtn').onclick=openChat;$('#chX').onclick=closeChat;addEventListener('keydown',e=>{if(e.key==='Escape')closeChat()});
 $('#chForm').onsubmit=e=>{e.preventDefault();const i=$('#chIn');send(i.value);i.value=''};
-$('#quick').innerHTML=['Lagi ngapain?','Rahasia taktikmu?','Ceritain Kikuka Sho','Gimana soal Special Week?','Aku lagi capek…'].map(q=>`<button class="chip whitespace-nowrap" type="button">${q}</button>`).join('');$$('#quick button').forEach(b=>b.onclick=()=>send(b.textContent));
+$('#quick').innerHTML=['Lagi ngapain?','Rahasia taktikmu?','Ceritain Kikuka Sho','Gimana soal Special Week?','Aku lagi capek…'].map(q=>`<button class="chip whitespace-nowrap" type="button">${q}</button>`).join('');async function testAI(){bubble('me','Tes koneksi AI…');let m;try{const c=new AbortController(),to=setTimeout(()=>c.abort(),15000);const res=await fetch(AI_ENDPOINT,{signal:c.signal});clearTimeout(to);const j=await res.json().catch(()=>({}));
+ if(j.status==='ok')m=`Worker aktif ✔ Model: ${j.model}. API key: ${j.hasKey?'terpasang ✔':'BELUM terpasang ✘ (buat Secret bernama GEMINI_API_KEY)'}. Origin halaman (${j.yourOrigin}): ${j.originAllowed?'diizinkan ✔':'DITOLAK ✘ (isi ALLOWED_ORIGINS dengan tepat '+j.yourOrigin+')'}.`;
+ else m='Worker membalas, tapi ini bukan kode Gemini terbaru ('+JSON.stringify(j).slice(0,90)+'). Tempel ulang isi seiun-chat-worker.js di Edit code, lalu klik Deploy.'}catch(e){m='Tidak bisa menghubungi Worker ('+(e.message==='Failed to fetch'?'diblokir CORS, atau Worker masih kode lama / belum di-Deploy':e.message)+'). Buka URL Worker langsung di tab baru untuk melihat statusnya.'}
+ bubble('sky',m)}
+$$('#quick button').forEach(b=>b.onclick=()=>send(b.textContent));if(AI_ENDPOINT){const b=document.createElement('button');b.type='button';b.className='chip whitespace-nowrap';b.textContent='🔧 Tes koneksi AI';b.onclick=testAI;$('#quick').appendChild(b)}
 $('#chNote').textContent=(AI_ENDPOINT?'Dijawab oleh Google Gemini (emosi disimulasikan); pesan diproses Google, jangan kirim data pribadi. ':'Mode offline: jawaban skrip berbasis data karakter. ')+'Karakter AI buatan fans, bukan Seiun Sky asli.';
 setMood('cloudy');bubble('sky','Fuwaa… Trainer-san? Aku lagi mancing nih. Mau ngobrol? Tanya aja soal taktik, rival, atau ikan~');
 
